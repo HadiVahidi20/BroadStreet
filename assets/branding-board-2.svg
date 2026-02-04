@@ -1,0 +1,13 @@
+﻿<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="900" viewBox="0 0 1200 900">
+  <rect width="1200" height="900" fill="#f5f5f5" />
+  <rect x="40" y="40" width="1120" height="820" fill="#ffffff" stroke="#111111" stroke-width="4" />
+  <g fill="#111111" font-family="Arial, sans-serif">
+    <text x="600" y="170" text-anchor="middle" font-size="40" font-weight="700">Branding Board 2</text>
+    <text x="600" y="230" text-anchor="middle" font-size="20">Replace this placeholder with the provided image</text>
+  </g>
+  <g>
+    <rect x="160" y="320" width="880" height="420" fill="#f0f0f0" stroke="#cccccc" />
+    <line x1="160" y1="320" x2="1040" y2="740" stroke="#cccccc" />
+    <line x1="1040" y1="320" x2="160" y2="740" stroke="#cccccc" />
+  </g>
+</svg>

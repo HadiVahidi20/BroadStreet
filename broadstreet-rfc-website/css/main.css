@@ -1,0 +1,26 @@
+/* ============================================
+   Broadstreet RFC - Main Stylesheet
+   ============================================
+
+   This file imports all CSS modules in the correct order.
+
+   Structure:
+   1. Variables (design tokens)
+   2. Base styles (reset, typography)
+   3. Layout (grid, containers)
+   4. Components (buttons, cards, forms)
+   5. Header & Navigation
+   6. Footer
+   7. Utilities (helper classes)
+
+   ============================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Sen:wght@400;600;800&display=swap');
+
+@import url('variables.css');
+@import url('base.css');
+@import url('layout.css');
+@import url('components.css');
+@import url('header.css');
+@import url('footer.css');
+@import url('utilities.css');

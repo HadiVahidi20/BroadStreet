@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:rctoulon.com)",
+      "WebFetch(domain:www.broadstreet-rugby.co.uk)"
+    ]
+  }
+}

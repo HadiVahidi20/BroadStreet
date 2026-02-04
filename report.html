@@ -1,0 +1,307 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Broadstreet RFC - Discovery Report</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Sen:wght@400;600;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --red: #e30917;
+      --green: #2a663a;
+      --yellow: #f9eb10;
+      --black: #000000;
+      --white: #ffffff;
+      --club-red: #a32020;
+      --club-green: #1d6345;
+      --ink: #1b1b1b;
+      --paper: #f7f7f5;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Sen", Arial, sans-serif;
+      color: var(--ink);
+      background: var(--paper);
+      line-height: 1.5;
+    }
+    header {
+      background: linear-gradient(120deg, #111111 0%, #2a2a2a 100%);
+      color: var(--white);
+      padding: 40px 28px;
+    }
+    header h1 {
+      margin: 0 0 6px 0;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+    }
+    header p { margin: 0; opacity: 0.9; }
+    main { padding: 28px; max-width: 1100px; margin: 0 auto; }
+    section {
+      background: #ffffff;
+      border: 1px solid #e4e4e4;
+      border-radius: 12px;
+      padding: 22px;
+      margin-bottom: 18px;
+    }
+    h2 {
+      margin: 0 0 10px 0;
+      font-size: 22px;
+      letter-spacing: 0.3px;
+    }
+    h3 { margin: 18px 0 8px 0; font-size: 18px; }
+    ul { margin: 8px 0 0 18px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+    figure { margin: 0; border: 1px solid #e6e6e6; border-radius: 10px; overflow: hidden; }
+    figure img { width: 100%; height: auto; display: block; background: #f0f0f0; }
+    figcaption { padding: 10px 12px; font-size: 14px; color: #4c4c4c; }
+    .swatches { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; }
+    .swatch {
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid #e3e3e3;
+    }
+    .swatch .chip { height: 70px; }
+    .swatch .meta { padding: 8px 10px; font-size: 13px; background: #ffffff; }
+    .tag { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 12px; background: #f0f0f0; }
+    .two-col { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 18px; }
+    .note { font-size: 13px; color: #555555; }
+    .links a { color: #0b4ea2; text-decoration: none; }
+    .links a:hover { text-decoration: underline; }
+    footer { text-align: center; font-size: 12px; color: #666666; padding: 18px 0 30px; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Broadstreet RFC - Discovery Report</h1>
+    <p>Summary of findings so far: branding kit, project focus, and proposed site architecture.</p>
+  </header>
+
+  <main>
+    <section>
+      <h2>Project Focus</h2>
+      <ul>
+        <li>Primary: match information and supporter experience (fixtures, results, matchday guidance, fan content).</li>
+        <li>Secondary: revenue from sponsors and clubhouse or venue hire.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>Branding Kit (from provided boards)</h2>
+      <div class="grid">
+        <figure>
+          <img src="assets/branding-board-1.svg" alt="Broadstreet RFC branding board 1" />
+          <figcaption>Board 1 placeholder. Replace with the provided image for the full visual board.</figcaption>
+        </figure>
+        <figure>
+          <img src="assets/branding-board-2.svg" alt="Clubhouse branding board" />
+          <figcaption>Board 2 placeholder. Replace with the provided image for the full visual board.</figcaption>
+        </figure>
+      </div>
+
+      <h3>Logo System</h3>
+      <ul>
+        <li>Primary crest logo with red, green, and yellow shield, red rose, and ribbon mark.</li>
+        <li>Dark background variant of the crest for black or photo-heavy layouts.</li>
+        <li>Secondary sub-brand: THE CLUB HOUSE wordmark with shield outline, red and green highlight blocks.</li>
+      </ul>
+
+      <h3>Color Palette</h3>
+      <div class="two-col">
+        <div>
+          <div class="tag">Broadstreet RFC</div>
+          <div class="swatches" style="margin-top: 10px;">
+            <div class="swatch"><div class="chip" style="background: #e30917;"></div><div class="meta">Red #E30917</div></div>
+            <div class="swatch"><div class="chip" style="background: #ffffff;"></div><div class="meta">White #FFFFFF</div></div>
+            <div class="swatch"><div class="chip" style="background: #000000;"></div><div class="meta">Black #000000</div></div>
+            <div class="swatch"><div class="chip" style="background: #2a663a;"></div><div class="meta">Green #2A663A</div></div>
+            <div class="swatch"><div class="chip" style="background: #f9eb10;"></div><div class="meta">Yellow #F9EB10</div></div>
+          </div>
+        </div>
+        <div>
+          <div class="tag">Clubhouse</div>
+          <div class="swatches" style="margin-top: 10px;">
+            <div class="swatch"><div class="chip" style="background: #a32020;"></div><div class="meta">Red #A32020</div></div>
+            <div class="swatch"><div class="chip" style="background: #ffffff;"></div><div class="meta">White #FFFFFF</div></div>
+            <div class="swatch"><div class="chip" style="background: #000000;"></div><div class="meta">Black #000000</div></div>
+            <div class="swatch"><div class="chip" style="background: #1d6345;"></div><div class="meta">Green #1D6345</div></div>
+          </div>
+        </div>
+      </div>
+
+      <h3>Typography</h3>
+      <ul>
+        <li>Primary font: Sen Extra Bold for key headings.</li>
+        <li>Secondary font: Sen Semibold for subheads and labels.</li>
+        <li>Body font: Sen Regular for paragraphs and UI copy.</li>
+      </ul>
+
+      <h3>Imagery Direction</h3>
+      <ul>
+        <li>On-field kit photography (home kit and training apparel).</li>
+        <li>Community and youth rugby moments.</li>
+        <li>Clubhouse and facility shots (building, entrance, aerials).</li>
+      </ul>
+
+      <p class="note">Note: the two image files are placeholders. If you want the real boards shown, place the provided images at <strong>assets/branding-board-1.svg</strong> and <strong>assets/branding-board-2.svg</strong> (or swap the file extensions in the HTML).</p>
+    </section>
+
+    <section>
+      <h2>Proposed Site Architecture</h2>
+      <h3>Primary Navigation</h3>
+      <ul>
+        <li>Home</li>
+        <li>Fixtures & Results</li>
+        <li>Matchday</li>
+        <li>News</li>
+        <li>Fan Zone</li>
+        <li>Sponsors / Business</li>
+        <li>Clubhouse / Venue Hire</li>
+        <li>Contact</li>
+      </ul>
+
+      <h3>Secondary Navigation (Footer or More)</h3>
+      <ul>
+        <li>Teams</li>
+        <li>About / History</li>
+        <li>Membership / Join</li>
+        <li>Gallery / Media</li>
+        <li>Community / Outreach</li>
+        <li>Safeguarding / Policies</li>
+        <li>Shop / Kit</li>
+        <li>Volunteering</li>
+      </ul>
+
+      <h3>Sitemap (Overview)</h3>
+      <pre style="background:#f7f7f7;border:1px solid #e3e3e3;border-radius:10px;padding:12px;overflow:auto;">
+Home
+Fixtures & Results
+League Table (inside Fixtures & Results)
+Matchday
+News
+Fan Zone
+Sponsors / Business
+Clubhouse / Venue Hire
+Contact
+Teams
+About / History
+Membership / Join
+Gallery / Media
+Community / Outreach
+Safeguarding / Policies
+Shop / Kit
+Volunteering
+      </pre>
+      <h3>Sitemap Content Notes (1-line per page)</h3>
+      <ul>
+        <li>Home: headline overview, next match, recent results, and main calls to action.</li>
+        <li>Fixtures & Results: full schedule with filters and recent scores.</li>
+        <li>League Table: current standings and points for the competition.</li>
+        <li>Matchday: directions, parking, timings, and on-site facilities.</li>
+        <li>News: club updates, announcements, and press-style posts.</li>
+        <li>Fan Zone: social feeds, photos, videos, and supporter content.</li>
+        <li>Sponsors / Business: sponsorship options, partner logos, and inquiry form.</li>
+        <li>Clubhouse / Venue Hire: venue spaces, capacities, and booking details.</li>
+        <li>Contact: contact methods, key emails, and location map.</li>
+        <li>Teams: all squads with coaches, training, and roster info.</li>
+        <li>About / History: club story, milestones, and values.</li>
+        <li>Membership / Join: membership types, fees, and how to sign up.</li>
+        <li>Gallery / Media: curated photos and videos from matches and events.</li>
+        <li>Community / Outreach: community programs, schools, and charity work.</li>
+        <li>Safeguarding / Policies: safeguarding contacts and key policies.</li>
+        <li>Shop / Kit: official merchandise and kit ordering.</li>
+        <li>Volunteering: roles needed and how to get involved.</li>
+      </ul>
+
+      <h3>Page Goals and Primary CTAs</h3>
+      <ul>
+        <li>Home: highlight next match, latest results, and direct links to tickets, fixtures, and sponsor inquiries.</li>
+        <li>Fixtures & Results: quick access to the next match, recent scores, and league position.</li>
+        <li>Matchday: reduce visitor friction with directions, parking, timetable, and facilities.</li>
+        <li>Fan Zone: keep supporters engaged through photos, social links, and community content.</li>
+        <li>Sponsors / Business: convert interest into leads via packages, benefits, and contact form.</li>
+        <li>Clubhouse / Venue Hire: showcase spaces and capture booking inquiries.</li>
+        <li>Contact: clear pathways for general inquiries, rugby, sponsorship, and events.</li>
+      </ul>
+
+      <h3>Key Conversion Pages</h3>
+      <ul>
+        <li>Fixtures & Results: next match, recent results, table or standings.</li>
+        <li>Matchday: directions, parking, facilities, food and drink, schedule.</li>
+        <li>Sponsors / Business: sponsorship packages, benefits, contact form.</li>
+        <li>Clubhouse / Venue Hire: spaces, capacity, amenities, gallery, inquiry form.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>Reference Site Findings: RC Toulon (What Helps Our Project)</h2>
+
+      <h3>Information Architecture Patterns</h3>
+      <ul>
+        <li>Top bar elevates revenue and experience paths: ticketing, shop, business, and events/hospitality.</li>
+        <li>Main navigation groups content into News, Pro Team (calendar, results, standings, squad), Teams (youth pathway), Fan Zone, Club history/stadium, and CSR/engagement.</li>
+        <li>Fan Zone acts as a hub for ticketing, shop, photos, social links, matchday info, and supporter clubs.</li>
+      </ul>
+
+      <h3>Match + Ticketing Experience</h3>
+      <ul>
+        <li>Homepage highlights the next home match with a clear “Reserve” call to action plus upcoming fixtures.</li>
+        <li>League standings and recent results are visible on the main site to keep supporters updated.</li>
+        <li>Ticketing runs on a dedicated sub-site with its own navigation: calendar, subscriptions, offers, VIP, practical info, and resale.</li>
+        <li>Upcoming matches are displayed as cards with date/time and a strong “Reserve” button.</li>
+        <li>Ticketing page emphasizes trust signals (official ticketing, secure payment, digital tickets) and displays sponsor tiers.</li>
+      </ul>
+
+      <h3>Fan Zone + Matchday Engagement</h3>
+      <ul>
+        <li>Fan Zone posts promote pre-match activities (food trucks, music, kids’ activities, giveaways).</li>
+        <li>Matchday information includes practical guidance and safety rules (access, prohibited items, timing).</li>
+        <li>Supporter services like carpooling are promoted via Fan Zone and the club app.</li>
+      </ul>
+
+      <h3>Commercial & Hospitality</h3>
+      <ul>
+        <li>Separate “Business” and “Events/Seminars” paths reinforce sponsorship and venue hire as distinct revenue streams.</li>
+        <li>Cross-links between the main site, ticketing, and shop keep users inside the club ecosystem.</li>
+      </ul>
+
+      <h3>Ideas to Borrow for Broadstreet</h3>
+      <ul>
+        <li>Give “Next Match” top priority on Home with a bold CTA and secondary fixtures list.</li>
+        <li>Keep standings visible (widget or mini-table) on Home and Fixtures.</li>
+        <li>Create a Fan Zone page that bundles matchday info, media, social, and supporter clubs.</li>
+        <li>Use a dedicated Sponsors/Business page and a separate Clubhouse/Venue Hire page, both with short inquiry forms.</li>
+        <li>Add trust signals and sponsor tiers near ticket/RSVP actions.</li>
+      </ul>
+    </section>
+
+    <section class="links">
+      <h2>Reference Sites and Sources</h2>
+      <ul>
+        <li>Main club website: <a href="https://www.broadstreet-rugby.co.uk/" target="_blank" rel="noreferrer">Broadstreet Rugby Club</a></li>
+        <li>RFU club portal: <a href="https://broadstreetrfc.rfu.club/" target="_blank" rel="noreferrer">Broadstreet RFC (RFU)</a></li>
+        <li>RFU contacts page: <a href="https://broadstreetrfc.rfu.club/contacts" target="_blank" rel="noreferrer">Broadstreet RFC Contacts</a></li>
+        <li>Alternate club contact page: <a href="https://www.broadstreetrfc.co.uk/contact/" target="_blank" rel="noreferrer">Broadstreet RFC Contact</a></li>
+        <li>Inspiration reference: <a href="https://rctoulon.com/" target="_blank" rel="noreferrer">RC Toulon</a></li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>Open Items to Confirm</h2>
+      <ul>
+        <li>Official content sources for fixtures and results (data feed or manual updates).</li>
+        <li>Final sponsorship packages, benefits, and pricing.</li>
+        <li>Venue hire pricing, capacities, and available dates.</li>
+        <li>Approved photo library and usage rights.</li>
+        <li>Any required safeguarding or policy content for youth sections.</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer>
+    Prepared for Broadstreet RFC website discovery. Updated February 4, 2026.
+  </footer>
+</body>
+</html>
