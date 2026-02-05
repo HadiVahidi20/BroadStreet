@@ -5,7 +5,14 @@
       "WebFetch(domain:www.broadstreet-rugby.co.uk)",
       "WebFetch(domain:unsplash.com)",
       "WebFetch(domain:www.pexels.com)",
-      "WebFetch(domain:dancelife31.ru)"
+      "WebFetch(domain:dancelife31.ru)",
+      "Bash(grep:*)",
+      "Bash(bash:*)",
+      "Bash(test:*)",
+      "Bash(if ! grep -q \"site-config.js\" index.html)",
+      "Bash(then sed -i 's|</body>|  <script src=\"\"js/site-config.js\"\"></script>\\\\n</body>|' index.html)",
+      "Bash(else echo \"✅ site-config.js already in index.html\")",
+      "Bash(fi)"
     ]
   }
 }
