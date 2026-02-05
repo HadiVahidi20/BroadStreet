@@ -12,7 +12,17 @@
       "Bash(if ! grep -q \"site-config.js\" index.html)",
       "Bash(then sed -i 's|</body>|  <script src=\"\"js/site-config.js\"\"></script>\\\\n</body>|' index.html)",
       "Bash(else echo \"✅ site-config.js already in index.html\")",
-      "Bash(fi)"
+      "Bash(fi)",
+      "Bash(for file in pages/*.html)",
+      "Bash(do if [ -f \"$file\" ])",
+      "Bash(! grep -q \"top-bar-social\" \"$file\")",
+      "Bash(then echo \"Processing: $file\")",
+      "Bash(done)",
+      "Bash(then basename \"$file\")",
+      "Bash(python add-social-media.py:*)",
+      "Bash(python3:*)",
+      "Bash(for file in index.html pages/*.html)",
+      "Bash(then echo \"$file\")"
     ]
   }
 }
