@@ -5,11 +5,209 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Broadstreet RFC Teams - Senior squads, women's rugby, youth, mini & juniors, and touch rugby.">
   <title>Teams | Broadstreet RFC</title>
-  <link rel="icon" type="image/svg+xml" href="../assets/logos/favicon.svg">
+  <link rel="icon" type="image/png" href="../assets/logos/logo-light.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Sen:wght@400;600;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../css/main.css">
+  <style>
+    /* Player Card Styles */
+    .player-card {
+      transition: all 0.3s ease;
+      perspective: 1500px;
+    }
+
+    .player-card.hidden {
+      display: none;
+    }
+
+    .player-card .card {
+      height: 100%;
+      transition: all 0.1s ease-out;
+      overflow: hidden;
+      transform-style: preserve-3d;
+      will-change: transform;
+    }
+
+    .player-card .card:hover {
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+    }
+
+    /* Inner elements for parallax effect */
+    .player-card .card > * {
+      transform-style: preserve-3d;
+    }
+
+    /* Player Card Image Container with Layers */
+    .player-card-image {
+      position: relative;
+      overflow: hidden;
+      border-radius: 8px 8px 0 0;
+      height: 320px;
+    }
+
+    /* Background Layer with Logo Pattern */
+    .player-card-bg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: url('../assets/photos/player_headshot/player-bg.png');
+      background-size: cover;
+      background-position: center;
+      background-color: #f5f5f5;
+      transition: transform 0.6s ease;
+      z-index: 1;
+    }
+
+    /* Fallback gradient if background image not loaded */
+    .player-card-bg::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      opacity: 0.1;
+      z-index: -1;
+    }
+
+    /* Player Image Layer */
+    .player-card-photo {
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      object-position: bottom center;
+      z-index: 2;
+      transition: transform 0.1s ease-out;
+      filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.3));
+      will-change: transform;
+    }
+
+    .player-card-bg {
+      transition: transform 0.1s ease-out;
+      will-change: transform;
+    }
+
+    /* Shine effect overlay */
+    .player-card .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, transparent 50%);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      z-index: 10;
+      pointer-events: none;
+    }
+
+    .player-card .card:hover::before {
+      opacity: 1;
+    }
+
+    /* Mobile responsive adjustments */
+    @media (max-width: 768px) {
+      .player-card-image {
+        height: 280px;
+      }
+
+      /* Disable 3D effect on mobile, use simple hover */
+      .player-card {
+        perspective: none;
+      }
+
+      .player-card .card {
+        transform-style: flat;
+      }
+
+      .player-card .card:hover {
+        transform: translateY(-5px) !important;
+      }
+
+      .player-card .card:hover .player-card-photo {
+        transform: translateX(-50%) scale(1.05) !important;
+      }
+
+      .player-card .card:hover .player-card-bg {
+        transform: scale(1.1) !important;
+      }
+    }
+
+    /* Overlay gradient for depth */
+    .player-card-overlay {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 50%;
+      background: linear-gradient(to top, rgba(0, 0, 0, 0.4), transparent);
+      z-index: 3;
+      pointer-events: none;
+    }
+
+    /* Filter Dropdown Styles */
+    .position-filter-select {
+      padding: 12px 40px 12px 20px;
+      font-size: 16px;
+      font-weight: 500;
+      border: 2px solid var(--color-border, #e0e0e0);
+      border-radius: 8px;
+      background-color: white;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      background-size: 20px;
+      appearance: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      min-width: 250px;
+    }
+
+    .position-filter-select:hover {
+      border-color: var(--color-primary);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .position-filter-select:focus {
+      outline: none;
+      border-color: var(--color-primary);
+      box-shadow: 0 0 0 3px rgba(var(--color-primary-rgb, 200, 50, 50), 0.1);
+    }
+
+    .position-filter-select option {
+      padding: 10px;
+    }
+
+    .position-filter-select optgroup {
+      font-weight: 600;
+      color: var(--color-text-muted);
+    }
+
+    /* Fade in animation */
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .player-card {
+      animation: fadeIn 0.4s ease forwards;
+    }
+  </style>
 </head>
 <body>
   <div class="page-wrapper">
@@ -27,7 +225,7 @@
     <header class="main-header">
       <div class="container">
         <a href="../index.html" class="logo">
-          <img src="../assets/logos/broadstreet-logo.svg" alt="Broadstreet RFC" class="logo-img">
+          <img src="../assets/logos/logo-light.png" alt="Broadstreet RFC" class="logo-img">
           <span class="logo-text"><span class="logo-name">Broadstreet RFC</span><span class="logo-tagline">Est. 1929</span></span>
         </a>
         <nav class="main-nav">
@@ -48,7 +246,7 @@
 
     <nav class="mobile-nav">
       <div class="mobile-nav-header">
-        <img src="../assets/logos/broadstreet-logo.svg" alt="Broadstreet RFC" height="40">
+        <img src="../assets/logos/logo-light.png" alt="Broadstreet RFC" height="40">
         <button class="mobile-nav-close">&times;</button>
       </div>
       <ul>
@@ -187,15 +385,15 @@
           <h2 class="text-center mb-8">Senior Men's Teams</h2>
 
           <!-- 1st XV -->
-          <div class="card mb-8">
-            <div class="card-body">
-              <div class="two-col-equal">
+          <div class="mb-12">
+            <div class="mb-6">
+              <div class="two-col-equal" style="align-items: center;">
                 <div>
                   <span class="badge badge-primary mb-2">First Team</span>
-                  <h3>1st XV</h3>
+                  <h3>1st XV Squad</h3>
                   <p class="text-muted mb-4">Our flagship team competing in Coventry NL2N, representing the club at the highest level.</p>
 
-                  <div class="grid grid-cols-2 gap-4 mb-4">
+                  <div class="grid grid-cols-2 gap-4 mb-4" style="max-width: 500px;">
                     <div>
                       <p class="text-sm text-muted mb-1">Training</p>
                       <p class="font-semibold mb-0">Tuesday & Thursday<br>7:00 PM - 9:00 PM</p>
@@ -205,105 +403,354 @@
                       <p class="font-semibold mb-0">Saturdays<br>3:00 PM Kick-off</p>
                     </div>
                   </div>
-
-                  <div class="mb-4">
-                    <p class="text-sm text-muted mb-1">Head Coach</p>
-                    <p class="font-semibold mb-0">Contact for details</p>
-                  </div>
-
-                  <a href="fixtures.html" class="btn btn-primary btn-sm">View Fixtures</a>
                 </div>
                 <div>
                   <img src="https://images.unsplash.com/photo-1552667466-07770ae110d0?w=600&h=375&q=80&fit=crop" alt="1st XV Squad" class="rounded-lg w-full" style="aspect-ratio: 16/10; object-fit: cover;">
                 </div>
               </div>
             </div>
-          </div>
 
-          <!-- 1st XV Squad -->
-          <div class="card mb-8">
-            <div class="card-body">
-              <h4 class="mb-4">1st XV Squad Positions</h4>
-              <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
-                <div class="text-center">
-                  <img src="https://images.unsplash.com/photo-1568602471122-7832951cc4c5?w=70&h=70&q=80&fit=crop" alt="Prop" style="width: 70px; height: 70px; border-radius: 50%; margin: 0 auto var(--space-2); object-fit: cover;">
-                  <p class="font-semibold text-sm mb-0">Tom Roberts</p>
-                  <p class="text-xs text-muted">Loosehead Prop</p>
-                </div>
-                <div class="text-center">
-                  <img src="https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=70&h=70&q=80&fit=crop" alt="Hooker" style="width: 70px; height: 70px; border-radius: 50%; margin: 0 auto var(--space-2); object-fit: cover;">
-                  <p class="font-semibold text-sm mb-0">Dan Mitchell</p>
-                  <p class="text-xs text-muted">Hooker (C)</p>
-                </div>
-                <div class="text-center">
-                  <img src="https://images.unsplash.com/photo-1552058544-f2b08422138a?w=70&h=70&q=80&fit=crop" alt="Lock" style="width: 70px; height: 70px; border-radius: 50%; margin: 0 auto var(--space-2); object-fit: cover;">
-                  <p class="font-semibold text-sm mb-0">Chris Evans</p>
-                  <p class="text-xs text-muted">Lock</p>
-                </div>
-                <div class="text-center">
-                  <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=70&h=70&q=80&fit=crop" alt="Flanker" style="width: 70px; height: 70px; border-radius: 50%; margin: 0 auto var(--space-2); object-fit: cover;">
-                  <p class="font-semibold text-sm mb-0">Ben Taylor</p>
-                  <p class="text-xs text-muted">Openside Flanker</p>
-                </div>
-                <div class="text-center">
-                  <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=70&h=70&q=80&fit=crop" alt="Number 8" style="width: 70px; height: 70px; border-radius: 50%; margin: 0 auto var(--space-2); object-fit: cover;">
-                  <p class="font-semibold text-sm mb-0">Jake Harris</p>
-                  <p class="text-xs text-muted">Number 8</p>
-                </div>
-                <div class="text-center">
-                  <img src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=70&h=70&q=80&fit=crop" alt="Scrum Half" style="width: 70px; height: 70px; border-radius: 50%; margin: 0 auto var(--space-2); object-fit: cover;">
-                  <p class="font-semibold text-sm mb-0">Ryan Scott</p>
-                  <p class="text-xs text-muted">Scrum Half</p>
-                </div>
-                <div class="text-center">
-                  <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=70&h=70&q=80&fit=crop" alt="Fly Half" style="width: 70px; height: 70px; border-radius: 50%; margin: 0 auto var(--space-2); object-fit: cover;">
-                  <p class="font-semibold text-sm mb-0">Alex Cooper</p>
-                  <p class="text-xs text-muted">Fly Half</p>
-                </div>
-                <div class="text-center">
-                  <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=70&h=70&q=80&fit=crop" alt="Centre" style="width: 70px; height: 70px; border-radius: 50%; margin: 0 auto var(--space-2); object-fit: cover;">
-                  <p class="font-semibold text-sm mb-0">Matt Lewis</p>
-                  <p class="text-xs text-muted">Inside Centre</p>
-                </div>
-                <div class="text-center">
-                  <img src="https://images.unsplash.com/photo-1463453091185-61582044d556?w=70&h=70&q=80&fit=crop" alt="Wing" style="width: 70px; height: 70px; border-radius: 50%; margin: 0 auto var(--space-2); object-fit: cover;">
-                  <p class="font-semibold text-sm mb-0">Josh Williams</p>
-                  <p class="text-xs text-muted">Left Wing</p>
-                </div>
-                <div class="text-center">
-                  <img src="https://images.unsplash.com/photo-1557862921-37829c790f19?w=70&h=70&q=80&fit=crop" alt="Full Back" style="width: 70px; height: 70px; border-radius: 50%; margin: 0 auto var(--space-2); object-fit: cover;">
-                  <p class="font-semibold text-sm mb-0">Sam Hughes</p>
-                  <p class="text-xs text-muted">Full Back</p>
+            <!-- Position Filter -->
+            <div class="mb-6">
+              <div class="flex justify-center items-center gap-4">
+                <label for="positionFilter" class="font-semibold text-lg">Filter by Position:</label>
+                <select id="positionFilter" class="position-filter-select">
+                  <option value="all">All Players</option>
+                  <optgroup label="General">
+                    <option value="forward">Forwards</option>
+                    <option value="back">Backs</option>
+                  </optgroup>
+                  <optgroup label="Forwards">
+                    <option value="prop">Props</option>
+                    <option value="hooker">Hooker</option>
+                    <option value="lock">Locks</option>
+                    <option value="flanker">Flankers</option>
+                    <option value="number8">Number 8</option>
+                  </optgroup>
+                  <optgroup label="Backs">
+                    <option value="scrumhalf">Scrum Half</option>
+                    <option value="flyhalf">Fly Half</option>
+                    <option value="centre">Centres</option>
+                    <option value="wing">Wings</option>
+                    <option value="fullback">Full Back</option>
+                  </optgroup>
+                </select>
+              </div>
+            </div>
+
+            <!-- 1st XV Squad Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6" id="playerGrid">
+              <!-- Forwards -->
+              <!-- Props -->
+              <div class="player-card" data-position="prop forward">
+                <div class="card">
+                  <div class="player-card-image">
+                    <div class="player-card-bg"></div>
+                    <img src="../assets/photos/player_headshot/player_headshot.png" alt="Tom Roberts" class="player-card-photo">
+                    <div class="player-card-overlay"></div>
+                  </div>
+                  <div class="card-body text-center">
+                    <div class="text-sm text-muted mb-1">1 • Loosehead Prop</div>
+                    <h4 class="mb-2">Tom Roberts</h4>
+                    <div class="text-xs text-muted">
+                      <div>Height: 1.85m • Weight: 115kg</div>
+                      <div class="mt-1">Age: 28 • Caps: 47</div>
+                    </div>
+                  </div>
                 </div>
               </div>
-              <p class="text-center text-muted text-sm mt-4">Note: Squad regularly rotates. Contact us for current team sheet.</p>
+
+              <div class="player-card" data-position="hooker forward">
+                <div class="card">
+                  <div class="player-card-image">
+                    <div class="player-card-bg"></div>
+                    <img src="../assets/photos/player_headshot/player_headshot.png" alt="Dan Mitchell" class="player-card-photo">
+                    <div class="player-card-overlay"></div>
+                  </div>
+                  <div class="card-body text-center">
+                    <div class="text-sm text-muted mb-1">2 • Hooker</div>
+                    <h4 class="mb-2">Dan Mitchell <span class="badge badge-primary" style="font-size: 0.7em; vertical-align: middle;">C</span></h4>
+                    <div class="text-xs text-muted">
+                      <div>Height: 1.80m • Weight: 108kg</div>
+                      <div class="mt-1">Age: 31 • Caps: 89</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="player-card" data-position="prop forward">
+                <div class="card">
+                  <div class="player-card-image">
+                    <div class="player-card-bg"></div>
+                    <img src="../assets/photos/player_headshot/player_headshot.png" alt="Steve Johnson" class="player-card-photo">
+                    <div class="player-card-overlay"></div>
+                  </div>
+                  <div class="card-body text-center">
+                    <div class="text-sm text-muted mb-1">3 • Tighthead Prop</div>
+                    <h4 class="mb-2">Steve Johnson</h4>
+                    <div class="text-xs text-muted">
+                      <div>Height: 1.88m • Weight: 120kg</div>
+                      <div class="mt-1">Age: 26 • Caps: 35</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Locks -->
+              <div class="player-card" data-position="lock forward">
+                <div class="card">
+                  <div class="player-card-image">
+                    <div class="player-card-bg"></div>
+                    <img src="../assets/photos/player_headshot/player_headshot.png" alt="Chris Evans" class="player-card-photo">
+                    <div class="player-card-overlay"></div>
+                  </div>
+                  <div class="card-body text-center">
+                    <div class="text-sm text-muted mb-1">4 • Lock</div>
+                    <h4 class="mb-2">Chris Evans</h4>
+                    <div class="text-xs text-muted">
+                      <div>Height: 2.00m • Weight: 115kg</div>
+                      <div class="mt-1">Age: 29 • Caps: 62</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="player-card" data-position="lock forward">
+                <div class="card">
+                  <div class="player-card-image">
+                    <div class="player-card-bg"></div>
+                    <img src="../assets/photos/player_headshot/player_headshot.png" alt="Michael Davies" class="player-card-photo">
+                    <div class="player-card-overlay"></div>
+                  </div>
+                  <div class="card-body text-center">
+                    <div class="text-sm text-muted mb-1">5 • Lock</div>
+                    <h4 class="mb-2">Michael Davies</h4>
+                    <div class="text-xs text-muted">
+                      <div>Height: 1.98m • Weight: 112kg</div>
+                      <div class="mt-1">Age: 27 • Caps: 41</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Back Row -->
+              <div class="player-card" data-position="flanker forward">
+                <div class="card">
+                  <div class="player-card-image">
+                    <div class="player-card-bg"></div>
+                    <img src="../assets/photos/player_headshot/player_headshot.png" alt="Ben Taylor" class="player-card-photo">
+                    <div class="player-card-overlay"></div>
+                  </div>
+                  <div class="card-body text-center">
+                    <div class="text-sm text-muted mb-1">6 • Blindside Flanker</div>
+                    <h4 class="mb-2">Ben Taylor</h4>
+                    <div class="text-xs text-muted">
+                      <div>Height: 1.90m • Weight: 105kg</div>
+                      <div class="mt-1">Age: 25 • Caps: 38</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="player-card" data-position="flanker forward">
+                <div class="card">
+                  <div class="player-card-image">
+                    <div class="player-card-bg"></div>
+                    <img src="../assets/photos/player_headshot/player_headshot.png" alt="Luke Anderson" class="player-card-photo">
+                    <div class="player-card-overlay"></div>
+                  </div>
+                  <div class="card-body text-center">
+                    <div class="text-sm text-muted mb-1">7 • Openside Flanker</div>
+                    <h4 class="mb-2">Luke Anderson</h4>
+                    <div class="text-xs text-muted">
+                      <div>Height: 1.85m • Weight: 100kg</div>
+                      <div class="mt-1">Age: 24 • Caps: 29</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="player-card" data-position="number8 forward">
+                <div class="card">
+                  <div class="player-card-image">
+                    <div class="player-card-bg"></div>
+                    <img src="../assets/photos/player_headshot/player_headshot.png" alt="Jake Harris" class="player-card-photo">
+                    <div class="player-card-overlay"></div>
+                  </div>
+                  <div class="card-body text-center">
+                    <div class="text-sm text-muted mb-1">8 • Number 8</div>
+                    <h4 class="mb-2">Jake Harris</h4>
+                    <div class="text-xs text-muted">
+                      <div>Height: 1.92m • Weight: 110kg</div>
+                      <div class="mt-1">Age: 30 • Caps: 71</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Backs -->
+              <!-- Half Backs -->
+              <div class="player-card" data-position="scrumhalf back">
+                <div class="card">
+                  <div class="player-card-image">
+                    <div class="player-card-bg"></div>
+                    <img src="../assets/photos/player_headshot/player_headshot.png" alt="Ryan Scott" class="player-card-photo">
+                    <div class="player-card-overlay"></div>
+                  </div>
+                  <div class="card-body text-center">
+                    <div class="text-sm text-muted mb-1">9 • Scrum Half</div>
+                    <h4 class="mb-2">Ryan Scott</h4>
+                    <div class="text-xs text-muted">
+                      <div>Height: 1.75m • Weight: 85kg</div>
+                      <div class="mt-1">Age: 27 • Caps: 54</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="player-card" data-position="flyhalf back">
+                <div class="card">
+                  <div class="player-card-image">
+                    <div class="player-card-bg"></div>
+                    <img src="../assets/photos/player_headshot/player_headshot.png" alt="Alex Cooper" class="player-card-photo">
+                    <div class="player-card-overlay"></div>
+                  </div>
+                  <div class="card-body text-center">
+                    <div class="text-sm text-muted mb-1">10 • Fly Half</div>
+                    <h4 class="mb-2">Alex Cooper</h4>
+                    <div class="text-xs text-muted">
+                      <div>Height: 1.82m • Weight: 90kg</div>
+                      <div class="mt-1">Age: 26 • Caps: 45</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Centres -->
+              <div class="player-card" data-position="centre back">
+                <div class="card">
+                  <div class="player-card-image">
+                    <div class="player-card-bg"></div>
+                    <img src="../assets/photos/player_headshot/player_headshot.png" alt="Matt Lewis" class="player-card-photo">
+                    <div class="player-card-overlay"></div>
+                  </div>
+                  <div class="card-body text-center">
+                    <div class="text-sm text-muted mb-1">12 • Inside Centre</div>
+                    <h4 class="mb-2">Matt Lewis</h4>
+                    <div class="text-xs text-muted">
+                      <div>Height: 1.85m • Weight: 95kg</div>
+                      <div class="mt-1">Age: 28 • Caps: 58</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="player-card" data-position="centre back">
+                <div class="card">
+                  <div class="player-card-image">
+                    <div class="player-card-bg"></div>
+                    <img src="../assets/photos/player_headshot/player_headshot.png" alt="Oliver White" class="player-card-photo">
+                    <div class="player-card-overlay"></div>
+                  </div>
+                  <div class="card-body text-center">
+                    <div class="text-sm text-muted mb-1">13 • Outside Centre</div>
+                    <h4 class="mb-2">Oliver White</h4>
+                    <div class="text-xs text-muted">
+                      <div>Height: 1.88m • Weight: 98kg</div>
+                      <div class="mt-1">Age: 25 • Caps: 36</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Back Three -->
+              <div class="player-card" data-position="wing back">
+                <div class="card">
+                  <div class="player-card-image">
+                    <div class="player-card-bg"></div>
+                    <img src="../assets/photos/player_headshot/player_headshot.png" alt="Josh Williams" class="player-card-photo">
+                    <div class="player-card-overlay"></div>
+                  </div>
+                  <div class="card-body text-center">
+                    <div class="text-sm text-muted mb-1">11 • Left Wing</div>
+                    <h4 class="mb-2">Josh Williams</h4>
+                    <div class="text-xs text-muted">
+                      <div>Height: 1.80m • Weight: 88kg</div>
+                      <div class="mt-1">Age: 23 • Caps: 27</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="player-card" data-position="wing back">
+                <div class="card">
+                  <div class="player-card-image">
+                    <div class="player-card-bg"></div>
+                    <img src="../assets/photos/player_headshot/player_headshot.png" alt="Charlie Brown" class="player-card-photo">
+                    <div class="player-card-overlay"></div>
+                  </div>
+                  <div class="card-body text-center">
+                    <div class="text-sm text-muted mb-1">14 • Right Wing</div>
+                    <h4 class="mb-2">Charlie Brown</h4>
+                    <div class="text-xs text-muted">
+                      <div>Height: 1.83m • Weight: 92kg</div>
+                      <div class="mt-1">Age: 24 • Caps: 31</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="player-card" data-position="fullback back">
+                <div class="card">
+                  <div class="player-card-image">
+                    <div class="player-card-bg"></div>
+                    <img src="../assets/photos/player_headshot/player_headshot.png" alt="Sam Hughes" class="player-card-photo">
+                    <div class="player-card-overlay"></div>
+                  </div>
+                  <div class="card-body text-center">
+                    <div class="text-sm text-muted mb-1">15 • Full Back</div>
+                    <h4 class="mb-2">Sam Hughes</h4>
+                    <div class="text-xs text-muted">
+                      <div>Height: 1.85m • Weight: 93kg</div>
+                      <div class="mt-1">Age: 29 • Caps: 66</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="text-center mt-8">
+              <a href="fixtures.html" class="btn btn-primary">View 1st XV Fixtures</a>
             </div>
           </div>
 
           <!-- 2nd XV -->
           <div class="card">
             <div class="card-body">
-              <div class="two-col-equal">
+              <div class="two-col-equal" style="align-items: center;">
                 <div>
-                  <span class="badge badge-secondary mb-2">Development</span>
+                  <img src="https://images.unsplash.com/photo-1529900748604-07564a03e7a6?w=600&h=400&q=80&fit=crop" alt="2nd XV Squad" class="rounded-lg w-full" style="aspect-ratio: 3/2; object-fit: cover;">
+                </div>
+                <div>
+                  <span class="badge badge-secondary mb-2">Development Squad</span>
                   <h3>2nd XV</h3>
-                  <p class="text-muted mb-4">Our development squad, providing competitive rugby for players progressing to senior level.</p>
+                  <p class="text-lg text-muted mb-4">Our development squad, providing competitive rugby for players progressing to senior level and returning from injury.</p>
 
-                  <div class="grid grid-cols-2 gap-4 mb-4">
+                  <div class="grid grid-cols-2 gap-4 mb-4" style="max-width: 500px;">
                     <div>
                       <p class="text-sm text-muted mb-1">Training</p>
                       <p class="font-semibold mb-0">Tuesday & Thursday<br>7:00 PM - 9:00 PM</p>
                     </div>
                     <div>
                       <p class="text-sm text-muted mb-1">Matches</p>
-                      <p class="font-semibold mb-0">Saturdays<br>Various times</p>
+                      <p class="font-semibold mb-0">Saturdays<br>Various kick-off times</p>
                     </div>
                   </div>
 
-                  <a href="contact.html?subject=rugby" class="btn btn-outline btn-sm">Join the Team</a>
-                </div>
-                <div>
-                  <img src="https://images.unsplash.com/photo-1529900748604-07564a03e7a6?w=600&h=375&q=80&fit=crop" alt="2nd XV Squad" class="rounded-lg w-full" style="aspect-ratio: 16/10; object-fit: cover;">
+                  <div class="flex gap-3">
+                    <a href="fixtures.html" class="btn btn-secondary">View Fixtures</a>
+                    <a href="contact.html?subject=rugby" class="btn btn-outline">Join the Team</a>
+                  </div>
                 </div>
               </div>
             </div>
@@ -561,7 +1008,7 @@
         <div class="footer-grid">
           <div class="footer-brand">
             <div class="footer-logo">
-              <img src="../assets/logos/broadstreet-logo.svg" alt="Broadstreet RFC" height="60">
+              <img src="../assets/logos/logo-light.png" alt="Broadstreet RFC" height="60">
               <span class="footer-logo-text">Broadstreet RFC</span>
             </div>
             <p class="footer-description">Playing rugby in Coventry since 1929.</p>
@@ -612,5 +1059,115 @@
   <script src="../js/components.js"></script>
   <script src="../js/utils.js"></script>
   <script src="../js/main.js"></script>
+
+  <!-- Player Filter Script -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const filterSelect = document.getElementById('positionFilter');
+      const playerCards = document.querySelectorAll('.player-card');
+
+      if (!filterSelect || playerCards.length === 0) return;
+
+      filterSelect.addEventListener('change', function() {
+        // Get selected position
+        const selectedPosition = this.value;
+
+        // Filter players
+        playerCards.forEach(card => {
+          const cardPositions = card.getAttribute('data-position');
+
+          if (selectedPosition === 'all') {
+            // Show all cards
+            card.classList.remove('hidden');
+          } else {
+            // Check if card has the selected position
+            if (cardPositions.includes(selectedPosition)) {
+              card.classList.remove('hidden');
+            } else {
+              card.classList.add('hidden');
+            }
+          }
+        });
+
+        // Add fade-in animation to visible cards
+        setTimeout(() => {
+          document.querySelectorAll('.player-card:not(.hidden)').forEach((card, index) => {
+            card.style.animation = 'none';
+            setTimeout(() => {
+              card.style.animation = `fadeIn 0.4s ease ${index * 0.05}s forwards`;
+            }, 10);
+          });
+        }, 10);
+      });
+    });
+  </script>
+
+  <!-- 3D Tilt Effect Script -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const cards = document.querySelectorAll('.player-card .card');
+
+      cards.forEach(card => {
+        const cardElement = card;
+        const bg = card.querySelector('.player-card-bg');
+        const photo = card.querySelector('.player-card-photo');
+
+        cardElement.addEventListener('mousemove', (e) => {
+          const rect = cardElement.getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          const y = e.clientY - rect.top;
+
+          const centerX = rect.width / 2;
+          const centerY = rect.height / 2;
+
+          const rotateX = (y - centerY) / 10;
+          const rotateY = (centerX - x) / 10;
+
+          // Apply tilt to card
+          cardElement.style.transform = `perspective(1500px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
+
+          // Parallax effect on background (moves opposite direction)
+          if (bg) {
+            const bgX = (x - centerX) / 30;
+            const bgY = (y - centerY) / 30;
+            bg.style.transform = `translate(${bgX}px, ${bgY}px) scale(1.1)`;
+          }
+
+          // Parallax effect on photo (moves more than card)
+          if (photo) {
+            const photoX = (centerX - x) / 20;
+            const photoY = (centerY - y) / 20;
+            photo.style.transform = `translateX(calc(-50% + ${photoX}px)) translateY(${photoY}px) scale(1.05)`;
+          }
+        });
+
+        cardElement.addEventListener('mouseleave', () => {
+          // Reset transformations
+          cardElement.style.transform = 'perspective(1500px) rotateX(0) rotateY(0) scale3d(1, 1, 1)';
+
+          if (bg) {
+            bg.style.transform = 'translate(0, 0) scale(1)';
+          }
+
+          if (photo) {
+            photo.style.transform = 'translateX(-50%) translateY(0) scale(1)';
+          }
+        });
+
+        // Smooth transition on mouse leave
+        cardElement.addEventListener('mouseenter', () => {
+          cardElement.style.transition = 'box-shadow 0.3s ease';
+          if (bg) bg.style.transition = 'transform 0.1s ease-out';
+          if (photo) photo.style.transition = 'transform 0.1s ease-out, filter 0.3s ease';
+        });
+
+        cardElement.addEventListener('mouseleave', () => {
+          cardElement.style.transition = 'all 0.5s ease';
+          if (bg) bg.style.transition = 'transform 0.5s ease';
+          if (photo) photo.style.transition = 'transform 0.5s ease, filter 0.3s ease';
+        });
+      });
+    });
+  </script>
 </body>
 </html>
