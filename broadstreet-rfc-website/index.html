@@ -121,165 +121,301 @@
     <main class="main-content">
       <!-- Hero Section -->
       <section class="hero">
-        <div class="hero-bg" style="background-image: url('https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=1920&q=80&fit=crop');"></div>
-        <div class="container">
-          <div class="hero-content">
-            <h1 class="hero-title">Welcome to<br>Broadstreet RFC</h1>
-            <p class="hero-subtitle">Playing rugby in Coventry since 1929. Join our community of players, supporters, and volunteers.</p>
-            <div class="hero-cta">
-              <a href="pages/fixtures.html" class="btn btn-primary btn-lg">View Fixtures</a>
-              <a href="pages/matchday.html" class="btn btn-outline-white btn-lg">Matchday Info</a>
+        <div class="hero-carousel">
+          <!-- Slide 1 -->
+          <div class="hero-slide active">
+            <div class="hero-bg" style="background-image: url('https://images.pexels.com/photos/1627960/pexels-photo-1627960.jpeg');"></div>
+            <div class="hero-overlay"></div>
+            <div class="container">
+              <div class="hero-content">
+                <h1 class="hero-title">Welcome to<br>Broadstreet RFC</h1>
+                <p class="hero-subtitle">Playing rugby in Coventry since 1929. Join our community of players, supporters, and volunteers.</p>
+                <div class="hero-cta">
+                  <a href="pages/fixtures.html" class="btn btn-primary btn-lg">View Fixtures</a>
+                  <a href="pages/matchday.html" class="btn btn-outline-white btn-lg">Matchday Info</a>
+                </div>
+              </div>
             </div>
           </div>
+
+          <!-- Slide 2 -->
+          <div class="hero-slide">
+            <div class="hero-bg" style="background-image: url('https://images.pexels.com/photos/13583557/pexels-photo-13583557.jpeg');"></div>
+            <div class="hero-overlay"></div>
+            <div class="container">
+              <div class="hero-content">
+                <h1 class="hero-title">Experience the<br>Passion of Rugby</h1>
+                <p class="hero-subtitle">Join us every matchday for thrilling rugby action and an unforgettable atmosphere.</p>
+                <div class="hero-cta">
+                  <a href="pages/membership.html" class="btn btn-primary btn-lg">Become a Member</a>
+                  <a href="pages/about.html" class="btn btn-outline-white btn-lg">About Us</a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 3 -->
+          <div class="hero-slide">
+            <div class="hero-bg" style="background-image: url('https://images.pexels.com/photos/6373836/pexels-photo-6373836.jpeg');"></div>
+            <div class="hero-overlay"></div>
+            <div class="container">
+              <div class="hero-content">
+                <h1 class="hero-title">Build Your Future<br>With Us</h1>
+                <p class="hero-subtitle">From youth to senior teams, we offer opportunities for players of all ages and skill levels.</p>
+                <div class="hero-cta">
+                  <a href="pages/teams.html" class="btn btn-primary btn-lg">Our Teams</a>
+                  <a href="pages/contact.html" class="btn btn-outline-white btn-lg">Get In Touch</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Navigation Arrows -->
+        <button class="hero-nav hero-prev" aria-label="Previous slide">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
+          </svg>
+        </button>
+        <button class="hero-nav hero-next" aria-label="Next slide">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/>
+          </svg>
+        </button>
+
+        <!-- Indicators -->
+        <div class="hero-indicators">
+          <button class="hero-indicator active" aria-label="Go to slide 1"></button>
+          <button class="hero-indicator" aria-label="Go to slide 2"></button>
+          <button class="hero-indicator" aria-label="Go to slide 3"></button>
         </div>
       </section>
 
       <!-- Next Match Section -->
-      <section class="section bg-white">
+      <section class="section bg-gray-50">
         <div class="container">
-          <div class="two-col-equal">
-            <div class="match-card card-featured">
-              <div class="match-card-header">Next Home Match</div>
-              <div class="match-card-teams">
-                <div class="match-card-team">
-                  <img src="assets/logos/broadstreet-logo.svg" alt="Broadstreet RFC">
-                  <span>Broadstreet</span>
+          <div class="next-match-grid">
+            <!-- Next Match Card -->
+            <div class="next-match-card">
+              <div class="next-match-card-bg" style="background-image: url('https://images.pexels.com/photos/3657154/pexels-photo-3657154.jpeg');"></div>
+              <div class="next-match-card-overlay"></div>
+
+              <div class="next-match-card-content">
+                <div class="next-match-header">
+                  <div class="next-match-badge">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                    </svg>
+                    Home Match
+                  </div>
+                  <div class="next-match-competition">Coventry NL2N</div>
                 </div>
-                <span class="match-card-vs">vs</span>
-                <div class="match-card-team">
-                  <img src="assets/logos/opponent-placeholder.svg" alt="Opponent">
-                  <span>Opponent RFC</span>
+
+              <div class="next-match-teams">
+                <div class="next-match-team">
+                  <div class="next-match-team-logo">
+                    <img src="assets/logos/broadstreet-logo.svg" alt="Broadstreet RFC">
+                  </div>
+                  <span class="next-match-team-name">Broadstreet RFC</span>
+                </div>
+
+                <div class="next-match-vs">
+                  <span>VS</span>
+                </div>
+
+                <div class="next-match-team">
+                  <div class="next-match-team-logo">
+                    <img src="assets/logos/opponent-placeholder.svg" alt="Opponent">
+                  </div>
+                  <span class="next-match-team-name">Opponent RFC</span>
                 </div>
               </div>
-              <div class="countdown" data-countdown="2026-02-15T15:00:00">
-                <!-- Countdown will be populated by JS -->
+
+              <div class="next-match-countdown">
+                <div class="countdown" data-countdown="2026-02-15T15:00:00">
+                  <!-- Countdown will be populated by JS -->
+                </div>
               </div>
-              <div class="match-card-date mt-4">
-                Saturday, 15th February 2026 - Kick-off 3:00 PM
+
+              <div class="next-match-details">
+                <div class="next-match-detail-item">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z"/>
+                  </svg>
+                  <span>Saturday, 15th February 2026</span>
+                </div>
+                <div class="next-match-detail-item">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
+                  </svg>
+                  <span>Kick-off: 3:00 PM</span>
+                </div>
+                <div class="next-match-detail-item">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                  </svg>
+                  <span>Broadstreet RFC Ground, Coventry</span>
+                </div>
               </div>
-              <div class="match-card-cta">
-                <a href="pages/matchday.html" class="btn btn-primary">Matchday Info</a>
+
+                <div class="next-match-actions">
+                  <a href="pages/matchday.html" class="btn btn-primary btn-block">Matchday Info</a>
+                  <a href="pages/fixtures.html" class="btn btn-outline btn-block">View Fixtures</a>
+                </div>
               </div>
             </div>
 
-            <div>
-              <h2 class="mb-6">League Standings</h2>
-              <div class="overflow-x-auto">
-                <table class="standings-table">
-                  <thead>
-                    <tr>
-                      <th>Pos</th>
-                      <th>Team</th>
-                      <th>P</th>
-                      <th>W</th>
-                      <th>D</th>
-                      <th>L</th>
-                      <th>Pts</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td>1</td>
-                      <td class="team-name">Team A</td>
-                      <td>12</td>
-                      <td>10</td>
-                      <td>1</td>
-                      <td>1</td>
-                      <td>45</td>
-                    </tr>
-                    <tr>
-                      <td>2</td>
-                      <td class="team-name">Team B</td>
-                      <td>12</td>
-                      <td>9</td>
-                      <td>0</td>
-                      <td>3</td>
-                      <td>40</td>
-                    </tr>
-                    <tr class="highlight">
-                      <td>3</td>
-                      <td class="team-name">Broadstreet</td>
-                      <td>12</td>
-                      <td>8</td>
-                      <td>1</td>
-                      <td>3</td>
-                      <td>37</td>
-                    </tr>
-                    <tr>
-                      <td>4</td>
-                      <td class="team-name">Team C</td>
-                      <td>12</td>
-                      <td>7</td>
-                      <td>2</td>
-                      <td>3</td>
-                      <td>35</td>
-                    </tr>
-                    <tr>
-                      <td>5</td>
-                      <td class="team-name">Team D</td>
-                      <td>12</td>
-                      <td>6</td>
-                      <td>1</td>
-                      <td>5</td>
-                      <td>28</td>
-                    </tr>
-                  </tbody>
-                </table>
+            <!-- League Standings -->
+            <div class="standings-wrapper">
+              <h2 class="standings-title">League Standings</h2>
+              <div class="standings-card">
+                <div class="overflow-x-auto">
+                  <table class="standings-table">
+                    <thead>
+                      <tr>
+                        <th>Pos</th>
+                        <th>Team</th>
+                        <th>P</th>
+                        <th>W</th>
+                        <th>D</th>
+                        <th>L</th>
+                        <th>Pts</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>1</td>
+                        <td class="team-name">Team A</td>
+                        <td>12</td>
+                        <td>10</td>
+                        <td>1</td>
+                        <td>1</td>
+                        <td>45</td>
+                      </tr>
+                      <tr>
+                        <td>2</td>
+                        <td class="team-name">Team B</td>
+                        <td>12</td>
+                        <td>9</td>
+                        <td>0</td>
+                        <td>3</td>
+                        <td>40</td>
+                      </tr>
+                      <tr class="highlight">
+                        <td>3</td>
+                        <td class="team-name">Broadstreet</td>
+                        <td>12</td>
+                        <td>8</td>
+                        <td>1</td>
+                        <td>3</td>
+                        <td>37</td>
+                      </tr>
+                      <tr>
+                        <td>4</td>
+                        <td class="team-name">Team C</td>
+                        <td>12</td>
+                        <td>7</td>
+                        <td>2</td>
+                        <td>3</td>
+                        <td>35</td>
+                      </tr>
+                      <tr>
+                        <td>5</td>
+                        <td class="team-name">Team D</td>
+                        <td>12</td>
+                        <td>6</td>
+                        <td>1</td>
+                        <td>5</td>
+                        <td>28</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <a href="pages/fixtures.html" class="btn btn-outline btn-block mt-4">View Full Table</a>
               </div>
-              <a href="pages/fixtures.html" class="btn btn-outline mt-4">Full Table</a>
             </div>
           </div>
         </div>
       </section>
 
       <!-- Recent Results -->
-      <section class="section bg-gray-50">
+      <section class="section bg-white">
         <div class="container">
           <h2 class="text-center mb-8">Recent Results</h2>
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div class="match-card">
-              <div class="match-card-header">Coventry NL2N</div>
-              <div class="match-card-teams">
-                <div class="match-card-team">
-                  <span>Broadstreet</span>
+          <div class="results-grid">
+            <!-- Result Poster 1 -->
+            <div class="result-poster result-poster--overlay">
+              <div class="result-scoreboard-bg" aria-hidden="true"></div>
+              <div class="result-photo">
+                <img src="assets/photos/score-poster.png" alt="Score poster player">
+              </div>
+              <div class="result-scoreboard">
+                <div class="result-score result-score-top">
+                  <div class="result-number">94</div>
+                  <div class="result-team">
+                    <img src="https://commons.wikimedia.org/wiki/Special:FilePath/North%20Carolina%20State%20University%20Athletic%20logo.svg" alt="NC State logo">
+                    <span>NC State</span>
+                  </div>
                 </div>
-                <div class="match-card-score">24 - 17</div>
-                <div class="match-card-team">
-                  <span>Opponent A</span>
+                <div class="result-final" aria-hidden="true"><span></span></div>
+                <div class="result-score result-score-bottom">
+                  <div class="result-number">74</div>
+                  <div class="result-team">
+                    <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Wake%20Forest%20University%20Athletic%20logo.svg" alt="Wake Forest logo">
+                    <span>Wake Forest</span>
+                  </div>
                 </div>
               </div>
-              <div class="match-card-date">Saturday, 1st February</div>
-              <span class="badge badge-success mt-2">Win</span>
             </div>
 
-            <div class="match-card">
-              <div class="match-card-header">Coventry NL2N</div>
-              <div class="match-card-teams">
-                <div class="match-card-team">
-                  <span>Opponent B</span>
+            <!-- Result Poster 2 -->
+            <div class="result-poster result-poster--overlay">
+              <div class="result-scoreboard-bg" aria-hidden="true"></div>
+              <div class="result-photo">
+                <img src="assets/photos/score-poster.png" alt="Score poster player">
+              </div>
+              <div class="result-scoreboard">
+                <div class="result-score result-score-top">
+                  <div class="result-number">94</div>
+                  <div class="result-team">
+                    <img src="https://commons.wikimedia.org/wiki/Special:FilePath/North%20Carolina%20State%20University%20Athletic%20logo.svg" alt="NC State logo">
+                    <span>NC State</span>
+                  </div>
                 </div>
-                <div class="match-card-score">21 - 28</div>
-                <div class="match-card-team">
-                  <span>Broadstreet</span>
+                <div class="result-final" aria-hidden="true"><span></span></div>
+                <div class="result-score result-score-bottom">
+                  <div class="result-number">74</div>
+                  <div class="result-team">
+                    <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Wake%20Forest%20University%20Athletic%20logo.svg" alt="Wake Forest logo">
+                    <span>Wake Forest</span>
+                  </div>
                 </div>
               </div>
-              <div class="match-card-date">Saturday, 25th January</div>
-              <span class="badge badge-success mt-2">Win</span>
             </div>
 
-            <div class="match-card">
-              <div class="match-card-header">Coventry NL2N</div>
-              <div class="match-card-teams">
-                <div class="match-card-team">
-                  <span>Broadstreet</span>
+            <!-- Result Poster 3 -->
+            <div class="result-poster result-poster--overlay">
+              <div class="result-scoreboard-bg" aria-hidden="true"></div>
+              <div class="result-photo">
+                <img src="assets/photos/score-poster.png" alt="Score poster player">
+              </div>
+              <div class="result-scoreboard">
+                <div class="result-score result-score-top">
+                  <div class="result-number">94</div>
+                  <div class="result-team">
+                    <img src="https://commons.wikimedia.org/wiki/Special:FilePath/North%20Carolina%20State%20University%20Athletic%20logo.svg" alt="NC State logo">
+                    <span>NC State</span>
+                  </div>
                 </div>
-                <div class="match-card-score">15 - 18</div>
-                <div class="match-card-team">
-                  <span>Opponent C</span>
+                <div class="result-final" aria-hidden="true"><span></span></div>
+                <div class="result-score result-score-bottom">
+                  <div class="result-number">74</div>
+                  <div class="result-team">
+                    <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Wake%20Forest%20University%20Athletic%20logo.svg" alt="Wake Forest logo">
+                    <span>Wake Forest</span>
+                  </div>
                 </div>
               </div>
-              <div class="match-card-date">Saturday, 18th January</div>
-              <span class="badge badge-primary mt-2">Loss</span>
             </div>
           </div>
           <div class="text-center mt-8">
@@ -295,46 +431,103 @@
             <h2 class="mb-0">Latest News</h2>
             <a href="pages/news.html" class="btn btn-outline btn-sm">View All News</a>
           </div>
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <article class="news-card">
-              <img src="https://images.unsplash.com/photo-1552667466-07770ae110d0?w=600&h=400&q=80&fit=crop" alt="Rugby match action" class="news-card-img">
+
+          <!-- News Grid Layout -->
+          <div class="news-grid">
+            <!-- Featured News (Large) -->
+            <article class="news-card news-card-featured">
+              <div class="news-card-image-wrapper">
+                <img src="https://images.unsplash.com/photo-1552667466-07770ae110d0?w=800&h=600&q=80&fit=crop" alt="Rugby match action" class="news-card-img">
+                <div class="news-card-overlay"></div>
+                <span class="news-card-badge badge-primary">Featured</span>
+              </div>
               <div class="news-card-body">
-                <span class="news-card-category">Match Report</span>
+                <div class="news-card-header">
+                  <span class="news-card-category">Match Report</span>
+                  <span class="news-card-date">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
+                    </svg>
+                    1 Feb 2026
+                  </span>
+                </div>
                 <h3 class="news-card-title">
                   <a href="#">Broadstreet Secure Important Victory at Home</a>
                 </h3>
-                <p class="news-card-excerpt">An exciting match saw the team come from behind to secure a crucial three points...</p>
-                <div class="news-card-meta">
-                  <span>1 Feb 2026</span>
+                <p class="news-card-excerpt">An exciting match saw the team come from behind to secure a crucial three points in front of a packed home crowd. The final score of 28-24 keeps Broadstreet in strong contention for promotion.</p>
+                <div class="news-card-footer">
+                  <div class="news-card-author">
+                    <div class="news-card-author-avatar">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                      </svg>
+                    </div>
+                    <span>By Tom Richards</span>
+                  </div>
+                  <a href="#" class="news-card-read-more">
+                    Read More
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/>
+                    </svg>
+                  </a>
                 </div>
               </div>
             </article>
 
-            <article class="news-card">
-              <img src="https://images.unsplash.com/photo-1529900748604-07564a03e7a6?w=600&h=400&q=80&fit=crop" alt="Youth rugby training" class="news-card-img">
+            <!-- Regular News Cards -->
+            <article class="news-card news-card-compact">
+              <div class="news-card-image-wrapper">
+                <img src="https://images.unsplash.com/photo-1529900748604-07564a03e7a6?w=600&h=400&q=80&fit=crop" alt="Youth rugby training" class="news-card-img">
+                <div class="news-card-overlay"></div>
+              </div>
               <div class="news-card-body">
-                <span class="news-card-category">Club News</span>
+                <div class="news-card-header">
+                  <span class="news-card-category">Club News</span>
+                  <span class="news-card-date">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
+                    </svg>
+                    28 Jan 2026
+                  </span>
+                </div>
                 <h3 class="news-card-title">
                   <a href="#">Youth Academy Open Day Announced</a>
                 </h3>
-                <p class="news-card-excerpt">Join us for our annual youth academy open day, welcoming players of all ages...</p>
-                <div class="news-card-meta">
-                  <span>28 Jan 2026</span>
-                </div>
+                <p class="news-card-excerpt">Join us for our annual youth academy open day, welcoming players of all ages and abilities to try rugby.</p>
+                <a href="#" class="news-card-read-more">
+                  Read More
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/>
+                  </svg>
+                </a>
               </div>
             </article>
 
-            <article class="news-card">
-              <img src="https://images.unsplash.com/photo-1544298621-35a989e2e6e0?w=600&h=400&q=80&fit=crop" alt="Rugby ball on field" class="news-card-img">
+            <article class="news-card news-card-compact">
+              <div class="news-card-image-wrapper">
+                <img src="https://images.unsplash.com/photo-1544298621-35a989e2e6e0?w=600&h=400&q=80&fit=crop" alt="Rugby ball on field" class="news-card-img">
+                <div class="news-card-overlay"></div>
+              </div>
               <div class="news-card-body">
-                <span class="news-card-category">Community</span>
+                <div class="news-card-header">
+                  <span class="news-card-category">Community</span>
+                  <span class="news-card-date">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
+                    </svg>
+                    25 Jan 2026
+                  </span>
+                </div>
                 <h3 class="news-card-title">
                   <a href="#">Community Rugby Day Returns This Spring</a>
                 </h3>
-                <p class="news-card-excerpt">Our popular community rugby day returns with activities for the whole family...</p>
-                <div class="news-card-meta">
-                  <span>25 Jan 2026</span>
-                </div>
+                <p class="news-card-excerpt">Our popular community rugby day returns with activities for the whole family and local schools invited.</p>
+                <a href="#" class="news-card-read-more">
+                  Read More
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/>
+                  </svg>
+                </a>
               </div>
             </article>
           </div>
@@ -344,26 +537,154 @@
       <!-- Sponsors Section -->
       <section class="section bg-gray-100">
         <div class="container">
-          <h2 class="text-center mb-8">Our Sponsors</h2>
-          <div class="sponsor-grid">
-            <div class="sponsor-item">
-              <img src="assets/logos/sponsor-1.svg" alt="Sponsor 1">
+          <div class="sponsors-header">
+            <h2 class="text-center mb-4">Our Sponsors</h2>
+            <p class="sponsors-subtitle">Proud to be supported by our partners</p>
+          </div>
+
+          <!-- Main/Title Sponsor -->
+          <div class="sponsor-tier">
+            <div class="sponsor-tier-label">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
+              </svg>
+              <span>Title Sponsor</span>
             </div>
-            <div class="sponsor-item">
-              <img src="assets/logos/sponsor-2.svg" alt="Sponsor 2">
-            </div>
-            <div class="sponsor-item">
-              <img src="assets/logos/sponsor-3.svg" alt="Sponsor 3">
-            </div>
-            <div class="sponsor-item">
-              <img src="assets/logos/sponsor-4.svg" alt="Sponsor 4">
-            </div>
-            <div class="sponsor-item">
-              <img src="assets/logos/sponsor-5.svg" alt="Sponsor 5">
+            <div class="sponsor-main">
+              <a href="#" class="sponsor-card sponsor-card-main" data-tooltip="Our proud title sponsor since 2020">
+                <div class="sponsor-card-inner">
+                  <div class="sponsor-badge sponsor-badge-platinum">Platinum</div>
+                  <div class="sponsor-logo-wrapper">
+                    <img src="assets/logos/sponsor-1.svg" alt="Main Sponsor">
+                  </div>
+                  <div class="sponsor-info">
+                    <h3 class="sponsor-name">Main Sponsor Ltd</h3>
+                    <p class="sponsor-tagline">Leading the way in excellence</p>
+                  </div>
+                </div>
+              </a>
             </div>
           </div>
-          <div class="text-center mt-8">
-            <a href="pages/sponsors.html" class="btn btn-secondary">Become a Sponsor</a>
+
+          <!-- Premium Sponsors -->
+          <div class="sponsor-tier">
+            <div class="sponsor-tier-label">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+              </svg>
+              <span>Premium Sponsors</span>
+            </div>
+            <div class="sponsor-grid sponsor-grid-premium">
+              <a href="#" class="sponsor-card sponsor-card-premium" data-tooltip="Supporting Broadstreet since 2018">
+                <div class="sponsor-card-inner">
+                  <div class="sponsor-badge sponsor-badge-gold">Gold</div>
+                  <div class="sponsor-logo-wrapper">
+                    <img src="assets/logos/sponsor-2.svg" alt="Premium Sponsor 1">
+                  </div>
+                  <div class="sponsor-info">
+                    <h4 class="sponsor-name">Premium Corp</h4>
+                  </div>
+                </div>
+              </a>
+
+              <a href="#" class="sponsor-card sponsor-card-premium" data-tooltip="Proud partner of Broadstreet RFC">
+                <div class="sponsor-card-inner">
+                  <div class="sponsor-badge sponsor-badge-gold">Gold</div>
+                  <div class="sponsor-logo-wrapper">
+                    <img src="assets/logos/sponsor-3.svg" alt="Premium Sponsor 2">
+                  </div>
+                  <div class="sponsor-info">
+                    <h4 class="sponsor-name">Elite Partners</h4>
+                  </div>
+                </div>
+              </a>
+
+              <a href="#" class="sponsor-card sponsor-card-premium" data-tooltip="Building futures together">
+                <div class="sponsor-card-inner">
+                  <div class="sponsor-badge sponsor-badge-gold">Gold</div>
+                  <div class="sponsor-logo-wrapper">
+                    <img src="assets/logos/sponsor-4.svg" alt="Premium Sponsor 3">
+                  </div>
+                  <div class="sponsor-info">
+                    <h4 class="sponsor-name">Top Solutions</h4>
+                  </div>
+                </div>
+              </a>
+            </div>
+          </div>
+
+          <!-- Official Partners -->
+          <div class="sponsor-tier">
+            <div class="sponsor-tier-label">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+              </svg>
+              <span>Official Partners</span>
+            </div>
+            <div class="sponsor-grid sponsor-grid-partners">
+              <a href="#" class="sponsor-card sponsor-card-partner" data-tooltip="Official partner">
+                <div class="sponsor-card-inner">
+                  <div class="sponsor-badge sponsor-badge-silver">Silver</div>
+                  <div class="sponsor-logo-wrapper">
+                    <img src="assets/logos/sponsor-5.svg" alt="Partner 1">
+                  </div>
+                </div>
+              </a>
+
+              <a href="#" class="sponsor-card sponsor-card-partner" data-tooltip="Official partner">
+                <div class="sponsor-card-inner">
+                  <div class="sponsor-badge sponsor-badge-silver">Silver</div>
+                  <div class="sponsor-logo-wrapper">
+                    <img src="assets/logos/sponsor-1.svg" alt="Partner 2">
+                  </div>
+                </div>
+              </a>
+
+              <a href="#" class="sponsor-card sponsor-card-partner" data-tooltip="Official partner">
+                <div class="sponsor-card-inner">
+                  <div class="sponsor-badge sponsor-badge-silver">Silver</div>
+                  <div class="sponsor-logo-wrapper">
+                    <img src="assets/logos/sponsor-2.svg" alt="Partner 3">
+                  </div>
+                </div>
+              </a>
+
+              <a href="#" class="sponsor-card sponsor-card-partner" data-tooltip="Official partner">
+                <div class="sponsor-card-inner">
+                  <div class="sponsor-badge sponsor-badge-silver">Silver</div>
+                  <div class="sponsor-logo-wrapper">
+                    <img src="assets/logos/sponsor-3.svg" alt="Partner 4">
+                  </div>
+                </div>
+              </a>
+
+              <a href="#" class="sponsor-card sponsor-card-partner" data-tooltip="Official partner">
+                <div class="sponsor-card-inner">
+                  <div class="sponsor-badge sponsor-badge-silver">Silver</div>
+                  <div class="sponsor-logo-wrapper">
+                    <img src="assets/logos/sponsor-4.svg" alt="Partner 5">
+                  </div>
+                </div>
+              </a>
+
+              <a href="#" class="sponsor-card sponsor-card-partner" data-tooltip="Official partner">
+                <div class="sponsor-card-inner">
+                  <div class="sponsor-badge sponsor-badge-silver">Silver</div>
+                  <div class="sponsor-logo-wrapper">
+                    <img src="assets/logos/sponsor-5.svg" alt="Partner 6">
+                  </div>
+                </div>
+              </a>
+            </div>
+          </div>
+
+          <!-- CTA -->
+          <div class="sponsors-cta">
+            <div class="sponsors-cta-content">
+              <h3>Become a Sponsor</h3>
+              <p>Join our family of partners and support rugby in Coventry</p>
+              <a href="pages/sponsors.html" class="btn btn-primary btn-lg">Partner With Us</a>
+            </div>
           </div>
         </div>
       </section>
