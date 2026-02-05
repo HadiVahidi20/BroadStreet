@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Broadstreet RFC Teams - Senior, junior, and mini rugby squads.">
+  <meta name="description" content="Broadstreet RFC Teams - Senior squads, women's rugby, youth, mini & juniors, and touch rugby.">
   <title>Teams | Broadstreet RFC</title>
   <link rel="icon" type="image/svg+xml" href="../assets/logos/favicon.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -50,7 +50,7 @@
     <nav class="mobile-nav">
       <div class="mobile-nav-header">
         <img src="../assets/logos/broadstreet-logo.svg" alt="Broadstreet RFC" height="40">
-        <button class="mobile-nav-close" aria-label="Close menu">&times;</button>
+        <button class="mobile-nav-close">&times;</button>
       </div>
       <ul>
         <li><a href="../index.html">Home</a></li>
@@ -59,14 +59,13 @@
         <li><a href="news.html">News</a></li>
         <li><a href="fan-zone.html">Fan Zone</a></li>
         <li><a href="teams.html" class="active">Teams</a></li>
-        <li><a href="sponsors.html">Sponsors</a></li>
-        <li><a href="clubhouse.html">Clubhouse</a></li>
         <li><a href="contact.html">Contact</a></li>
       </ul>
     </nav>
     <div class="mobile-overlay"></div>
 
     <main class="main-content">
+      <!-- Hero Section -->
       <section class="hero" style="padding: var(--space-12) 0;">
         <div class="hero-bg" style="background-image: url('../images/teams-hero.jpg');"></div>
         <div class="container">
@@ -77,129 +76,450 @@
               <span class="breadcrumb-current">Teams</span>
             </nav>
             <h1 class="hero-title">Our Teams</h1>
-            <p class="hero-subtitle">From minis to seniors, we have rugby for everyone at Broadstreet RFC.</p>
+            <p class="hero-subtitle">Rugby for everyone - from minis to seniors, men's and women's.</p>
           </div>
         </div>
       </section>
 
-      <section class="section">
+      <!-- Quick Navigation -->
+      <section class="section-sm bg-white">
         <div class="container">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div class="card">
-              <img src="../images/team-1st.jpg" alt="1st XV" class="card-img" style="background: var(--color-gray-200);">
-              <div class="card-body">
-                <h3>1st XV</h3>
-                <p class="text-muted mb-4">Our senior men's team competing in Coventry NL2N.</p>
-                <p class="text-sm"><strong>Training:</strong> Tuesday & Thursday, 7:00 PM</p>
-                <a href="#" class="btn btn-outline btn-sm mt-4">View Squad</a>
+          <div class="flex flex-wrap gap-2 justify-center">
+            <a href="#senior" class="btn btn-outline btn-sm">Senior Men's</a>
+            <a href="#women" class="btn btn-outline btn-sm">Women's Rugby</a>
+            <a href="#youth" class="btn btn-outline btn-sm">Youth & Juniors</a>
+            <a href="#minis" class="btn btn-outline btn-sm">Mini Rugby</a>
+            <a href="#touch" class="btn btn-outline btn-sm">Touch Rugby</a>
+          </div>
+        </div>
+      </section>
+
+      <!-- Senior Men's Teams Section -->
+      <section class="section" id="senior">
+        <div class="container">
+          <h2 class="text-center mb-8">Senior Men's Teams</h2>
+
+          <!-- 1st XV -->
+          <div class="card mb-8">
+            <div class="card-body">
+              <div class="two-col-equal">
+                <div>
+                  <span class="badge badge-primary mb-2">First Team</span>
+                  <h3>1st XV</h3>
+                  <p class="text-muted mb-4">Our flagship team competing in Coventry NL2N, representing the club at the highest level.</p>
+
+                  <div class="grid grid-cols-2 gap-4 mb-4">
+                    <div>
+                      <p class="text-sm text-muted mb-1">Training</p>
+                      <p class="font-semibold mb-0">Tuesday & Thursday<br>7:00 PM - 9:00 PM</p>
+                    </div>
+                    <div>
+                      <p class="text-sm text-muted mb-1">Matches</p>
+                      <p class="font-semibold mb-0">Saturdays<br>3:00 PM Kick-off</p>
+                    </div>
+                  </div>
+
+                  <div class="mb-4">
+                    <p class="text-sm text-muted mb-1">Head Coach</p>
+                    <p class="font-semibold mb-0">Contact for details</p>
+                  </div>
+
+                  <a href="fixtures.html" class="btn btn-primary btn-sm">View Fixtures</a>
+                </div>
+                <div>
+                  <img src="../images/team-1st.jpg" alt="1st XV Squad" class="rounded-lg w-full" style="aspect-ratio: 16/10; object-fit: cover; background: var(--color-gray-200);">
+                </div>
               </div>
             </div>
+          </div>
 
-            <div class="card">
-              <img src="../images/team-2nd.jpg" alt="2nd XV" class="card-img" style="background: var(--color-gray-200);">
-              <div class="card-body">
-                <h3>2nd XV</h3>
-                <p class="text-muted mb-4">Development squad for players progressing to senior rugby.</p>
-                <p class="text-sm"><strong>Training:</strong> Tuesday & Thursday, 7:00 PM</p>
-                <a href="#" class="btn btn-outline btn-sm mt-4">View Squad</a>
+          <!-- 1st XV Squad -->
+          <div class="card mb-8">
+            <div class="card-body">
+              <h4 class="mb-4">1st XV Squad</h4>
+              <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+                <div class="text-center">
+                  <div style="width: 70px; height: 70px; background: var(--color-gray-200); border-radius: 50%; margin: 0 auto var(--space-2);"></div>
+                  <p class="font-semibold text-sm mb-0">Player Name</p>
+                  <p class="text-xs text-muted">Prop</p>
+                </div>
+                <div class="text-center">
+                  <div style="width: 70px; height: 70px; background: var(--color-gray-200); border-radius: 50%; margin: 0 auto var(--space-2);"></div>
+                  <p class="font-semibold text-sm mb-0">Player Name</p>
+                  <p class="text-xs text-muted">Hooker</p>
+                </div>
+                <div class="text-center">
+                  <div style="width: 70px; height: 70px; background: var(--color-gray-200); border-radius: 50%; margin: 0 auto var(--space-2);"></div>
+                  <p class="font-semibold text-sm mb-0">Player Name</p>
+                  <p class="text-xs text-muted">Lock</p>
+                </div>
+                <div class="text-center">
+                  <div style="width: 70px; height: 70px; background: var(--color-gray-200); border-radius: 50%; margin: 0 auto var(--space-2);"></div>
+                  <p class="font-semibold text-sm mb-0">Player Name</p>
+                  <p class="text-xs text-muted">Flanker</p>
+                </div>
+                <div class="text-center">
+                  <div style="width: 70px; height: 70px; background: var(--color-gray-200); border-radius: 50%; margin: 0 auto var(--space-2);"></div>
+                  <p class="font-semibold text-sm mb-0">Player Name</p>
+                  <p class="text-xs text-muted">Number 8</p>
+                </div>
+                <div class="text-center">
+                  <div style="width: 70px; height: 70px; background: var(--color-gray-200); border-radius: 50%; margin: 0 auto var(--space-2);"></div>
+                  <p class="font-semibold text-sm mb-0">Player Name</p>
+                  <p class="text-xs text-muted">Scrum Half</p>
+                </div>
+                <div class="text-center">
+                  <div style="width: 70px; height: 70px; background: var(--color-gray-200); border-radius: 50%; margin: 0 auto var(--space-2);"></div>
+                  <p class="font-semibold text-sm mb-0">Player Name</p>
+                  <p class="text-xs text-muted">Fly Half</p>
+                </div>
+                <div class="text-center">
+                  <div style="width: 70px; height: 70px; background: var(--color-gray-200); border-radius: 50%; margin: 0 auto var(--space-2);"></div>
+                  <p class="font-semibold text-sm mb-0">Player Name</p>
+                  <p class="text-xs text-muted">Centre</p>
+                </div>
+                <div class="text-center">
+                  <div style="width: 70px; height: 70px; background: var(--color-gray-200); border-radius: 50%; margin: 0 auto var(--space-2);"></div>
+                  <p class="font-semibold text-sm mb-0">Player Name</p>
+                  <p class="text-xs text-muted">Wing</p>
+                </div>
+                <div class="text-center">
+                  <div style="width: 70px; height: 70px; background: var(--color-gray-200); border-radius: 50%; margin: 0 auto var(--space-2);"></div>
+                  <p class="font-semibold text-sm mb-0">Player Name</p>
+                  <p class="text-xs text-muted">Full Back</p>
+                </div>
               </div>
             </div>
+          </div>
 
-            <div class="card">
-              <img src="../images/team-women.jpg" alt="Women's Team" class="card-img" style="background: var(--color-gray-200);">
-              <div class="card-body">
-                <h3>Women's Team</h3>
-                <p class="text-muted mb-4">Growing women's section welcoming players of all abilities.</p>
-                <p class="text-sm"><strong>Training:</strong> Wednesday, 7:00 PM</p>
-                <a href="#" class="btn btn-outline btn-sm mt-4">View Squad</a>
-              </div>
-            </div>
+          <!-- 2nd XV -->
+          <div class="card">
+            <div class="card-body">
+              <div class="two-col-equal">
+                <div>
+                  <span class="badge badge-secondary mb-2">Development</span>
+                  <h3>2nd XV</h3>
+                  <p class="text-muted mb-4">Our development squad, providing competitive rugby for players progressing to senior level.</p>
 
-            <div class="card">
-              <img src="../images/team-colts.jpg" alt="Colts" class="card-img" style="background: var(--color-gray-200);">
-              <div class="card-body">
-                <h3>Colts (U17-U18)</h3>
-                <p class="text-muted mb-4">Bridge between junior and senior rugby for young players.</p>
-                <p class="text-sm"><strong>Training:</strong> Thursday, 6:30 PM</p>
-                <a href="#" class="btn btn-outline btn-sm mt-4">View Squad</a>
+                  <div class="grid grid-cols-2 gap-4 mb-4">
+                    <div>
+                      <p class="text-sm text-muted mb-1">Training</p>
+                      <p class="font-semibold mb-0">Tuesday & Thursday<br>7:00 PM - 9:00 PM</p>
+                    </div>
+                    <div>
+                      <p class="text-sm text-muted mb-1">Matches</p>
+                      <p class="font-semibold mb-0">Saturdays<br>Various times</p>
+                    </div>
+                  </div>
+
+                  <a href="contact.html?subject=rugby" class="btn btn-outline btn-sm">Join the Team</a>
+                </div>
+                <div>
+                  <img src="../images/team-2nd.jpg" alt="2nd XV Squad" class="rounded-lg w-full" style="aspect-ratio: 16/10; object-fit: cover; background: var(--color-gray-200);">
+                </div>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      <section class="section bg-gray-50">
+      <!-- Women's Rugby Section -->
+      <section class="section bg-gray-50" id="women">
         <div class="container">
-          <h2 class="text-center mb-8">Youth & Mini Rugby</h2>
+          <h2 class="text-center mb-8">Women's Rugby</h2>
+
+          <div class="card">
+            <div class="card-body">
+              <div class="two-col-equal">
+                <div>
+                  <img src="../images/team-women.jpg" alt="Women's Team" class="rounded-lg w-full" style="aspect-ratio: 16/10; object-fit: cover; background: var(--color-gray-200);">
+                </div>
+                <div>
+                  <span class="badge badge-success mb-2">All Welcome</span>
+                  <h3>Women's Team</h3>
+                  <p class="text-lg mb-4">Our growing women's section welcomes players of all abilities - from complete beginners to experienced players.</p>
+
+                  <div class="grid grid-cols-2 gap-4 mb-4">
+                    <div>
+                      <p class="text-sm text-muted mb-1">Training</p>
+                      <p class="font-semibold mb-0">Wednesday<br>7:00 PM - 8:30 PM</p>
+                    </div>
+                    <div>
+                      <p class="text-sm text-muted mb-1">Matches</p>
+                      <p class="font-semibold mb-0">Sundays<br>Various times</p>
+                    </div>
+                  </div>
+
+                  <h4 class="mb-2">Why Join?</h4>
+                  <ul class="mb-4">
+                    <li>No experience necessary</li>
+                    <li>Qualified female coaches</li>
+                    <li>Supportive, friendly environment</li>
+                    <li>Great social scene</li>
+                    <li>Competitive matches available</li>
+                  </ul>
+
+                  <a href="contact.html?subject=women" class="btn btn-primary">Join Women's Rugby</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Youth & Juniors Section -->
+      <section class="section" id="youth">
+        <div class="container">
+          <h2 class="text-center mb-8">Youth & Junior Rugby</h2>
+          <p class="text-center text-muted mb-8" style="max-width: 700px; margin: 0 auto;">
+            Our junior section develops players from Under 13 to Under 18, providing age-appropriate coaching and competitive opportunities.
+          </p>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="card">
+              <div class="card-body">
+                <span class="badge badge-primary mb-2">U17-U18</span>
+                <h4>Colts</h4>
+                <p class="text-muted">Transition from junior to senior rugby. Preparing players for the adult game.</p>
+                <p class="text-sm"><strong>Training:</strong> Thursday, 6:30 PM - 8:00 PM</p>
+                <p class="text-sm"><strong>Contact:</strong> <a href="mailto:colts@broadstreet-rugby.co.uk">colts@broadstreet-rugby.co.uk</a></p>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-body">
+                <span class="badge badge-primary mb-2">U15-U16</span>
+                <h4>Under 16s & Under 15s</h4>
+                <p class="text-muted">Developing tactical understanding and position-specific skills.</p>
+                <p class="text-sm"><strong>Training:</strong> Thursday, 6:30 PM - 8:00 PM</p>
+                <p class="text-sm"><strong>Contact:</strong> <a href="mailto:youth@broadstreet-rugby.co.uk">youth@broadstreet-rugby.co.uk</a></p>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-body">
+                <span class="badge badge-primary mb-2">U13-U14</span>
+                <h4>Under 14s & Under 13s</h4>
+                <p class="text-muted">Introduction to contact rugby with focus on skills and teamwork.</p>
+                <p class="text-sm"><strong>Training:</strong> Thursday, 6:30 PM - 8:00 PM</p>
+                <p class="text-sm"><strong>Contact:</strong> <a href="mailto:youth@broadstreet-rugby.co.uk">youth@broadstreet-rugby.co.uk</a></p>
+              </div>
+            </div>
+
+            <div class="card bg-secondary text-white">
+              <div class="card-body">
+                <h4 class="text-white">Join Youth Rugby</h4>
+                <p class="opacity-90">New players always welcome! Contact us to arrange a trial session.</p>
+                <a href="contact.html?subject=youth" class="btn btn-white btn-sm mt-2">Register Interest</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Mini Rugby Section -->
+      <section class="section bg-gray-50" id="minis">
+        <div class="container">
+          <h2 class="text-center mb-8">Mini Rugby</h2>
+          <p class="text-center text-muted mb-8" style="max-width: 700px; margin: 0 auto;">
+            Fun, safe introduction to rugby for children aged 5-12. Our qualified coaches focus on enjoyment, skills, and making friends.
+          </p>
+
+          <div class="card mb-8">
+            <div class="card-body">
+              <div class="two-col-equal">
+                <div>
+                  <h3>Sunday Morning Rugby</h3>
+                  <p class="text-lg mb-4">Every Sunday during the season (September - April), rain or shine!</p>
+
+                  <div class="alert alert-info mb-4">
+                    <strong>Time:</strong> 10:00 AM - 11:30 AM<br>
+                    <strong>Location:</strong> Ivor Preece Field
+                  </div>
+
+                  <h4>What to Bring</h4>
+                  <ul class="mb-4">
+                    <li>Boots (moulded studs)</li>
+                    <li>Gumshield (compulsory)</li>
+                    <li>Comfortable sports clothing</li>
+                    <li>Water bottle</li>
+                    <li>Enthusiasm!</li>
+                  </ul>
+
+                  <a href="contact.html?subject=minis" class="btn btn-primary">Register Your Child</a>
+                </div>
+                <div>
+                  <img src="../images/mini-rugby.jpg" alt="Mini Rugby" class="rounded-lg w-full mb-4" style="aspect-ratio: 16/10; object-fit: cover; background: var(--color-gray-200);">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <h3 class="text-center mb-6">Age Groups</h3>
           <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div class="card text-center">
               <div class="card-body">
-                <h4>Under 16s</h4>
-                <p class="text-sm text-muted">Thursday 6:30 PM</p>
+                <div class="text-3xl font-bold text-primary">U12</div>
+                <p class="text-sm text-muted mb-0">School Year 7</p>
               </div>
             </div>
             <div class="card text-center">
               <div class="card-body">
-                <h4>Under 14s</h4>
-                <p class="text-sm text-muted">Thursday 6:30 PM</p>
+                <div class="text-3xl font-bold text-primary">U11</div>
+                <p class="text-sm text-muted mb-0">School Year 6</p>
               </div>
             </div>
             <div class="card text-center">
               <div class="card-body">
-                <h4>Under 12s</h4>
-                <p class="text-sm text-muted">Sunday 10:00 AM</p>
+                <div class="text-3xl font-bold text-primary">U10</div>
+                <p class="text-sm text-muted mb-0">School Year 5</p>
               </div>
             </div>
             <div class="card text-center">
               <div class="card-body">
-                <h4>Under 10s</h4>
-                <p class="text-sm text-muted">Sunday 10:00 AM</p>
+                <div class="text-3xl font-bold text-primary">U9</div>
+                <p class="text-sm text-muted mb-0">School Year 4</p>
               </div>
             </div>
             <div class="card text-center">
               <div class="card-body">
-                <h4>Under 8s</h4>
-                <p class="text-sm text-muted">Sunday 10:00 AM</p>
+                <div class="text-3xl font-bold text-primary">U8</div>
+                <p class="text-sm text-muted mb-0">School Year 3</p>
               </div>
             </div>
             <div class="card text-center">
               <div class="card-body">
-                <h4>Under 7s</h4>
-                <p class="text-sm text-muted">Sunday 10:00 AM</p>
+                <div class="text-3xl font-bold text-primary">U7</div>
+                <p class="text-sm text-muted mb-0">School Year 2</p>
               </div>
             </div>
             <div class="card text-center">
               <div class="card-body">
-                <h4>Under 6s</h4>
-                <p class="text-sm text-muted">Sunday 10:00 AM</p>
+                <div class="text-3xl font-bold text-primary">U6</div>
+                <p class="text-sm text-muted mb-0">School Year 1</p>
               </div>
             </div>
-            <div class="card text-center bg-primary text-white">
+            <div class="card text-center bg-accent">
               <div class="card-body">
-                <h4 class="text-white">Join Us!</h4>
-                <a href="membership.html" class="btn btn-white btn-sm mt-2">Register</a>
+                <div class="text-3xl font-bold text-ink">U5</div>
+                <p class="text-sm text-ink mb-0">Reception</p>
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Touch Rugby Section -->
+      <section class="section" id="touch">
+        <div class="container">
+          <h2 class="text-center mb-8">Touch Rugby</h2>
+
+          <div class="card">
+            <div class="card-body">
+              <div class="two-col-equal">
+                <div>
+                  <span class="badge badge-info mb-2">Non-Contact</span>
+                  <h3>Social Touch Rugby</h3>
+                  <p class="text-lg mb-4">A fun, fast-paced, non-contact version of rugby. Perfect for fitness, social interaction, and enjoying the game without tackles.</p>
+
+                  <div class="grid grid-cols-2 gap-4 mb-4">
+                    <div>
+                      <p class="text-sm text-muted mb-1">When</p>
+                      <p class="font-semibold mb-0">Tuesday Evenings<br>6:00 PM - 7:00 PM</p>
+                    </div>
+                    <div>
+                      <p class="text-sm text-muted mb-1">Season</p>
+                      <p class="font-semibold mb-0">April - September<br>(Summer months)</p>
+                    </div>
+                  </div>
+
+                  <h4 class="mb-2">Who Can Play?</h4>
+                  <ul class="mb-4">
+                    <li>Men and women of all ages</li>
+                    <li>No experience required</li>
+                    <li>Mixed teams encouraged</li>
+                    <li>Great for fitness and fun</li>
+                  </ul>
+
+                  <p class="text-muted mb-4">Just turn up on the night - no commitment required. Bring trainers and be ready to have fun!</p>
+
+                  <a href="contact.html?subject=touch" class="btn btn-primary">Find Out More</a>
+                </div>
+                <div>
+                  <img src="../images/touch-rugby.jpg" alt="Touch Rugby" class="rounded-lg w-full" style="aspect-ratio: 16/10; object-fit: cover; background: var(--color-gray-200);">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- CTA Section -->
+      <section class="section bg-primary text-white">
+        <div class="container text-center">
+          <h2 class="text-white mb-4">Find Your Team</h2>
+          <p class="text-lg opacity-90 mb-6">Whatever your age or ability, there's a place for you at Broadstreet RFC.</p>
+          <div class="flex justify-center gap-4 flex-wrap">
+            <a href="membership.html" class="btn btn-white btn-lg">Join Us</a>
+            <a href="contact.html" class="btn btn-outline-white btn-lg">Contact Us</a>
           </div>
         </div>
       </section>
     </main>
 
+    <!-- Footer -->
     <footer class="main-footer">
       <div class="container">
         <div class="footer-grid">
           <div class="footer-brand">
-            <div class="footer-logo"><img src="../assets/logos/broadstreet-logo.svg" alt="Broadstreet RFC" height="60"><span class="footer-logo-text">Broadstreet RFC</span></div>
+            <div class="footer-logo">
+              <img src="../assets/logos/broadstreet-logo.svg" alt="Broadstreet RFC" height="60">
+              <span class="footer-logo-text">Broadstreet RFC</span>
+            </div>
             <p class="footer-description">Playing rugby in Coventry since 1929.</p>
           </div>
-          <div class="footer-links"><h4>Quick Links</h4><ul><li><a href="fixtures.html">Fixtures</a></li><li><a href="news.html">News</a></li></ul></div>
-          <div class="footer-links"><h4>Get Involved</h4><ul><li><a href="membership.html">Membership</a></li><li><a href="contact.html">Contact</a></li></ul></div>
+          <div class="footer-links">
+            <h4>Quick Links</h4>
+            <ul>
+              <li><a href="fixtures.html">Fixtures & Results</a></li>
+              <li><a href="matchday.html">Matchday Info</a></li>
+              <li><a href="news.html">News</a></li>
+              <li><a href="about.html">About Us</a></li>
+            </ul>
+          </div>
+          <div class="footer-links">
+            <h4>Get Involved</h4>
+            <ul>
+              <li><a href="membership.html">Membership</a></li>
+              <li><a href="sponsors.html">Sponsorship</a></li>
+              <li><a href="clubhouse.html">Venue Hire</a></li>
+              <li><a href="volunteering.html">Volunteering</a></li>
+            </ul>
+          </div>
+          <div class="footer-links">
+            <h4>Contact</h4>
+            <p class="footer-contact-text">
+              <a href="mailto:info@broadstreet-rugby.co.uk">info@broadstreet-rugby.co.uk</a>
+            </p>
+          </div>
         </div>
       </div>
-      <div class="footer-bottom"><div class="container"><p class="footer-copyright">&copy; 2026 Broadstreet RFC.</p></div></div>
+      <div class="footer-bottom">
+        <div class="container">
+          <p class="footer-copyright">&copy; 2026 Broadstreet RFC. All rights reserved.</p>
+          <div class="footer-legal">
+            <a href="privacy.html">Privacy Policy</a>
+            <a href="safeguarding.html">Safeguarding</a>
+          </div>
+        </div>
+      </div>
     </footer>
-    <button class="back-to-top" aria-label="Back to top"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6z"/></svg></button>
+
+    <button class="back-to-top" aria-label="Back to top">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6z"/></svg>
+    </button>
   </div>
+
   <script src="../js/navigation.js"></script>
   <script src="../js/components.js"></script>
   <script src="../js/utils.js"></script>

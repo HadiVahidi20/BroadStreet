@@ -13,15 +13,55 @@
 </head>
 <body>
   <div class="page-wrapper">
+    <!-- Top Bar -->
+    <div class="top-bar">
+      <div class="container">
+        <div class="top-bar-links">
+          <a href="sponsors.html">Sponsors</a>
+          <a href="clubhouse.html">Venue Hire</a>
+          <a href="shop.html">Shop</a>
+          <a href="membership.html">Join Us</a>
+        </div>
+      </div>
+    </div>
+
     <header class="main-header">
       <div class="container">
-        <a href="../index.html" class="logo"><img src="../assets/logos/broadstreet-logo.svg" alt="Broadstreet RFC" class="logo-img"><span class="logo-text"><span class="logo-name">Broadstreet RFC</span></span></a>
-        <nav class="main-nav"><ul><li class="nav-item"><a href="../index.html">Home</a></li><li class="nav-item"><a href="news.html">News</a></li><li class="nav-item"><a href="contact.html">Contact</a></li></ul></nav>
+        <a href="../index.html" class="logo">
+          <img src="../assets/logos/broadstreet-logo.svg" alt="Broadstreet RFC" class="logo-img">
+          <span class="logo-text">
+            <span class="logo-name">Broadstreet RFC</span>
+            <span class="logo-tagline">Est. 1929</span>
+          </span>
+        </a>
+        <nav class="main-nav">
+          <ul>
+            <li class="nav-item"><a href="../index.html">Home</a></li>
+            <li class="nav-item"><a href="fixtures.html">Fixtures</a></li>
+            <li class="nav-item"><a href="news.html">News</a></li>
+            <li class="nav-item"><a href="teams.html">Teams</a></li>
+            <li class="nav-item"><a href="community.html" class="active">Community</a></li>
+            <li class="nav-item"><a href="contact.html">Contact</a></li>
+          </ul>
+        </nav>
         <div class="header-cta"><a href="membership.html" class="btn btn-primary btn-sm">Join Us</a></div>
         <button class="mobile-menu-toggle" aria-label="Toggle menu"><span></span><span></span><span></span></button>
       </div>
     </header>
-    <nav class="mobile-nav"><div class="mobile-nav-header"><img src="../assets/logos/broadstreet-logo.svg" height="40"><button class="mobile-nav-close">&times;</button></div><ul><li><a href="../index.html">Home</a></li></ul></nav>
+    <nav class="mobile-nav">
+      <div class="mobile-nav-header">
+        <img src="../assets/logos/broadstreet-logo.svg" height="40">
+        <button class="mobile-nav-close">&times;</button>
+      </div>
+      <ul>
+        <li><a href="../index.html">Home</a></li>
+        <li><a href="fixtures.html">Fixtures</a></li>
+        <li><a href="news.html">News</a></li>
+        <li><a href="teams.html">Teams</a></li>
+        <li><a href="community.html" class="active">Community</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+    </nav>
     <div class="mobile-overlay"></div>
 
     <main class="main-content">
@@ -36,47 +76,239 @@
         </div>
       </section>
 
+      <!-- Quick Navigation -->
+      <section class="section bg-gray-50" style="padding: var(--space-6) 0;">
+        <div class="container">
+          <div class="flex flex-wrap gap-2 justify-center">
+            <a href="#schools" class="btn btn-outline btn-sm">Schools Programme</a>
+            <a href="#community-days" class="btn btn-outline btn-sm">Community Days</a>
+            <a href="#charity" class="btn btn-outline btn-sm">Charity Support</a>
+            <a href="#inclusion" class="btn btn-outline btn-sm">Inclusion</a>
+            <a href="#get-involved" class="btn btn-outline btn-sm">Get Involved</a>
+          </div>
+        </div>
+      </section>
+
+      <!-- Intro Section -->
       <section class="section">
         <div class="container">
           <div class="text-center mb-12" style="max-width: 800px; margin: 0 auto;">
             <h2>Rugby in the Community</h2>
             <p class="text-lg">At Broadstreet RFC, we believe rugby is for everyone. Our community programmes bring the benefits of sport to people of all ages and backgrounds in Coventry.</p>
           </div>
+        </div>
+      </section>
 
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div class="card">
-              <div class="card-body">
-                <h3>Schools Programme</h3>
-                <p class="text-muted">We work with local schools to introduce rugby and promote physical activity.</p>
-              </div>
+      <!-- Schools Programme -->
+      <section id="schools" class="section bg-gray-50">
+        <div class="container">
+          <div class="two-col-equal">
+            <div>
+              <h2>Schools Programme</h2>
+              <p class="text-lg mb-4">We work with local primary and secondary schools across Coventry and Warwickshire to introduce young people to rugby union.</p>
+              <h4>What We Offer</h4>
+              <ul class="mb-6">
+                <li>Free taster sessions and coaching at schools</li>
+                <li>Tag rugby festivals for primary schools</li>
+                <li>After-school rugby clubs</li>
+                <li>Pathway to junior teams at the club</li>
+                <li>DBS-checked, qualified coaches</li>
+              </ul>
+              <h4>Partner Schools</h4>
+              <p class="text-muted mb-4">We currently work with over 15 local schools including Binley Woods Primary, Stretton Primary, and Ernesford Grange Secondary.</p>
+              <a href="contact.html" class="btn btn-primary">Request a School Visit</a>
             </div>
             <div class="card">
-              <div class="card-body">
-                <h3>Community Days</h3>
-                <p class="text-muted">Regular open days welcoming families to experience rugby at our club.</p>
+              <div style="aspect-ratio: 4/3; background: var(--color-gray-200); display: flex; align-items: center; justify-content: center;">
+                <span class="text-muted">Schools Programme Image</span>
               </div>
-            </div>
-            <div class="card">
               <div class="card-body">
-                <h3>Charity Support</h3>
-                <p class="text-muted">Supporting local charities through fundraising events and awareness campaigns.</p>
+                <div class="grid grid-cols-2 gap-4 text-center">
+                  <div>
+                    <p class="text-3xl font-bold text-primary mb-1">15+</p>
+                    <p class="text-sm text-muted">Partner Schools</p>
+                  </div>
+                  <div>
+                    <p class="text-3xl font-bold text-primary mb-1">500+</p>
+                    <p class="text-sm text-muted">Children Reached</p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
+        </div>
+      </section>
 
-          <div class="text-center mt-12">
-            <a href="contact.html" class="btn btn-primary btn-lg">Get Involved</a>
+      <!-- Community Days -->
+      <section id="community-days" class="section">
+        <div class="container">
+          <div class="text-center mb-8" style="max-width: 800px; margin: 0 auto;">
+            <h2>Community Days</h2>
+            <p class="text-lg">Regular open days welcoming families to experience rugby at our club. Free activities, food, and fun for all ages.</p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="card">
+              <div class="card-body">
+                <span class="badge bg-primary text-white mb-2">Annual Event</span>
+                <h3>Family Fun Day</h3>
+                <p class="text-muted">Our biggest community event of the year with games, competitions, BBQ, and entertainment for the whole family.</p>
+                <p class="text-sm"><strong>Next event:</strong> August 2026</p>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-body">
+                <span class="badge bg-secondary text-white mb-2">Monthly</span>
+                <h3>Open Training</h3>
+                <p class="text-muted">First Sunday of each month - come and try rugby! Free sessions for beginners of all ages.</p>
+                <p class="text-sm"><strong>Time:</strong> 10am - 12pm</p>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-body">
+                <span class="badge bg-accent mb-2">Easter & Summer</span>
+                <h3>Holiday Camps</h3>
+                <p class="text-muted">Multi-sport camps during school holidays with rugby, games, and activities.</p>
+                <p class="text-sm"><strong>Ages:</strong> 5-14 years</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Charity Support -->
+      <section id="charity" class="section bg-gray-50">
+        <div class="container">
+          <div class="text-center mb-8" style="max-width: 800px; margin: 0 auto;">
+            <h2>Charity Support</h2>
+            <p class="text-lg">Supporting local and national charities through fundraising events and awareness campaigns.</p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="card">
+              <div class="card-body">
+                <h3>Charity Partners</h3>
+                <p class="text-muted mb-4">Each season we partner with selected charities to raise funds and awareness:</p>
+                <ul>
+                  <li>Wooden Spoon - children's charity of rugby</li>
+                  <li>MIND - mental health awareness</li>
+                  <li>Local foodbanks</li>
+                  <li>Restart Rugby - injured players fund</li>
+                </ul>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-body">
+                <h3>Fundraising Events</h3>
+                <p class="text-muted mb-4">Throughout the year we host events to support our charity partners:</p>
+                <ul>
+                  <li>Charity matches and tournaments</li>
+                  <li>Sponsored runs and cycles</li>
+                  <li>Quiz nights and social events</li>
+                  <li>Christmas toy collections</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Inclusion -->
+      <section id="inclusion" class="section">
+        <div class="container">
+          <div class="text-center mb-8" style="max-width: 800px; margin: 0 auto;">
+            <h2>Rugby for All</h2>
+            <p class="text-lg">We're committed to making rugby accessible and welcoming to everyone, regardless of age, ability, or background.</p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="card bg-primary text-white">
+              <div class="card-body">
+                <h3 class="text-white">Walking Rugby</h3>
+                <p class="opacity-90">A slower-paced version of the game for those who want to stay active. Perfect for returning to sport or staying fit as we age.</p>
+                <p class="mt-4"><strong>When:</strong> Thursdays 7pm</p>
+              </div>
+            </div>
+            <div class="card bg-secondary text-white">
+              <div class="card-body">
+                <h3 class="text-white">Mixed Ability Rugby</h3>
+                <p class="opacity-90">Inclusive rugby for players of all abilities, bringing together disabled and non-disabled players in the same team.</p>
+                <p class="mt-4"><strong>Contact us for details</strong></p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Get Involved CTA -->
+      <section id="get-involved" class="section bg-primary text-white">
+        <div class="container text-center">
+          <h2 class="text-white mb-4">Get Involved</h2>
+          <p class="text-lg opacity-90 mb-8" style="max-width: 600px; margin: 0 auto;">
+            Whether you want to volunteer, bring your school to the club, or simply get involved in community rugby - we'd love to hear from you.
+          </p>
+          <div class="flex flex-wrap gap-4 justify-center">
+            <a href="volunteering.html" class="btn btn-white btn-lg">Volunteer With Us</a>
+            <a href="contact.html" class="btn btn-outline-white btn-lg">Contact Us</a>
           </div>
         </div>
       </section>
     </main>
 
     <footer class="main-footer">
-      <div class="container"><div class="footer-bottom"><p class="footer-copyright">&copy; 2026 Broadstreet RFC.</p></div></div>
+      <div class="container">
+        <div class="footer-grid">
+          <div class="footer-brand">
+            <div class="footer-logo">
+              <img src="../assets/logos/broadstreet-logo.svg" alt="Broadstreet RFC" height="60">
+              <span class="footer-logo-text">Broadstreet RFC</span>
+            </div>
+            <p class="footer-description">Playing rugby in Coventry since 1929.</p>
+          </div>
+          <div class="footer-links">
+            <h4>Quick Links</h4>
+            <ul>
+              <li><a href="fixtures.html">Fixtures & Results</a></li>
+              <li><a href="news.html">News</a></li>
+              <li><a href="teams.html">Teams</a></li>
+              <li><a href="about.html">About Us</a></li>
+            </ul>
+          </div>
+          <div class="footer-links">
+            <h4>Get Involved</h4>
+            <ul>
+              <li><a href="membership.html">Membership</a></li>
+              <li><a href="sponsors.html">Sponsorship</a></li>
+              <li><a href="clubhouse.html">Venue Hire</a></li>
+              <li><a href="volunteering.html">Volunteering</a></li>
+            </ul>
+          </div>
+          <div class="footer-links">
+            <h4>Contact</h4>
+            <p class="footer-contact-text">
+              <a href="mailto:info@broadstreet-rugby.co.uk">info@broadstreet-rugby.co.uk</a>
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div class="container">
+          <p class="footer-copyright">&copy; 2026 Broadstreet RFC. All rights reserved.</p>
+          <div class="footer-legal">
+            <a href="privacy.html">Privacy Policy</a>
+            <a href="safeguarding.html">Safeguarding</a>
+          </div>
+        </div>
+      </div>
     </footer>
+
+    <button class="back-to-top" aria-label="Back to top">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6z"/></svg>
+    </button>
   </div>
   <script src="../js/navigation.js"></script>
   <script src="../js/components.js"></script>
+  <script src="../js/utils.js"></script>
   <script src="../js/main.js"></script>
 </body>
 </html>

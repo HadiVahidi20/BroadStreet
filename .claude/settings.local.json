@@ -2,7 +2,9 @@
   "permissions": {
     "allow": [
       "WebFetch(domain:rctoulon.com)",
-      "WebFetch(domain:www.broadstreet-rugby.co.uk)"
+      "WebFetch(domain:www.broadstreet-rugby.co.uk)",
+      "WebFetch(domain:unsplash.com)",
+      "WebFetch(domain:www.pexels.com)"
     ]
   }
 }
