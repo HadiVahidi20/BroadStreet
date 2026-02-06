@@ -207,6 +207,270 @@
     .player-card {
       animation: fadeIn 0.4s ease forwards;
     }
+
+    /* Team Hero Section Styles */
+    .team-hero-container {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 21/9;
+      background-image: url('../assets/photos/teams/Team_bg.png');
+      background-size: cover;
+      background-position: center;
+      border-radius: 12px;
+      overflow: hidden;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      padding-bottom: 20px;
+    }
+
+    .team-hero-players {
+      position: relative;
+      width: 100%;
+      max-width: 1200px;
+      height: 100%;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+    }
+
+    .team-player-link {
+      position: absolute;
+      bottom: 0;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    /* Ground shadow for standing players */
+    .team-player-link::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80%;
+      height: 25px;
+      background: radial-gradient(ellipse, rgba(0, 0, 0, 0.25) 0%, rgba(0, 0, 0, 0.1) 40%, transparent 70%);
+      border-radius: 50%;
+      z-index: -1;
+    }
+
+    .team-player-img {
+      height: 420px;
+      width: auto;
+      display: block;
+      transition: all 0.3s ease;
+      filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.4));
+    }
+
+    /* Player positions - balanced spacing */
+    .team-player-link:nth-child(1) {
+      left: 23%;
+      bottom: 0;
+      z-index: 2;
+    }
+
+    .team-player-link:nth-child(2) {
+      left: 33%;
+      bottom: 0;
+      z-index: 3;
+    }
+
+    .team-player-link:nth-child(3) {
+      left: 50%;
+      transform: translateX(-50%);
+      bottom: 0;
+      z-index: 4;
+    }
+
+    .team-player-link:nth-child(4) {
+      right: 33%;
+      bottom: 0;
+      z-index: 3;
+    }
+
+    .team-player-link:nth-child(5) {
+      right: 23%;
+      bottom: 0;
+      z-index: 2;
+    }
+
+    /* Sitting players - in front with higher z-index */
+    .team-player-sitting {
+      position: absolute;
+      bottom: 0;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    /* Ground shadow for sitting players */
+    .team-player-sitting::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 70%;
+      height: 20px;
+      background: radial-gradient(ellipse, rgba(0, 0, 0, 0.25) 0%, rgba(0, 0, 0, 0.1) 40%, transparent 70%);
+      border-radius: 50%;
+      z-index: -1;
+    }
+
+    .team-player-sitting-img {
+      height: 280px;
+      width: auto;
+      display: block;
+      transition: all 0.3s ease;
+      filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.4));
+    }
+
+    /* Sitting players positions - symmetrical layout for 4 players */
+    .team-player-sitting:nth-child(6) {
+      left: 28%;
+      bottom: 0;
+      z-index: 5;
+    }
+
+    .team-player-sitting:nth-child(7) {
+      left: 38%;
+      bottom: 0;
+      z-index: 6;
+    }
+
+    .team-player-sitting:nth-child(8) {
+      right: 38%;
+      bottom: 0;
+      z-index: 6;
+    }
+
+    .team-player-sitting:nth-child(9) {
+      right: 28%;
+      bottom: 0;
+      z-index: 7;
+    }
+
+    /* Hover effects */
+    .team-player-link:hover,
+    .team-player-sitting:hover {
+      transform: rotateY(8deg) scale(1.03);
+    }
+
+    .team-player-link:nth-child(3):hover {
+      transform: translateX(-50%) rotateY(8deg) scale(1.03);
+    }
+
+    .team-player-link:hover .team-player-img,
+    .team-player-sitting:hover .team-player-sitting-img {
+      filter: drop-shadow(0 12px 24px rgba(0, 0, 0, 0.6));
+    }
+
+    /* When any player is hovered, make others grayscale */
+    .team-hero-players:has(.team-player-link:hover) .team-player-link:not(:hover),
+    .team-hero-players:has(.team-player-sitting:hover) .team-player-link:not(:hover),
+    .team-hero-players:has(.team-player-link:hover) .team-player-sitting:not(:hover),
+    .team-hero-players:has(.team-player-sitting:hover) .team-player-sitting:not(:hover) {
+      filter: grayscale(1);
+    }
+
+    .team-hero-players:has(.team-player-link:hover) .team-player-link:not(:hover) .team-player-img,
+    .team-hero-players:has(.team-player-sitting:hover) .team-player-link:not(:hover) .team-player-img,
+    .team-hero-players:has(.team-player-link:hover) .team-player-sitting:not(:hover) .team-player-sitting-img,
+    .team-hero-players:has(.team-player-sitting:hover) .team-player-sitting:not(:hover) .team-player-sitting-img {
+      filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.4)) grayscale(1);
+    }
+
+    /* Tablet responsive - حفظ چیدمان اصلی */
+    @media (min-width: 769px) and (max-width: 1024px) {
+      .team-hero-container {
+        aspect-ratio: 18/9;
+      }
+
+      .team-player-img {
+        height: 360px;
+      }
+
+      .team-player-sitting-img {
+        height: 250px;
+      }
+    }
+
+    /* Mobile responsive - Full screen carousel with player pairs */
+    @media (max-width: 768px) {
+      .team-hero-container {
+        aspect-ratio: auto;
+        height: 100vh;
+        min-height: 100vh;
+        overflow-x: auto;
+        overflow-y: hidden;
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        scroll-behavior: smooth;
+      }
+
+      .team-hero-container::-webkit-scrollbar {
+        display: none;
+      }
+
+      /* JavaScript will reorganize the players into pair containers */
+
+      .team-player-img {
+        width: 100vw;
+        max-width: 100vw;
+        height: auto;
+        max-height: 90vh;
+        object-fit: contain;
+      }
+
+      .team-player-sitting-img {
+        width: 100vw;
+        max-width: 100vw;
+        height: auto;
+        max-height: 60vh;
+        object-fit: contain;
+      }
+
+      /* Smaller ground shadows on mobile */
+      .team-player-link::after,
+      .team-player-sitting::after {
+        width: 55%;
+        height: 12px;
+      }
+
+      /* Disable 3D hover effects on mobile */
+      .team-player-link:hover,
+      .team-player-sitting:hover {
+        transform: translateX(-50%) !important;
+      }
+
+      /* Disable grayscale effect on mobile */
+      .team-hero-players:has(.team-player-link:hover) .team-player-link:not(:hover),
+      .team-hero-players:has(.team-player-sitting:hover) .team-player-link:not(:hover),
+      .team-hero-players:has(.team-player-link:hover) .team-player-sitting:not(:hover),
+      .team-hero-players:has(.team-player-sitting:hover) .team-player-sitting:not(:hover) {
+        filter: none;
+      }
+
+      .team-hero-players:has(.team-player-link:hover) .team-player-link:not(:hover) .team-player-img,
+      .team-hero-players:has(.team-player-sitting:hover) .team-player-link:not(:hover) .team-player-img,
+      .team-hero-players:has(.team-player-link:hover) .team-player-sitting:not(:hover) .team-player-sitting-img,
+      .team-hero-players:has(.team-player-sitting:hover) .team-player-sitting:not(:hover) .team-player-sitting-img {
+        filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.4));
+      }
+    }
+
+    @media (max-width: 480px) {
+      .team-player-img {
+        height: 240px;
+      }
+
+      .team-player-sitting-img {
+        height: 170px;
+      }
+    }
   </style>
 </head>
 <body>
@@ -422,7 +686,41 @@
                   </div>
                 </div>
                 <div>
-                  <img src="https://images.unsplash.com/photo-1552667466-07770ae110d0?w=600&h=375&q=80&fit=crop" alt="1st XV Squad" class="rounded-lg w-full" style="aspect-ratio: 16/10; object-fit: cover;">
+                  <!-- Interactive Team Hero -->
+                  <div class="team-hero-container">
+                    <div class="team-hero-players">
+                      <!-- Standing Players (Back Row) -->
+                      <a href="#" class="team-player-link" aria-label="Standing Player 1">
+                        <img src="../assets/photos/teams/sl1.png" alt="Standing Player 1" class="team-player-img">
+                      </a>
+                      <a href="#" class="team-player-link" aria-label="Standing Player 2">
+                        <img src="../assets/photos/teams/sl2.png" alt="Standing Player 2" class="team-player-img">
+                      </a>
+                      <a href="#" class="team-player-link" aria-label="Standing Player 3">
+                        <img src="../assets/photos/teams/sl3.png" alt="Standing Player 3" class="team-player-img">
+                      </a>
+                      <a href="#" class="team-player-link" aria-label="Standing Player 4">
+                        <img src="../assets/photos/teams/sl4.png" alt="Standing Player 4" class="team-player-img">
+                      </a>
+                      <a href="#" class="team-player-link" aria-label="Standing Player 5">
+                        <img src="../assets/photos/teams/sl5.png" alt="Standing Player 5" class="team-player-img">
+                      </a>
+
+                      <!-- Sitting Players (Front Row) -->
+                      <a href="#" class="team-player-sitting" aria-label="Sitting Player 1">
+                        <img src="../assets/photos/teams/sitted1.png" alt="Sitting Player 1" class="team-player-sitting-img">
+                      </a>
+                      <a href="#" class="team-player-sitting" aria-label="Sitting Player 2">
+                        <img src="../assets/photos/teams/sitted2.png" alt="Sitting Player 2" class="team-player-sitting-img">
+                      </a>
+                      <a href="#" class="team-player-sitting" aria-label="Sitting Player 3">
+                        <img src="../assets/photos/teams/sitted3.png" alt="Sitting Player 3" class="team-player-sitting-img">
+                      </a>
+                      <a href="#" class="team-player-sitting" aria-label="Sitting Player 4">
+                        <img src="../assets/photos/teams/sitted4.png" alt="Sitting Player 4" class="team-player-sitting-img">
+                      </a>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -1186,6 +1484,64 @@
       });
     });
   </script>
+
+  <!-- Mobile Carousel Grouping Script -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      function setupMobileCarousel() {
+        if (window.innerWidth > 768) return;
+
+        const heroPlayers = document.querySelector('.team-hero-players');
+        if (!heroPlayers) return;
+
+        const standingPlayers = Array.from(heroPlayers.querySelectorAll('.team-player-link'));
+        const sittingPlayers = Array.from(heroPlayers.querySelectorAll('.team-player-sitting'));
+
+        // Clear and rebuild in pairs
+        heroPlayers.innerHTML = '';
+        heroPlayers.style.cssText = 'display: flex; flex-direction: row; width: max-content; height: 100%;';
+
+        const maxPairs = Math.max(standingPlayers.length, sittingPlayers.length);
+
+        for (let i = 0; i < maxPairs; i++) {
+          const pairContainer = document.createElement('div');
+          pairContainer.style.cssText = `
+            position: relative;
+            flex-shrink: 0;
+            width: 100vw;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            scroll-snap-align: start;
+          `;
+
+          if (standingPlayers[i]) {
+            standingPlayers[i].style.cssText = 'position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); z-index: 1;';
+            pairContainer.appendChild(standingPlayers[i]);
+          }
+
+          if (sittingPlayers[i]) {
+            sittingPlayers[i].style.cssText = 'position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); z-index: 2;';
+            pairContainer.appendChild(sittingPlayers[i]);
+          }
+
+          heroPlayers.appendChild(pairContainer);
+        }
+      }
+
+      setupMobileCarousel();
+
+      let resizeTimer;
+      window.addEventListener('resize', function() {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(function() {
+          location.reload();
+        }, 500);
+      });
+    });
+  </script>
+
   <script src="../js/site-config.js"></script>
 </body>
 </html>

@@ -22,7 +22,8 @@
       "Bash(python add-social-media.py:*)",
       "Bash(python3:*)",
       "Bash(for file in index.html pages/*.html)",
-      "Bash(then echo \"$file\")"
+      "Bash(then echo \"$file\")",
+      "Bash(ls:*)"
     ]
   }
 }
