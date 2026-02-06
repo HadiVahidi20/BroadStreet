@@ -1361,9 +1361,10 @@
   position: absolute;
   inset: 0;
   background-size: cover;
-  background-position: center;
+  background-position: calc(50% + var(--hero-pan-x, 0px)) center;
   background-repeat: no-repeat;
   animation: kenBurns 20s ease-out infinite alternate;
+  will-change: background-position;
 }
 
 @keyframes kenBurns {
@@ -1508,6 +1509,12 @@
   .hero {
     min-height: 500px;
     height: 100vh;
+    touch-action: pan-y;
+  }
+
+  .hero-slide .container {
+    align-items: flex-end;
+    padding-bottom: var(--space-12);
   }
 
   .hero-nav {
@@ -1544,7 +1551,7 @@
   }
 
   .hero-slide .container {
-    padding-bottom: var(--space-10);
+    padding-bottom: var(--space-12);
   }
 
   .hero-content {

@@ -35,6 +35,23 @@ const Components = {
     let autoPlayInterval;
     const autoPlayDelay = 5000; // 5 seconds
 
+    let touchStartX = 0;
+    let touchStartY = 0;
+    let touchEndX = 0;
+    let isPanningBg = false;
+    let hasPannedBg = false;
+    let panStartOffset = 0;
+
+    const isMobile = () => window.matchMedia('(max-width: 768px)').matches;
+    const getActiveBg = () => slides[currentSlide]?.querySelector('.hero-bg');
+
+    const resetBgPan = (slideEl) => {
+      const bg = slideEl?.querySelector('.hero-bg');
+      if (!bg) return;
+      bg.style.setProperty('--hero-pan-x', '0px');
+      bg.dataset.panX = '0';
+    };
+
     const goToSlide = (index) => {
       // Remove active class from current slide
       slides[currentSlide].classList.remove('active');
@@ -46,6 +63,7 @@ const Components = {
       // Add active class to new slide
       slides[currentSlide].classList.add('active');
       indicators[currentSlide]?.classList.add('active');
+      resetBgPan(slides[currentSlide]);
     };
 
     const nextSlide = () => {
@@ -108,16 +126,54 @@ const Components = {
     hero.addEventListener('mouseleave', startAutoPlay);
 
     // Touch/swipe support for mobile
-    let touchStartX = 0;
-    let touchEndX = 0;
-
     hero.addEventListener('touchstart', (e) => {
       touchStartX = e.changedTouches[0].screenX;
+      touchStartY = e.changedTouches[0].screenY;
+      touchEndX = touchStartX;
+      hasPannedBg = false;
+      isPanningBg = isMobile() && !e.target.closest('.hero-content, .hero-cta, .btn, .hero-indicators, .hero-nav');
+
+      if (isPanningBg) {
+        const bg = getActiveBg();
+        panStartOffset = bg ? parseFloat(bg.dataset.panX || '0') : 0;
+      }
+
       stopAutoPlay();
     }, { passive: true });
 
+    hero.addEventListener('touchmove', (e) => {
+      if (!isPanningBg) return;
+
+      const touch = e.changedTouches[0];
+      const deltaX = touch.screenX - touchStartX;
+      const deltaY = touch.screenY - touchStartY;
+
+      if (Math.abs(deltaY) > Math.abs(deltaX)) {
+        isPanningBg = false;
+        return;
+      }
+
+      e.preventDefault();
+
+      const bg = getActiveBg();
+      if (!bg) return;
+
+      const maxPan = Math.min(bg.offsetWidth * 0.18, 120);
+      const nextPan = Math.max(-maxPan, Math.min(maxPan, panStartOffset + deltaX));
+      bg.style.setProperty('--hero-pan-x', `${nextPan}px`);
+      bg.dataset.panX = `${nextPan}`;
+
+      if (Math.abs(deltaX) > 6) {
+        hasPannedBg = true;
+      }
+    }, { passive: false });
+
     hero.addEventListener('touchend', (e) => {
       touchEndX = e.changedTouches[0].screenX;
+      if (hasPannedBg) {
+        startAutoPlay();
+        return;
+      }
       handleSwipe();
       startAutoPlay();
     }, { passive: true });
@@ -137,6 +193,7 @@ const Components = {
 
     // Start autoplay
     startAutoPlay();
+    resetBgPan(slides[currentSlide]);
 
     // Stop autoplay when page is hidden
     document.addEventListener('visibilitychange', () => {
