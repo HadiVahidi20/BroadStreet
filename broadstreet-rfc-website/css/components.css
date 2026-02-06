@@ -239,6 +239,10 @@
   align-items: start;
 }
 
+.next-match-grid > * {
+  min-width: 0;
+}
+
 @media (min-width: 1024px) {
   .next-match-grid {
     grid-template-columns: 1fr 1fr;
@@ -1241,7 +1245,6 @@
   width: 100%;
   border-collapse: collapse;
   font-size: var(--font-size-sm);
-  min-width: 520px;
 }
 
 .standings-table th {
@@ -1291,11 +1294,30 @@
 
   .standings-table {
     font-size: var(--font-size-xs);
+    table-layout: fixed;
   }
 
   .standings-table th,
   .standings-table td {
     padding: var(--space-2);
+    white-space: nowrap;
+  }
+
+  .standings-table th:nth-child(5),
+  .standings-table td:nth-child(5),
+  .standings-table th:nth-child(6),
+  .standings-table td:nth-child(6) {
+    display: none;
+  }
+
+  .standings-table .team-name {
+    display: table-cell;
+    white-space: normal;
+    line-height: var(--line-height-snug);
+  }
+
+  .standings-table .team-logo {
+    display: none;
   }
 }
 
