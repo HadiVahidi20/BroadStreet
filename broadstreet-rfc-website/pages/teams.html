@@ -420,17 +420,17 @@
       .team-player-img {
         width: 100vw;
         max-width: 100vw;
-        height: auto;
-        max-height: 90vh;
-        object-fit: contain;
+        height: 85vh;
+        object-fit: cover;
+        object-position: center bottom;
       }
 
       .team-player-sitting-img {
         width: 100vw;
         max-width: 100vw;
-        height: auto;
-        max-height: 60vh;
-        object-fit: contain;
+        height: 55vh;
+        object-fit: cover;
+        object-position: center bottom;
       }
 
       /* Smaller ground shadows on mobile */
@@ -459,6 +459,131 @@
       .team-hero-players:has(.team-player-link:hover) .team-player-sitting:not(:hover) .team-player-sitting-img,
       .team-hero-players:has(.team-player-sitting:hover) .team-player-sitting:not(:hover) .team-player-sitting-img {
         filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.4));
+      }
+
+      /* Navigation buttons */
+      .carousel-nav {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background: rgba(255, 255, 255, 0.9);
+        border: none;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        z-index: 10;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        transition: all 0.3s ease;
+      }
+
+      .carousel-nav:active {
+        transform: translateY(-50%) scale(0.95);
+      }
+
+      .carousel-nav-prev {
+        left: 15px;
+      }
+
+      .carousel-nav-next {
+        right: 15px;
+      }
+
+      .carousel-nav svg {
+        width: 24px;
+        height: 24px;
+        fill: #333;
+      }
+
+      /* Swipe hint animation */
+      .swipe-hint {
+        position: absolute;
+        bottom: 80px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: rgba(255, 255, 255, 0.9);
+        font-size: 14px;
+        font-weight: 500;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        animation: swipeHintFade 3s ease-in-out infinite;
+        pointer-events: none;
+        z-index: 10;
+      }
+
+      @keyframes swipeHintFade {
+        0%, 100% { opacity: 0; }
+        50% { opacity: 1; }
+      }
+
+      .swipe-hint.hidden {
+        display: none;
+      }
+
+      .swipe-hint svg {
+        width: 20px;
+        height: 20px;
+        fill: currentColor;
+        animation: swipeArrow 1.5s ease-in-out infinite;
+      }
+
+      @keyframes swipeArrow {
+        0%, 100% { transform: translateX(0); }
+        50% { transform: translateX(8px); }
+      }
+
+      /* Pagination dots */
+      .carousel-pagination {
+        position: absolute;
+        bottom: 30px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        gap: 10px;
+        z-index: 10;
+      }
+
+      .carousel-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.5);
+        border: 2px solid rgba(255, 255, 255, 0.8);
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .carousel-dot.active {
+        background: rgba(255, 255, 255, 1);
+        transform: scale(1.2);
+      }
+
+      /* Edge gradients to hint more content */
+      .team-hero-container::before,
+      .team-hero-container::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        width: 40px;
+        pointer-events: none;
+        z-index: 5;
+        opacity: 0.7;
+      }
+
+      .team-hero-container::before {
+        left: 0;
+        background: linear-gradient(to right, rgba(0, 0, 0, 0.2), transparent);
+      }
+
+      .team-hero-container::after {
+        right: 0;
+        background: linear-gradient(to left, rgba(0, 0, 0, 0.2), transparent);
       }
     }
 
@@ -1491,8 +1616,9 @@
       function setupMobileCarousel() {
         if (window.innerWidth > 768) return;
 
+        const heroContainer = document.querySelector('.team-hero-container');
         const heroPlayers = document.querySelector('.team-hero-players');
-        if (!heroPlayers) return;
+        if (!heroPlayers || !heroContainer) return;
 
         const standingPlayers = Array.from(heroPlayers.querySelectorAll('.team-player-link'));
         const sittingPlayers = Array.from(heroPlayers.querySelectorAll('.team-player-sitting'));
@@ -1528,6 +1654,101 @@
 
           heroPlayers.appendChild(pairContainer);
         }
+
+        // Add navigation buttons
+        const prevBtn = document.createElement('button');
+        prevBtn.className = 'carousel-nav carousel-nav-prev';
+        prevBtn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>';
+        prevBtn.setAttribute('aria-label', 'Previous player');
+
+        const nextBtn = document.createElement('button');
+        nextBtn.className = 'carousel-nav carousel-nav-next';
+        nextBtn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>';
+        nextBtn.setAttribute('aria-label', 'Next player');
+
+        heroContainer.appendChild(prevBtn);
+        heroContainer.appendChild(nextBtn);
+
+        // Add swipe hint
+        const swipeHint = document.createElement('div');
+        swipeHint.className = 'swipe-hint';
+        swipeHint.innerHTML = `
+          <span>Swipe</span>
+          <svg viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+        `;
+        heroContainer.appendChild(swipeHint);
+
+        // Hide swipe hint after first interaction
+        let hintHidden = false;
+        const hideHint = () => {
+          if (!hintHidden) {
+            swipeHint.classList.add('hidden');
+            hintHidden = true;
+          }
+        };
+
+        // Add pagination dots
+        const pagination = document.createElement('div');
+        pagination.className = 'carousel-pagination';
+        for (let i = 0; i < maxPairs; i++) {
+          const dot = document.createElement('div');
+          dot.className = 'carousel-dot' + (i === 0 ? ' active' : '');
+          dot.setAttribute('data-index', i);
+          pagination.appendChild(dot);
+        }
+        heroContainer.appendChild(pagination);
+
+        // Navigation functions
+        let currentIndex = 0;
+
+        function scrollToSlide(index) {
+          heroContainer.scrollTo({
+            left: index * window.innerWidth,
+            behavior: 'smooth'
+          });
+          currentIndex = index;
+          updatePagination();
+          hideHint();
+        }
+
+        function updatePagination() {
+          const dots = pagination.querySelectorAll('.carousel-dot');
+          dots.forEach((dot, i) => {
+            dot.classList.toggle('active', i === currentIndex);
+          });
+        }
+
+        // Button events
+        prevBtn.addEventListener('click', () => {
+          if (currentIndex > 0) {
+            scrollToSlide(currentIndex - 1);
+          }
+        });
+
+        nextBtn.addEventListener('click', () => {
+          if (currentIndex < maxPairs - 1) {
+            scrollToSlide(currentIndex + 1);
+          }
+        });
+
+        // Dot events
+        pagination.querySelectorAll('.carousel-dot').forEach(dot => {
+          dot.addEventListener('click', () => {
+            const index = parseInt(dot.getAttribute('data-index'));
+            scrollToSlide(index);
+          });
+        });
+
+        // Update on scroll
+        heroContainer.addEventListener('scroll', () => {
+          const scrollLeft = heroContainer.scrollLeft;
+          const newIndex = Math.round(scrollLeft / window.innerWidth);
+          if (newIndex !== currentIndex) {
+            currentIndex = newIndex;
+            updatePagination();
+            hideHint();
+          }
+        });
       }
 
       setupMobileCarousel();
