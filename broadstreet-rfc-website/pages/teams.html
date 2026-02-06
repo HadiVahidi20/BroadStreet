@@ -209,6 +209,10 @@
     }
 
     /* Team Hero Section Styles */
+    .team-hero-wrapper {
+      position: relative;
+    }
+
     .team-hero-container {
       position: relative;
       width: 100%;
@@ -478,6 +482,11 @@
         z-index: 10;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
         transition: all 0.3s ease;
+      }
+
+      .carousel-nav:disabled {
+        opacity: 0.5;
+        cursor: default;
       }
 
       .carousel-nav:active {
@@ -803,8 +812,9 @@
                 </div>
                 <div>
                   <!-- Interactive Team Hero -->
-                  <div class="team-hero-container">
-                    <div class="team-hero-players">
+                  <div class="team-hero-wrapper">
+                    <div class="team-hero-container">
+                      <div class="team-hero-players">
                       <!-- Standing Players (Back Row) -->
                       <a href="#" class="team-player-link" aria-label="Standing Player 1">
                         <img src="../assets/photos/teams/sl1.png" alt="Standing Player 1" class="team-player-img">
@@ -835,6 +845,7 @@
                       <a href="#" class="team-player-sitting" aria-label="Sitting Player 4">
                         <img src="../assets/photos/teams/sitted4.png" alt="Sitting Player 4" class="team-player-sitting-img">
                       </a>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -1611,6 +1622,11 @@
         const heroPlayers = document.querySelector('.team-hero-players');
         if (!heroPlayers || !heroContainer) return;
 
+        const heroWrapper = heroContainer.closest('.team-hero-wrapper') || heroContainer;
+
+        // If setup runs more than once, avoid duplicating UI elements.
+        heroWrapper.querySelectorAll('.carousel-nav, .swipe-hint, .carousel-pagination').forEach(el => el.remove());
+
         const standingPlayers = Array.from(heroPlayers.querySelectorAll('.team-player-link'));
         const sittingPlayers = Array.from(heroPlayers.querySelectorAll('.team-player-sitting'));
 
@@ -1646,6 +1662,11 @@
           heroPlayers.appendChild(pairContainer);
         }
 
+        // Reset to the first slide after rebuild.
+        heroContainer.scrollLeft = 0;
+
+        const slides = Array.from(heroPlayers.children);
+
         // Add navigation buttons
         const prevBtn = document.createElement('button');
         prevBtn.className = 'carousel-nav carousel-nav-prev';
@@ -1657,8 +1678,8 @@
         nextBtn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>';
         nextBtn.setAttribute('aria-label', 'Next player');
 
-        heroContainer.appendChild(prevBtn);
-        heroContainer.appendChild(nextBtn);
+        heroWrapper.appendChild(prevBtn);
+        heroWrapper.appendChild(nextBtn);
 
         // Add swipe hint
         const swipeHint = document.createElement('div');
@@ -1667,7 +1688,7 @@
           <span>Swipe</span>
           <svg viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
         `;
-        heroContainer.appendChild(swipeHint);
+        heroWrapper.appendChild(swipeHint);
 
         // Hide swipe hint after first interaction
         let hintHidden = false;
@@ -1687,18 +1708,26 @@
           dot.setAttribute('data-index', i);
           pagination.appendChild(dot);
         }
-        heroContainer.appendChild(pagination);
+        heroWrapper.appendChild(pagination);
 
         // Navigation functions
         let currentIndex = 0;
 
+        function updateNavState() {
+          prevBtn.disabled = currentIndex <= 0;
+          nextBtn.disabled = currentIndex >= maxPairs - 1;
+        }
+
         function scrollToSlide(index) {
+          const target = slides[index];
+          if (!target) return;
           heroContainer.scrollTo({
-            left: index * window.innerWidth,
+            left: target.offsetLeft,
             behavior: 'smooth'
           });
           currentIndex = index;
           updatePagination();
+          updateNavState();
           hideHint();
         }
 
@@ -1708,6 +1737,8 @@
             dot.classList.toggle('active', i === currentIndex);
           });
         }
+
+        updateNavState();
 
         // Button events
         prevBtn.addEventListener('click', () => {
@@ -1725,7 +1756,7 @@
         // Dot events
         pagination.querySelectorAll('.carousel-dot').forEach(dot => {
           dot.addEventListener('click', () => {
-            const index = parseInt(dot.getAttribute('data-index'));
+            const index = parseInt(dot.getAttribute('data-index'), 10);
             scrollToSlide(index);
           });
         });
@@ -1733,10 +1764,22 @@
         // Update on scroll
         heroContainer.addEventListener('scroll', () => {
           const scrollLeft = heroContainer.scrollLeft;
-          const newIndex = Math.round(scrollLeft / window.innerWidth);
+
+          // Find the closest slide to the current scrollLeft. (Small N, cheap and robust.)
+          let newIndex = 0;
+          let bestDelta = Number.POSITIVE_INFINITY;
+          slides.forEach((slide, idx) => {
+            const delta = Math.abs(slide.offsetLeft - scrollLeft);
+            if (delta < bestDelta) {
+              bestDelta = delta;
+              newIndex = idx;
+            }
+          });
+
           if (newIndex !== currentIndex) {
             currentIndex = newIndex;
             updatePagination();
+            updateNavState();
             hideHint();
           }
         });
