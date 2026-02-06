@@ -329,13 +329,19 @@ const Components = {
           items.forEach((i) => {
             i.classList.remove('open');
             const c = i.querySelector('.accordion-content');
-            if (c) c.style.maxHeight = null;
+            if (c) {
+              c.style.maxHeight = null;
+              c.style.display = 'none';
+            }
           });
 
           // Open clicked item if it was closed
           if (!isOpen) {
             item.classList.add('open');
-            if (content) content.style.maxHeight = content.scrollHeight + 'px';
+            if (content) {
+              content.style.display = 'block';
+              content.style.maxHeight = content.scrollHeight + 'px';
+            }
           }
         });
       });

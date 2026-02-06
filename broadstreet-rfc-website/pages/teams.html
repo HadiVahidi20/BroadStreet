@@ -405,8 +405,11 @@
     @media (max-width: 768px) {
       .team-hero-container {
         aspect-ratio: auto;
+        /* Use stable viewport units to avoid "jumping" when the mobile browser UI shows/hides. */
         height: 100vh;
         min-height: 100vh;
+        height: 100svh;
+        min-height: 100svh;
         overflow-x: auto;
         overflow-y: hidden;
         scroll-snap-type: x mandatory;
@@ -794,11 +797,12 @@
           <!-- 1st XV -->
           <div class="mb-12">
             <div class="mb-6">
-              <div class="two-col-equal" style="align-items: center;">
+              <div class="two-col-equal" style="align-items: start;">
                 <div>
                   <span class="badge badge-primary mb-2">First Team</span>
                   <h3>1st XV Squad</h3>
-                  <p class="text-muted mb-4">Our flagship team competing in Coventry NL2N, representing the club at the highest level.</p>
+                  <p class="text-sm text-muted mb-2">Tradition. Resilience. Ambition.</p>
+                  <p class="text-muted mb-4">The Broadstreet RFC 1st XV is the flagship side of the club and a team shaped by experience at the higher levels of English rugby. With a proud history of competing across National 2, Regional 1, and now Regional 2 Midlands East, the 1st XV is driven by one clear goal - to climb back up the leagues and re-establish Broadstreet at the level it belongs.</p>
 
                   <div class="grid grid-cols-2 gap-4 mb-4" style="max-width: 500px;">
                     <div>
@@ -808,6 +812,53 @@
                     <div>
                       <p class="text-sm text-muted mb-1">Matches</p>
                       <p class="font-semibold mb-0">Saturdays<br>3:00 PM Kick-off</p>
+                    </div>
+                  </div>
+
+                  <!-- Page Content (Source: instruction/Untitled document.docx) -->
+                  <div class="card mt-6" style="max-width: 560px;">
+                    <div class="card-body">
+                      <h4 class="mb-2">About the 1st XV</h4>
+                      <p class="text-muted mb-4">Broadstreet's 1st XV represents the very best of the club, combining battle-hardened senior players with ambitious emerging talent. Having experienced the demands of rugby at National and Regional 1 level, the squad understands what it takes to compete, rebuild, and push forward.</p>
+                      <p class="text-muted mb-4">Currently competing in Regional 2 Midlands East, the team is firmly focused on promotion, using past experience as motivation and fuel for the future. Every performance is underpinned by pride in the shirt and a relentless desire to progress.</p>
+
+                      <h4 class="mb-2">League Journey &amp; Ambition</h4>
+                      <p class="text-muted mb-3">The club's recent history reflects both challenge and resilience.</p>
+                      <ul class="mb-4">
+                        <li>Previous campaigns in National 2</li>
+                        <li>Strong spells in Regional 1</li>
+                        <li>A competitive return to Regional 2 Midlands East</li>
+                      </ul>
+                      <p class="text-muted mb-4">Rather than seeing this as a setback, the 1st XV views the current league as an opportunity - an opportunity to build momentum, develop depth, and fight for promotion with purpose and belief.</p>
+                      <p class="text-muted mb-4">The ambition is clear: step by step, season by season, Broadstreet RFC is determined to climb back up the leagues.</p>
+
+                      <h4 class="mb-2">Playing Philosophy</h4>
+                      <p class="text-muted mb-3">The Broadstreet 1st XV plays a brand of rugby built to succeed across all levels:</p>
+                      <ul class="mb-4">
+                        <li>Physical, dominant forward play</li>
+                        <li>Ambitious attacking rugby backed by disciplined defence</li>
+                        <li>Intelligent game management</li>
+                        <li>Strong set-piece and breakdown control</li>
+                      </ul>
+                      <p class="text-muted mb-4">This balanced approach reflects the experience gained at higher levels while remaining adaptable to the demands of the current league.</p>
+
+                      <h4 class="mb-2">Leadership &amp; Coaching</h4>
+                      <p class="text-muted mb-4">Guided by a committed coaching and leadership group, the 1st XV places a strong emphasis on standards, preparation, and accountability. Training sessions are intense, purposeful, and focused on continuous improvement - ensuring the squad is ready to compete week in, week out.</p>
+                      <p class="text-muted mb-4">Leadership within the group is earned, with experienced players setting the tone and driving the team forward in pursuit of promotion.</p>
+
+                      <h4 class="mb-2">Matchday at Broadstreet</h4>
+                      <p class="text-muted mb-4">Home matches at The Ivor Preece Field offer competitive rugby and a strong club atmosphere. Matchday is about performance on the pitch and connection off it - bringing together players, members, supporters, and the wider community.</p>
+                      <p class="text-muted mb-4">Your support plays a vital role in the team's push up the leagues.</p>
+
+                      <h4 class="mb-2">The Squad</h4>
+                      <p class="text-muted mb-3">The 1st XV squad features:</p>
+                      <ul class="mb-6">
+                        <li>Players with experience at Championship, National League and Regional levels</li>
+                        <li>Homegrown talent developed within Broadstreet RFC</li>
+                        <li>Hungry, ambitious players committed to success</li>
+                      </ul>
+
+                      <a href="#playerGrid" class="btn btn-outline btn-sm">View Squad Profiles</a>
                     </div>
                   </div>
                 </div>
@@ -1616,17 +1667,28 @@
   <!-- Mobile Carousel Grouping Script -->
   <script>
     document.addEventListener('DOMContentLoaded', function() {
-      function setupMobileCarousel() {
-        if (window.innerWidth > 768) return;
+      const heroContainer = document.querySelector('.team-hero-container');
+      const heroPlayers = document.querySelector('.team-hero-players');
+      if (!heroPlayers || !heroContainer) return;
 
-        const heroContainer = document.querySelector('.team-hero-container');
-        const heroPlayers = document.querySelector('.team-hero-players');
-        if (!heroPlayers || !heroContainer) return;
+      const heroWrapper = heroContainer.closest('.team-hero-wrapper') || heroContainer;
+      const desktopMarkup = heroPlayers.innerHTML;
+      const mobileMql = window.matchMedia('(max-width: 768px)');
 
-        const heroWrapper = heroContainer.closest('.team-hero-wrapper') || heroContainer;
+      let isMounted = false;
+      let mobileScrollHandler = null;
 
-        // If setup runs more than once, avoid duplicating UI elements.
-        heroWrapper.querySelectorAll('.carousel-nav, .swipe-hint, .carousel-pagination').forEach(el => el.remove());
+      function removeMobileUi() {
+        heroWrapper
+          .querySelectorAll('.carousel-nav, .swipe-hint, .carousel-pagination')
+          .forEach(el => el.remove());
+      }
+
+      function mountMobileCarousel() {
+        if (isMounted) return;
+        if (!mobileMql.matches) return;
+
+        removeMobileUi();
 
         const standingPlayers = Array.from(heroPlayers.querySelectorAll('.team-player-link'));
         const sittingPlayers = Array.from(heroPlayers.querySelectorAll('.team-player-sitting'));
@@ -1719,6 +1781,13 @@
           nextBtn.disabled = currentIndex >= maxPairs - 1;
         }
 
+        function updatePagination() {
+          const dots = pagination.querySelectorAll('.carousel-dot');
+          dots.forEach((dot, i) => {
+            dot.classList.toggle('active', i === currentIndex);
+          });
+        }
+
         function scrollToSlide(index) {
           const target = slides[index];
           if (!target) return;
@@ -1730,13 +1799,6 @@
           updatePagination();
           updateNavState();
           hideHint();
-        }
-
-        function updatePagination() {
-          const dots = pagination.querySelectorAll('.carousel-dot');
-          dots.forEach((dot, i) => {
-            dot.classList.toggle('active', i === currentIndex);
-          });
         }
 
         updateNavState();
@@ -1762,39 +1824,70 @@
           });
         });
 
-        // Update on scroll
-        heroContainer.addEventListener('scroll', () => {
-          const scrollLeft = heroContainer.scrollLeft;
+        // Update on scroll (passive + rAF to keep it cheap)
+        let scrollRaf = 0;
+        mobileScrollHandler = () => {
+          if (scrollRaf) return;
+          scrollRaf = window.requestAnimationFrame(() => {
+            scrollRaf = 0;
+            const scrollLeft = heroContainer.scrollLeft;
 
-          // Find the closest slide to the current scrollLeft. (Small N, cheap and robust.)
-          let newIndex = 0;
-          let bestDelta = Number.POSITIVE_INFINITY;
-          slides.forEach((slide, idx) => {
-            const delta = Math.abs(slide.offsetLeft - scrollLeft);
-            if (delta < bestDelta) {
-              bestDelta = delta;
-              newIndex = idx;
+            // Find the closest slide to the current scrollLeft. (Small N, cheap and robust.)
+            let newIndex = 0;
+            let bestDelta = Number.POSITIVE_INFINITY;
+            slides.forEach((slide, idx) => {
+              const delta = Math.abs(slide.offsetLeft - scrollLeft);
+              if (delta < bestDelta) {
+                bestDelta = delta;
+                newIndex = idx;
+              }
+            });
+
+            if (newIndex !== currentIndex) {
+              currentIndex = newIndex;
+              updatePagination();
+              updateNavState();
+              hideHint();
             }
           });
+        };
 
-          if (newIndex !== currentIndex) {
-            currentIndex = newIndex;
-            updatePagination();
-            updateNavState();
-            hideHint();
-          }
-        });
+        heroContainer.addEventListener('scroll', mobileScrollHandler, { passive: true });
+        isMounted = true;
       }
 
-      setupMobileCarousel();
+      function unmountMobileCarousel() {
+        if (!isMounted) return;
 
-      let resizeTimer;
-      window.addEventListener('resize', function() {
-        clearTimeout(resizeTimer);
-        resizeTimer = setTimeout(function() {
-          location.reload();
-        }, 500);
-      });
+        if (mobileScrollHandler) {
+          heroContainer.removeEventListener('scroll', mobileScrollHandler);
+          mobileScrollHandler = null;
+        }
+
+        removeMobileUi();
+        heroPlayers.innerHTML = desktopMarkup;
+        heroPlayers.removeAttribute('style');
+        isMounted = false;
+      }
+
+      function syncCarouselMode() {
+        if (mobileMql.matches) {
+          mountMobileCarousel();
+        } else {
+          unmountMobileCarousel();
+        }
+      }
+
+      // Initial setup
+      syncCarouselMode();
+
+      // IMPORTANT: Do not reload the page on `resize`. Mobile browsers fire `resize` during scroll
+      // (address bar show/hide), which feels like the page is constantly reloading and "jumping".
+      if (mobileMql.addEventListener) {
+        mobileMql.addEventListener('change', syncCarouselMode);
+      } else if (mobileMql.addListener) {
+        mobileMql.addListener(syncCarouselMode);
+      }
     });
   </script>
 
