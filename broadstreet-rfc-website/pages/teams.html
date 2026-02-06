@@ -413,6 +413,7 @@
         -webkit-overflow-scrolling: touch;
         scrollbar-width: none;
         scroll-behavior: smooth;
+        justify-content: flex-start;
       }
 
       .team-hero-container::-webkit-scrollbar {
@@ -1632,7 +1633,7 @@
 
         // Clear and rebuild in pairs
         heroPlayers.innerHTML = '';
-        heroPlayers.style.cssText = 'display: flex; flex-direction: row; width: max-content; height: 100%;';
+        heroPlayers.style.cssText = 'display: flex; flex-direction: row; width: max-content; max-width: none; height: 100%; justify-content: flex-start;';
 
         const maxPairs = Math.max(standingPlayers.length, sittingPlayers.length);
 

@@ -292,6 +292,21 @@
   background-color: var(--color-black);
 }
 
+@media (max-width: 640px) {
+  .footer-newsletter-form {
+    flex-direction: column;
+  }
+
+  .footer-newsletter-form button {
+    width: 100%;
+  }
+
+  .footer-legal {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}
+
 /* ----------------
    Back to Top
    ---------------- */
