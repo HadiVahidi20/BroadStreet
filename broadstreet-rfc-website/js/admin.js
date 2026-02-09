@@ -15,11 +15,11 @@ const AdminApp = (function () {
   
   // Google Sign-In Client ID - Create at https://console.cloud.google.com
   // Go to APIs & Services → Credentials → Create OAuth 2.0 Client ID
-  const GOOGLE_CLIENT_ID = 'YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com';  // Replace with your Client ID
+  const GOOGLE_CLIENT_ID = '113530727392-71pcmuk8sbh1n8o14muuviq0ldlujbp3.apps.googleusercontent.com';  // Replace with your Client ID
   
   // Google Apps Script URL - Deploy your script and paste the URL here
   // Go to Extensions → Apps Script → Deploy → New deployment
-  const APPS_SCRIPT_URL = 'YOUR_APPS_SCRIPT_URL';  // Replace with your Apps Script URL
+  const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxe8cuvtbt8mjoyWZ9qbvT_AaT6NpEIXBR92EvETITaQPn9dU1OhBml-EI2TQEPhRy_EA/exec';  // Replace with your Apps Script URL
 
   let currentSection = 'news';
   let currentData = [];

@@ -28,8 +28,8 @@ var CONFIG = {
   // ⚠️ IMPORTANT: Add authorized Gmail/Google Workspace email addresses here
   // Only these emails can access the admin panel
   ALLOWED_EMAILS: [
-    // "hadi@theherd.agency",      // Example: club admin
-    // "webmaster@broadstreetrfc.co.uk",  // Example: webmaster
+     "hadi@theherd.agency",      // Example: club admin
+     "hadivahidi20@gmail.com",  // Example: webmaster
     // "your.email@gmail.com",            // Add your Gmail here
   ],
   
