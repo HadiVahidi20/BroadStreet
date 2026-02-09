@@ -19,7 +19,7 @@ const AdminApp = (function () {
   
   // Google Apps Script URL - Deploy your script and paste the URL here
   // Go to Extensions → Apps Script → Deploy → New deployment
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxe8cuvtbt8mjoyWZ9qbvT_AaT6NpEIXBR92EvETITaQPn9dU10hBml-El2TQEPhry_EA/exec';
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxe8cuvtbt8mjoyWZ9qbvT_AaT6NpEIXBR92EvETITaQPn9dU1OhBml-EI2TQEPhRy_EA/exec';
 
   let currentSection = 'news';
   let currentData = [];
