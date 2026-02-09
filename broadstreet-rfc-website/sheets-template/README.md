@@ -1,5 +1,24 @@
 # Google Sheets Setup Guide
 
+This folder contains CSV templates and Google Apps Scripts for the Broadstreet RFC website.
+
+## Files Overview
+
+### CSV Templates
+- `news.csv` - News articles
+- `fixtures.csv` - Match fixtures and results
+- `standings.csv` - League table (auto-calculated)
+- `players.csv` - Player profiles
+- `coaching.csv` - Coaching staff
+- `sponsors.csv` - Sponsor information
+- `hero.csv` - Homepage hero carousel
+
+### Google Apps Scripts
+- `google-apps-script.js` - Auto-calculate standings from fixtures (original)
+- `google-apps-script-admin-api.js` - **NEW!** Admin Panel API for CRUD operations
+
+---
+
 ## Step 1: Create Google Sheet
 1. Go to https://sheets.google.com
 2. Click **Blank spreadsheet**
@@ -91,6 +110,60 @@ The included Google Apps Script auto-calculates the `standings` tab from your `f
 - Also available from menu: **Rugby Data → Calculate Standings**
 
 ### Bonus points columns in fixtures:
+- `home_bp` (optional): number of try bonus points for home team
+- `away_bp` (optional): number of try bonus points for away team
+If a team scores 4+ tries, enter `1` in the bonus column.
+
+---
+
+## Step 8: Setup Admin Panel API (NEW!)
+
+The admin panel allows you to manage all website content through a web interface.
+
+### Setup:
+1. In your Google Sheet, go to **Extensions → Apps Script**
+2. Click the **+** button to create a new file
+3. Name it `AdminAPI`
+4. Copy the contents of `google-apps-script-admin-api.js` and paste it
+5. **IMPORTANT:** Change the password:
+   ```javascript
+   var CONFIG = {
+     PASSWORD: "your-secure-password-here",  // Change this!
+     // ...
+   };
+   ```
+6. Click **Save**
+
+### Deploy as Web App:
+1. Click **Deploy → New deployment**
+2. Click the gear icon ⚙️ and select **Web app**
+3. Configure:
+   - **Description:** Admin API
+   - **Execute as:** Me (your email)
+   - **Who has access:** Anyone
+4. Click **Deploy**
+5. Review and **Authorize** the required permissions
+6. **Copy the Web App URL** - you'll need this for the admin panel
+
+### Security Notes:
+- The API requires password authentication for all operations
+- Change the default password immediately
+- Keep the Web App URL private
+- Only share admin panel access with trusted users
+- Google Sheets automatically maintains version history for backups
+
+### Using the Admin Panel:
+1. Navigate to `/pages/admin.html` on your website
+2. Enter:
+   - **Password:** The password you set in the script
+   - **Google Apps Script URL:** The Web App URL you copied
+3. Click **Login**
+
+See `ADMIN-GUIDE.md` (Persian) or `ADMIN-GUIDE-EN.md` (English) for complete documentation.
+
+---
+
+## Troubleshooting
 | Column | Description |
 |--------|-------------|
 | `home_bp` | Try bonus point for home team (0 or 1) |

@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Panel - Broadstreet RFC</title>
+  <link rel="icon" type="image/png" href="../assets/logos/logo-light.png">
+  
+  <!-- Google Sign-In -->
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sen:wght@400;600;800&display=swap" rel="stylesheet">
+  
+  <!-- Styles -->
+  <link rel="stylesheet" href="../css/main.css">
+  <link rel="stylesheet" href="../css/admin.css">
+</head>
+<body class="admin-page">
+  
+  <!-- Login Screen -->
+  <div id="loginScreen" class="login-screen">
+    <div class="login-container">
+      <img src="../assets/logos/logo-light.png" alt="Broadstreet RFC" class="login-logo">
+      <h1>Admin Panel</h1>
+      <p class="login-subtitle">Broadstreet RFC Content Management</p>
+      
+      <div id="loginForm" class="login-form">
+        <!-- Google Sign-In -->
+        <div id="apiUrlStep" class="form-step">
+          <!-- Hidden input for compatibility -->
+          <input type="hidden" id="apiUrl" value="configured">
+          
+          <!-- Google Sign-In Button Container -->
+          <div class="google-signin-container">
+            <div id="googleSignInBtn"></div>
+          </div>
+          
+          <div class="divider">
+            <span>Secure login with your Google account</span>
+          </div>
+          
+          <p class="login-note">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            </svg>
+            Only authorized Google accounts can access this panel
+          </p>
+        </div>
+        
+        <div id="loginError" class="alert alert-error" style="display: none;"></div>
+        <div id="loginLoading" class="login-loading" style="display: none;">
+          <div class="spinner"></div>
+          <p>Verifying access...</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Admin Dashboard -->
+  <div id="adminDashboard" class="admin-dashboard" style="display: none;">
+    
+    <!-- Header -->
+    <header class="admin-header">
+      <div class="admin-header-content">
+        <div class="admin-logo">
+          <img src="../assets/logos/logo-light.png" alt="Broadstreet RFC" height="40">
+          <h1>Admin Panel</h1>
+        </div>
+        <div class="admin-header-actions">
+          <div class="admin-user-info">
+            <img id="userAvatar" src="" alt="" class="user-avatar">
+            <span id="userName" class="admin-user">User</span>
+          </div>
+          <button id="logoutBtn" class="btn btn-secondary btn-sm">Logout</button>
+        </div>
+      </div>
+    </header>
+    
+    <!-- Main Content -->
+    <div class="admin-main">
+      
+      <!-- Sidebar -->
+      <aside class="admin-sidebar">
+        <nav class="admin-nav">
+          <button class="admin-nav-item active" data-section="news">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/>
+            </svg>
+            <span>News</span>
+          </button>
+          
+          <button class="admin-nav-item" data-section="fixtures">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+            </svg>
+            <span>Fixtures</span>
+          </button>
+          
+          <button class="admin-nav-item" data-section="sponsors">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            <span>Sponsors</span>
+          </button>
+          
+          <button class="admin-nav-item" data-section="players">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+            </svg>
+            <span>Players</span>
+          </button>
+          
+          <button class="admin-nav-item" data-section="hero">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+            </svg>
+            <span>Hero Carousel</span>
+          </button>
+          
+          <button class="admin-nav-item" data-section="standings">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+            </svg>
+            <span>Standings</span>
+          </button>
+        </nav>
+        
+        <div class="admin-sidebar-footer">
+          <a href="../index.html" class="btn btn-secondary btn-sm btn-block">
+            View Website
+          </a>
+        </div>
+      </aside>
+      
+      <!-- Content Area -->
+      <main class="admin-content">
+        
+        <!-- Loading State -->
+        <div id="loadingState" class="loading-state">
+          <div class="spinner"></div>
+          <p>Loading data...</p>
+        </div>
+        
+        <!-- Error State -->
+        <div id="errorState" class="error-state" style="display: none;">
+          <p class="error-message"></p>
+          <button class="btn btn-primary" onclick="AdminApp.loadCurrentSection()">Retry</button>
+        </div>
+        
+        <!-- Section: News -->
+        <section id="section-news" class="admin-section" style="display: none;">
+          <div class="section-header">
+            <h2>Manage News</h2>
+            <button class="btn btn-primary" onclick="AdminApp.showAddForm('news')">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 4v16m8-8H4"/>
+              </svg>
+              Add News
+            </button>
+          </div>
+          
+          <div id="newsTable" class="data-table-container"></div>
+        </section>
+        
+        <!-- Section: Fixtures -->
+        <section id="section-fixtures" class="admin-section" style="display: none;">
+          <div class="section-header">
+            <h2>Manage Fixtures & Results</h2>
+            <button class="btn btn-primary" onclick="AdminApp.showAddForm('fixtures')">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 4v16m8-8H4"/>
+              </svg>
+              Add Fixture
+            </button>
+          </div>
+          
+          <div id="fixturesTable" class="data-table-container"></div>
+        </section>
+        
+        <!-- Section: Sponsors -->
+        <section id="section-sponsors" class="admin-section" style="display: none;">
+          <div class="section-header">
+            <h2>Manage Sponsors</h2>
+            <button class="btn btn-primary" onclick="AdminApp.showAddForm('sponsors')">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 4v16m8-8H4"/>
+              </svg>
+              Add Sponsor
+            </button>
+          </div>
+          
+          <div id="sponsorsTable" class="data-table-container"></div>
+        </section>
+        
+        <!-- Section: Players -->
+        <section id="section-players" class="admin-section" style="display: none;">
+          <div class="section-header">
+            <h2>Manage Players</h2>
+            <button class="btn btn-primary" onclick="AdminApp.showAddForm('players')">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 4v16m8-8H4"/>
+              </svg>
+              Add Player
+            </button>
+          </div>
+          
+          <div id="playersTable" class="data-table-container"></div>
+        </section>
+        
+        <!-- Section: Hero -->
+        <section id="section-hero" class="admin-section" style="display: none;">
+          <div class="section-header">
+            <h2>Manage Hero Carousel</h2>
+            <button class="btn btn-primary" onclick="AdminApp.showAddForm('hero')">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 4v16m8-8H4"/>
+              </svg>
+              Add Slide
+            </button>
+          </div>
+          
+          <div id="heroTable" class="data-table-container"></div>
+        </section>
+        
+        <!-- Section: Standings -->
+        <section id="section-standings" class="admin-section" style="display: none;">
+          <div class="section-header">
+            <h2>Standings Table</h2>
+            <div class="alert alert-info">
+              <strong>Note:</strong> Standings are automatically calculated from fixtures. Edit fixtures to update standings.
+            </div>
+          </div>
+          
+          <div id="standingsTable" class="data-table-container"></div>
+        </section>
+        
+      </main>
+      
+    </div>
+  </div>
+  
+  <!-- Modal for Add/Edit Forms -->
+  <div id="formModal" class="modal" style="display: none;">
+    <div class="modal-overlay" onclick="AdminApp.closeModal()"></div>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="modalTitle">Add Item</h3>
+        <button class="modal-close" onclick="AdminApp.closeModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="itemForm"></form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="AdminApp.closeModal()">Cancel</button>
+        <button class="btn btn-primary" onclick="AdminApp.submitForm()">Save</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Toast Notifications -->
+  <div id="toastContainer" class="toast-container"></div>
+  
+  <!-- Scripts -->
+  <script src="../js/admin.js"></script>
+  
+</body>
+</html>

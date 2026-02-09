@@ -1,0 +1,172 @@
+┌─────────────────────────────────────────────────────────────┐
+│       🎯 راهنمای سریع پنل ادمین Broadstreet RFC            │
+│            🔐 با احراز هویت امن Google Sign-In             │
+└─────────────────────────────────────────────────────────────┘
+
+📍 آدرس پنل ادمین:
+   https://your-domain.com/pages/admin.html
+
+🔐 روش ورود:
+   ورود امن با حساب Google (Gmail)
+   ✅ بدون نیاز به رمز عبور!
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📋 مراحل نصب:
+
+═══════════════════════════════════════════════════════════
+قدم 1: ایجاد Google OAuth Client ID
+═══════════════════════════════════════════════════════════
+
+1️⃣  رفتن به Google Cloud Console
+   https://console.cloud.google.com
+   
+2️⃣  ایجاد پروژه جدید یا انتخاب پروژه موجود
+
+3️⃣  فعال کردن Google Identity API
+   APIs & Services → Library → Google Identity Services
+   
+4️⃣  ایجاد OAuth Client ID
+   APIs & Services → Credentials → Create Credentials → OAuth client ID
+   - Application type: Web application
+   - Authorized JavaScript origins:
+     • https://your-domain.com
+     • http://localhost:3000 (برای تست)
+   - Authorized redirect URIs:
+     • https://your-domain.com/pages/admin.html
+     
+5️⃣  کپی Client ID
+   چیزی شبیه: 123456789-abc123.apps.googleusercontent.com
+
+═══════════════════════════════════════════════════════════
+قدم 2: تنظیم کد JavaScript
+═══════════════════════════════════════════════════════════
+
+6️⃣  باز کردن js/admin.js
+
+7️⃣  جایگزین کردن Client ID
+   خط زیر را پیدا کنید:
+   const GOOGLE_CLIENT_ID = 'YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com';
+   
+   و با Client ID واقعی جایگزین کنید
+
+8️⃣  جایگزین کردن Apps Script URL
+   *بعد از Deploy در مرحله بعد این URL را دریافت خواهید کرد*
+   خط زیر را پیدا کنید:
+   const APPS_SCRIPT_URL = 'YOUR_APPS_SCRIPT_URL';
+   
+   و با URL واقعی جایگزین کنید
+
+═══════════════════════════════════════════════════════════
+قدم 3: نصب Google Apps Script
+═══════════════════════════════════════════════════════════
+
+9️⃣  باز کردن Google Sheet
+   Extensions → Apps Script
+   
+🔟  کپی کد
+   📁 sheets-template/google-apps-script-admin-api.js
+   
+1️⃣1️⃣  اضافه کردن ایمیل‌های مجاز
+   در CONFIG.ALLOWED_EMAILS ایمیل‌های مجاز را اضافه کنید:
+   
+   ALLOWED_EMAILS: [
+     "admin@example.com",
+     "your.email@gmail.com",
+   ]
+
+1️⃣2️⃣  Deploy به عنوان Web App
+   Deploy → New deployment → Web app
+   Execute as: Me
+   Access: Anyone
+
+1️⃣3️⃣  کپی Web App URL
+   این URL را در js/admin.js در APPS_SCRIPT_URL قرار دهید
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🎨 فایل‌های ایجاد شده:
+
+┌─ Frontend
+│  ├─ pages/admin.html        → صفحه اصلی پنل
+│  ├─ css/admin.css           → استایل‌ها
+│  └─ js/admin.js             → منطق و Google Sign-In
+│
+└─ Backend (Google Apps Script)
+   └─ google-apps-script-admin-api.js  → API با احراز هویت Google
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✨ امکانات پنل:
+
+📰 News           → اضافه / ویرایش / حذف اخبار
+📅 Fixtures       → مدیریت بازی‌ها و نتایج  
+💰 Sponsors       → مدیریت اسپانسرها
+👥 Players        → مدیریت بازیکنان
+🎭 Hero Carousel  → مدیریت اسلایدر صفحه اصلی
+📊 Standings      → نمایش جدول (خودکار)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🔒 مزایای امنیتی Google Sign-In:
+
+✅ بدون ذخیره یا ارسال رمز عبور
+✅ احراز هویت دو مرحله‌ای (اگر در Gmail فعال باشد)
+✅ فقط ایمیل‌های مجاز می‌توانند وارد شوند
+✅ امکان لغو دسترسی بدون تغییر رمز
+✅ Sessions امن با توکن‌های Google
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+⚡ عملیات سریع:
+
+1️⃣  باز کردن /pages/admin.html
+2️⃣  کلیک روی "Sign in with Google"
+3️⃣  انتخاب حساب Google مجاز
+4️⃣  ✅ ورود موفق!
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🐛 رفع مشکلات:
+
+❌ "Please configure APPS_SCRIPT_URL"
+   → URL اسکریپت در admin.js تنظیم نشده
+   → APPS_SCRIPT_URL را در admin.js وارد کنید
+
+❌ "Access denied"
+   → ایمیل شما در ALLOWED_EMAILS نیست
+   → ایمیل خود را به لیست اضافه کنید
+
+❌ "Invalid token"
+   → Client ID اشتباه است
+   → دوباره Client ID را چک کنید
+
+❌ "Origin not allowed"
+   → دامنه سایت در Authorized origins نیست
+   → دامنه را در Google Console اضافه کنید
+
+❌ Cannot load Google
+   → اینترنت را چک کنید
+   → کش مرورگر را پاک کنید
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📚 مستندات کامل:
+
+🇮🇷 فارسی:   ADMIN-GUIDE.md
+🇬🇧 English:  ADMIN-GUIDE-EN.md
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+💡 نکات مهم:
+
+• Client ID را مخفی نگه دارید (اما در JS قابل مشاهده است)
+• ALLOWED_EMAILS را محدود نگه دارید
+• دسترسی‌ها را در Google Console مدیریت کنید
+• از Version History برای backup استفاده کنید
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✅ تمام! حالا می‌توانید با امنیت بالا محتوای سایت را مدیریت کنید.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
