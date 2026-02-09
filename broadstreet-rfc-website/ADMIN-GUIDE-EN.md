@@ -88,19 +88,23 @@ Upload all files to your server or deploy via Netlify.
 7. Click **CREATE**
 8. **Copy the Client ID**
 
-### Step 4: Add Client ID to Code
+### Step 4: Add Client ID and Apps Script URL to Code
 
-Open `js/admin.js` and find this line:
+Open `js/admin.js` and find these lines:
 
 ```javascript
 const GOOGLE_CLIENT_ID = 'YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com';
+const APPS_SCRIPT_URL = 'YOUR_APPS_SCRIPT_URL';
 ```
 
-Replace it with your actual Client ID:
+Replace them with your actual values:
 
 ```javascript
 const GOOGLE_CLIENT_ID = '123456789-abc123xyz.apps.googleusercontent.com';
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby.../exec';
 ```
+
+⚠️ **Important:** You need to get the Apps Script URL from Step 4 of the next section first!
 
 ---
 
@@ -167,6 +171,16 @@ The URL will look like:
 https://script.google.com/macros/s/AKfycby.../exec
 ```
 
+### Step 5: Add the URL to Code
+
+Now go back to `js/admin.js` and update the `APPS_SCRIPT_URL`:
+
+```javascript
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby.../exec';
+```
+
+Replace with the actual URL you copied from deployment.
+
 ---
 
 ## 🔐 Using the Admin Panel
@@ -174,10 +188,9 @@ https://script.google.com/macros/s/AKfycby.../exec
 ### Login
 
 1. Navigate to `/pages/admin.html`
-2. Enter the Web App URL
-3. Click the **Sign in with Google** button
-4. Select your Google account
-5. If your email is authorized, you'll enter the dashboard
+2. Click the **Sign in with Google** button
+3. Select your Google account
+4. If your email is authorized, you'll enter the dashboard
 
 ### Admin Interface
 
@@ -317,11 +330,12 @@ Google Sheets automatically maintains version history:
 
 ## 🐛 Troubleshooting
 
-### Issue 1: "Unauthorized" or "Email not allowed"
+### Issue 1: "Please configure APPS_SCRIPT_URL" or "Unauthorized"
 
 **Solution:**
+- Ensure you've set the `APPS_SCRIPT_URL` in `js/admin.js`
 - Ensure your email is in the `ALLOWED_EMAILS` list
-- Check the URL is entered correctly
+- Check the Apps Script URL is correct
 - Ensure Apps Script is properly deployed
 
 ### Issue 2: "Sign-in popup blocked"
