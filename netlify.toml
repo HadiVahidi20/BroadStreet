@@ -1,3 +1,11 @@
 [build]
   publish = "broadstreet-rfc-website"
   command = ""
+
+[functions]
+  directory = "netlify/functions"
+
+[[redirects]]
+  from = "/api/news"
+  to = "/.netlify/functions/news"
+  status = 200

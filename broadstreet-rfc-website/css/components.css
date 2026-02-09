@@ -2224,3 +2224,135 @@
     font-size: var(--font-size-2xl);
   }
 }
+
+/* ----------------
+   Team Pathway Cards (Homepage)
+   ---------------- */
+.team-pathway-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: var(--space-8) var(--space-5) var(--space-6);
+  background-color: var(--color-white);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-xl);
+  transition: all var(--transition-normal);
+}
+
+.team-pathway-card:hover {
+  box-shadow: var(--shadow-xl);
+  transform: translateY(-6px);
+  border-color: transparent;
+}
+
+.team-pathway-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 72px;
+  height: 72px;
+  border-radius: var(--radius-full);
+  color: var(--color-white);
+  margin-bottom: var(--space-4);
+  flex-shrink: 0;
+}
+
+.team-pathway-title {
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  margin-bottom: var(--space-3);
+  color: var(--color-ink);
+}
+
+.team-pathway-desc {
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-600);
+  line-height: var(--line-height-relaxed);
+  margin-bottom: var(--space-5);
+  flex: 1;
+}
+
+/* Women's Card -- Highlight Variant */
+.team-pathway-card--highlight {
+  border: 2px solid var(--color-accent);
+  background: linear-gradient(180deg, rgba(249, 235, 16, 0.06) 0%, var(--color-white) 40%);
+}
+
+.team-pathway-card--highlight:hover {
+  border-color: var(--color-accent-dark);
+  box-shadow: 0 20px 25px -5px rgba(249, 235, 16, 0.15), var(--shadow-xl);
+}
+
+.team-pathway-new-badge {
+  position: absolute;
+  top: var(--space-3);
+  right: var(--space-3);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-3);
+  background-color: var(--color-accent);
+  color: var(--color-ink);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-wide);
+  border-radius: var(--radius-full);
+  box-shadow: 0 2px 8px rgba(249, 235, 16, 0.4);
+}
+
+/* ----------------
+   Facility Stats (Homepage)
+   ---------------- */
+.facility-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: var(--space-6) var(--space-4);
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-xl);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  transition: all var(--transition-normal);
+}
+
+.facility-stat:hover {
+  background-color: rgba(255, 255, 255, 0.18);
+  transform: translateY(-4px);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.facility-stat-icon {
+  margin-bottom: var(--space-3);
+  opacity: 0.9;
+}
+
+.facility-stat-number {
+  font-size: var(--font-size-4xl);
+  font-weight: var(--font-weight-bold);
+  line-height: 1;
+  margin-bottom: var(--space-2);
+  color: var(--color-white);
+}
+
+.facility-stat-unit {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  opacity: 0.8;
+}
+
+.facility-stat-label {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-wider);
+  opacity: 0.85;
+}
+
+@media (max-width: 767px) {
+  .facility-stat-number {
+    font-size: var(--font-size-3xl);
+  }
+}

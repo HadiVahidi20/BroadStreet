@@ -1,0 +1,274 @@
+<!--
+  Broadstreet News (Google Sheets) - GoHighLevel Custom HTML Snippet
+
+  How to use:
+  1) Paste this entire block into a GHL "Custom HTML" element.
+  2) Set the CONFIG values below.
+
+  Notes:
+  - This reads from Google Sheets in the browser.
+  - API keys in browser are not secret. Restrict them by HTTP referrer in Google Cloud.
+  - The Google Sheet must be shared as Viewer ("Anyone with link") for read access.
+-->
+
+<style>
+  .bs-news {
+    font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  }
+  .bs-news a { color: inherit; }
+  .bs-news-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+  }
+  .bs-news-card {
+    border: 1px solid rgba(0,0,0,0.12);
+    border-radius: 12px;
+    overflow: hidden;
+    background: #fff;
+  }
+  .bs-news-img {
+    width: 100%;
+    aspect-ratio: 16/10;
+    object-fit: cover;
+    background: #eee;
+    display: block;
+  }
+  .bs-news-body { padding: 14px 14px 16px; }
+  .bs-news-cat {
+    font-size: 12px;
+    opacity: 0.75;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .bs-news-title {
+    margin: 8px 0 8px;
+    font-size: 18px;
+    line-height: 1.25;
+  }
+  .bs-news-excerpt { margin: 0 0 10px; opacity: 0.85; }
+  .bs-news-meta { font-size: 12px; opacity: 0.75; }
+
+  .bs-news-featured {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 16px;
+    align-items: stretch;
+    margin-bottom: 18px;
+  }
+  .bs-news-featured .bs-news-card { display: grid; grid-template-columns: 1fr 1fr; }
+  .bs-news-featured .bs-news-img { aspect-ratio: auto; height: 100%; min-height: 220px; }
+  .bs-news-featured .bs-news-body { display: flex; flex-direction: column; justify-content: center; }
+  .bs-news-btn {
+    display: inline-block;
+    margin-top: 12px;
+    padding: 10px 14px;
+    border-radius: 10px;
+    border: 1px solid rgba(0,0,0,0.15);
+    text-decoration: none;
+    width: fit-content;
+  }
+
+  @media (max-width: 980px) {
+    .bs-news-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .bs-news-featured .bs-news-card { grid-template-columns: 1fr; }
+    .bs-news-featured .bs-news-img { min-height: 200px; }
+  }
+  @media (max-width: 640px) {
+    .bs-news-grid { grid-template-columns: 1fr; }
+  }
+</style>
+
+<section class="bs-news" data-bs-news>
+  <div class="bs-news-featured" data-bs-news-featured-wrap>
+    <article class="bs-news-card" data-bs-news-featured>
+      <img class="bs-news-img" data-bs-news-featured-img alt="Featured" />
+      <div class="bs-news-body">
+        <div class="bs-news-cat" data-bs-news-featured-cat>Featured</div>
+        <h2 class="bs-news-title" data-bs-news-featured-title>Loading...</h2>
+        <p class="bs-news-excerpt" data-bs-news-featured-excerpt>Fetching latest updates.</p>
+        <div class="bs-news-meta" data-bs-news-featured-date></div>
+        <a class="bs-news-btn" data-bs-news-featured-link href="#" target="_blank" rel="noopener">Read more</a>
+      </div>
+    </article>
+  </div>
+
+  <div class="bs-news-grid" data-bs-news-grid></div>
+</section>
+
+<script>
+  (function () {
+    // ======================
+    // CONFIG (edit these)
+    // ======================
+    const CONFIG = {
+      apiKey: "PASTE_GOOGLE_SHEETS_API_KEY",
+      sheetId: "PASTE_SHEET_ID",
+      // Tab name must match your sheet tab.
+      // First row must be headers: title,date,category,excerpt,image,link,featured
+      range: "news!A1:Z",
+      fallbackImage: "https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=1200&q=80&fit=crop",
+      // Optional: set true if you want to hide the featured block when no featured exists.
+      hideFeaturedWhenEmpty: false
+    };
+
+    function esc(s) {
+      return String(s || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+    }
+
+    function normalizeHeader(h) {
+      return String(h || "")
+        .trim()
+        .toLowerCase()
+        .replace(/\s+/g, "_");
+    }
+
+    function parseBool(v) {
+      const s = String(v || "").trim().toLowerCase();
+      return s === "true" || s === "1" || s === "yes" || s === "y";
+    }
+
+    function rowsToObjects(values) {
+      if (!Array.isArray(values) || values.length < 2) return [];
+      const headers = values[0].map(normalizeHeader);
+      const out = [];
+      for (let i = 1; i < values.length; i++) {
+        const row = values[i];
+        if (!row || row.every((c) => String(c || "").trim() === "")) continue;
+        const obj = {};
+        for (let c = 0; c < headers.length; c++) {
+          const key = headers[c];
+          if (!key) continue;
+          obj[key] = row[c] ?? "";
+        }
+        out.push(obj);
+      }
+      return out;
+    }
+
+    function qs(root, sel) {
+      return root.querySelector(sel);
+    }
+
+    async function fetchSheet() {
+      if (!CONFIG.apiKey || CONFIG.apiKey.includes("PASTE_")) {
+        throw new Error("Missing CONFIG.apiKey");
+      }
+      if (!CONFIG.sheetId || CONFIG.sheetId.includes("PASTE_")) {
+        throw new Error("Missing CONFIG.sheetId");
+      }
+
+      const url =
+        "https://sheets.googleapis.com/v4/spreadsheets/" +
+        encodeURIComponent(CONFIG.sheetId) +
+        "/values/" +
+        encodeURIComponent(CONFIG.range) +
+        "?key=" +
+        encodeURIComponent(CONFIG.apiKey) +
+        "&majorDimension=ROWS";
+
+      const resp = await fetch(url, { headers: { accept: "application/json" } });
+      if (!resp.ok) throw new Error("Sheets API error: " + resp.status);
+      return resp.json();
+    }
+
+    function pickFeatured(items) {
+      return items.find((i) => i.featured) || items[0] || null;
+    }
+
+    function render(root, items) {
+      const featuredWrap = qs(root, "[data-bs-news-featured-wrap]");
+      const featured = qs(root, "[data-bs-news-featured]");
+      const grid = qs(root, "[data-bs-news-grid]");
+      if (!grid) return;
+
+      const featuredItem = pickFeatured(items);
+      const rest = featuredItem ? items.filter((x) => x !== featuredItem) : items;
+
+      if (featured && featuredItem) {
+        const img = qs(featured, "[data-bs-news-featured-img]");
+        const cat = qs(featured, "[data-bs-news-featured-cat]");
+        const title = qs(featured, "[data-bs-news-featured-title]");
+        const excerpt = qs(featured, "[data-bs-news-featured-excerpt]");
+        const date = qs(featured, "[data-bs-news-featured-date]");
+        const link = qs(featured, "[data-bs-news-featured-link]");
+
+        if (img) img.src = featuredItem.image || CONFIG.fallbackImage;
+        if (cat) cat.textContent = featuredItem.category || "Featured";
+        if (title) title.textContent = featuredItem.title || "Untitled";
+        if (excerpt) excerpt.textContent = featuredItem.excerpt || "";
+        if (date) date.textContent = featuredItem.date || "";
+        if (link) link.href = featuredItem.link || "#";
+      } else if (featuredWrap && CONFIG.hideFeaturedWhenEmpty) {
+        featuredWrap.style.display = "none";
+      }
+
+      if (!rest || rest.length === 0) {
+        grid.innerHTML = '<p style="opacity:.75">No news items yet.</p>';
+        return;
+      }
+
+      grid.innerHTML = rest
+        .map((item) => {
+          const imgSrc = esc(item.image || CONFIG.fallbackImage);
+          const title = esc(item.title || "Untitled");
+          const excerpt = esc(item.excerpt || "");
+          const category = esc(item.category || "Club News");
+          const date = esc(item.date || "");
+          const link = esc(item.link || "#");
+          return (
+            '<article class="bs-news-card">' +
+            `<img class="bs-news-img" src="${imgSrc}" alt="News">` +
+            '<div class="bs-news-body">' +
+            `<div class="bs-news-cat">${category}</div>` +
+            `<h3 class="bs-news-title"><a href="${link}" target="_blank" rel="noopener">${title}</a></h3>` +
+            `<p class="bs-news-excerpt">${excerpt}</p>` +
+            `<div class="bs-news-meta">${date}</div>` +
+            "</div>" +
+            "</article>"
+          );
+        })
+        .join("");
+    }
+
+    async function init() {
+      const root = document.querySelector("[data-bs-news]");
+      if (!root) return;
+
+      try {
+        const data = await fetchSheet();
+        const rows = rowsToObjects(data.values).map((x) => ({
+          title: String(x.title || "").trim(),
+          date: String(x.date || "").trim(),
+          category: String(x.category || "").trim(),
+          excerpt: String(x.excerpt || "").trim(),
+          image: String(x.image || "").trim(),
+          link: String(x.link || "").trim(),
+          featured: parseBool(x.featured),
+        }));
+
+        render(root, rows);
+      } catch (e) {
+        const grid = root.querySelector("[data-bs-news-grid]");
+        if (grid) {
+          grid.innerHTML =
+            '<p style="opacity:.8">Failed to load news. Check Sheets permissions and API key restrictions.</p>';
+        }
+        // Optional: console for debugging inside GHL.
+        try { console.error(e); } catch {}
+      }
+    }
+
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", init);
+    } else {
+      init();
+    }
+  })();
+</script>
+

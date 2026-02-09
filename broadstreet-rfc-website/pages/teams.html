@@ -600,6 +600,28 @@
       }
     }
 
+    /* Philosophy Items (1st XV section) */
+    .philosophy-item {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--space-3);
+      padding: var(--space-3);
+      background-color: var(--color-gray-50);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--color-gray-200);
+      transition: all var(--transition-fast);
+    }
+
+    .philosophy-item:hover {
+      border-color: var(--color-primary);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .philosophy-item svg {
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
   </style>
 </head>
 <body>
@@ -815,51 +837,69 @@
                     </div>
                   </div>
 
-                  <!-- Page Content (Source: instruction/Untitled document.docx) -->
-                  <div class="card mt-6" style="max-width: 560px;">
-                    <div class="card-body">
-                      <h4 class="mb-2">About the 1st XV</h4>
-                      <p class="text-muted mb-4">Broadstreet's 1st XV represents the very best of the club, combining battle-hardened senior players with ambitious emerging talent. Having experienced the demands of rugby at National and Regional 1 level, the squad understands what it takes to compete, rebuild, and push forward.</p>
-                      <p class="text-muted mb-4">Currently competing in Regional 2 Midlands East, the team is firmly focused on promotion, using past experience as motivation and fuel for the future. Every performance is underpinned by pride in the shirt and a relentless desire to progress.</p>
-
-                      <h4 class="mb-2">League Journey &amp; Ambition</h4>
-                      <p class="text-muted mb-3">The club's recent history reflects both challenge and resilience.</p>
-                      <ul class="mb-4">
-                        <li>Previous campaigns in National 2</li>
-                        <li>Strong spells in Regional 1</li>
-                        <li>A competitive return to Regional 2 Midlands East</li>
-                      </ul>
-                      <p class="text-muted mb-4">Rather than seeing this as a setback, the 1st XV views the current league as an opportunity - an opportunity to build momentum, develop depth, and fight for promotion with purpose and belief.</p>
-                      <p class="text-muted mb-4">The ambition is clear: step by step, season by season, Broadstreet RFC is determined to climb back up the leagues.</p>
-
-                      <h4 class="mb-2">Playing Philosophy</h4>
-                      <p class="text-muted mb-3">The Broadstreet 1st XV plays a brand of rugby built to succeed across all levels:</p>
-                      <ul class="mb-4">
-                        <li>Physical, dominant forward play</li>
-                        <li>Ambitious attacking rugby backed by disciplined defence</li>
-                        <li>Intelligent game management</li>
-                        <li>Strong set-piece and breakdown control</li>
-                      </ul>
-                      <p class="text-muted mb-4">This balanced approach reflects the experience gained at higher levels while remaining adaptable to the demands of the current league.</p>
-
-                      <h4 class="mb-2">Leadership &amp; Coaching</h4>
-                      <p class="text-muted mb-4">Guided by a committed coaching and leadership group, the 1st XV places a strong emphasis on standards, preparation, and accountability. Training sessions are intense, purposeful, and focused on continuous improvement - ensuring the squad is ready to compete week in, week out.</p>
-                      <p class="text-muted mb-4">Leadership within the group is earned, with experienced players setting the tone and driving the team forward in pursuit of promotion.</p>
-
-                      <h4 class="mb-2">Matchday at Broadstreet</h4>
-                      <p class="text-muted mb-4">Home matches at The Ivor Preece Field offer competitive rugby and a strong club atmosphere. Matchday is about performance on the pitch and connection off it - bringing together players, members, supporters, and the wider community.</p>
-                      <p class="text-muted mb-4">Your support plays a vital role in the team's push up the leagues.</p>
-
-                      <h4 class="mb-2">The Squad</h4>
-                      <p class="text-muted mb-3">The 1st XV squad features:</p>
-                      <ul class="mb-6">
-                        <li>Players with experience at Championship, National League and Regional levels</li>
-                        <li>Homegrown talent developed within Broadstreet RFC</li>
-                        <li>Hungry, ambitious players committed to success</li>
-                      </ul>
-
-                      <a href="#playerGrid" class="btn btn-outline btn-sm">View Squad Profiles</a>
+                  <!-- Playing Philosophy -->
+                  <div class="mt-6" style="max-width: 560px;">
+                    <h4 class="mb-4">Playing Philosophy</h4>
+                    <div class="grid grid-cols-2 gap-3 mb-6">
+                      <div class="philosophy-item">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="var(--color-primary)">
+                          <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/>
+                        </svg>
+                        <div>
+                          <p class="font-semibold text-sm mb-0">Dominant Forward Play</p>
+                          <p class="text-xs text-muted mb-0">Physical, set-piece focused</p>
+                        </div>
+                      </div>
+                      <div class="philosophy-item">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="var(--color-primary)">
+                          <path d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                        </svg>
+                        <div>
+                          <p class="font-semibold text-sm mb-0">Attacking Rugby</p>
+                          <p class="text-xs text-muted mb-0">Ambitious, disciplined defence</p>
+                        </div>
+                      </div>
+                      <div class="philosophy-item">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="var(--color-primary)">
+                          <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+                        </svg>
+                        <div>
+                          <p class="font-semibold text-sm mb-0">Game Management</p>
+                          <p class="text-xs text-muted mb-0">Intelligent, tactical play</p>
+                        </div>
+                      </div>
+                      <div class="philosophy-item">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="var(--color-primary)">
+                          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                        </svg>
+                        <div>
+                          <p class="font-semibold text-sm mb-0">Set-Piece Control</p>
+                          <p class="text-xs text-muted mb-0">Strong breakdown work</p>
+                        </div>
+                      </div>
                     </div>
+
+                    <!-- League Journey -->
+                    <h4 class="mb-3">League Journey</h4>
+                    <div class="flex flex-wrap items-center gap-2 mb-6">
+                      <span class="badge badge-primary">National 2</span>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="var(--color-gray-400)"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+                      <span class="badge badge-primary">Regional 1</span>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="var(--color-gray-400)"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+                      <span class="badge badge-primary" style="background-color: var(--color-accent); color: var(--color-ink);">Regional 2 Midlands East</span>
+                    </div>
+
+                    <!-- Squad Highlights -->
+                    <h4 class="mb-3">The Squad</h4>
+                    <div class="flex flex-wrap gap-2 mb-6">
+                      <span class="badge badge-outline" style="border-color: var(--color-gray-400); color: var(--color-gray-700);">Championship &amp; National League experience</span>
+                      <span class="badge badge-outline" style="border-color: var(--color-gray-400); color: var(--color-gray-700);">Homegrown talent</span>
+                      <span class="badge badge-outline" style="border-color: var(--color-gray-400); color: var(--color-gray-700);">Committed to promotion</span>
+                    </div>
+
+                    <a href="#playerGrid" class="btn btn-outline btn-sm">View Squad Profiles
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg>
+                    </a>
                   </div>
                 </div>
                 <div>
