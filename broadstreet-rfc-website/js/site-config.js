@@ -33,6 +33,13 @@ const SiteConfig = {
     youtube: 'https://youtube.com/@broadstreetrfc',
   },
 
+  // Google Sheets integration
+  sheets: {
+    apiKey: 'AIzaSyDeLiOcwEJuu8sCt6UjN74-Q9pvNljeoq4',
+    sheetId: '1DT5Xti6N6uc9XgXJENQuF7B29uCAVwEQYQX3F6WRVc0',
+    cacheTTL: 5 * 60 * 1000, // 5 minutes
+  },
+
   /**
    * Initialize site-wide configurations
    */

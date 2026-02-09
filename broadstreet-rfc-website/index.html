@@ -340,7 +340,7 @@
         <div class="container">
           <div class="next-match-grid">
             <!-- Next Match Card -->
-            <div class="next-match-card">
+            <div class="next-match-card" id="homeNextMatch">
               <div class="next-match-card-bg" style="background-image: url('https://images.pexels.com/photos/3657154/pexels-photo-3657154.jpeg');"></div>
               <div class="next-match-card-overlay"></div>
 
@@ -426,7 +426,7 @@
                         <th>Pts</th>
                       </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="homeStandings">
                       <tr>
                         <td>1</td>
                         <td class="team-name">Team A</td>
@@ -486,7 +486,7 @@
       <section class="section bg-white">
         <div class="container">
           <h2 class="text-center mb-8">Recent Results</h2>
-          <div class="results-grid">
+          <div class="results-grid" id="homeResults">
             <!-- Result Poster 1 -->
             <div class="result-poster result-poster--overlay">
               <div class="result-scoreboard-bg" aria-hidden="true"></div>
@@ -577,7 +577,7 @@
           </div>
 
           <!-- News Grid Layout -->
-          <div class="news-grid">
+          <div class="news-grid" id="homeNews">
             <!-- Featured News (Large) -->
             <article class="news-card news-card-featured">
               <div class="news-card-image-wrapper">
@@ -687,7 +687,7 @@
           </div>
 
           <!-- Main/Title Sponsor -->
-          <div class="sponsor-tier">
+          <div class="sponsor-tier" id="sponsorTitle">
             <div class="sponsor-tier-label">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
@@ -718,7 +718,7 @@
               </svg>
               <span>Premium Sponsors</span>
             </div>
-            <div class="sponsor-grid sponsor-grid-premium">
+            <div class="sponsor-grid sponsor-grid-premium" id="sponsorPremium">
               <a href="#" class="sponsor-card sponsor-card-premium" data-tooltip="Supporting Broadstreet since 2018">
                 <div class="sponsor-card-inner">
                   <div class="sponsor-badge sponsor-badge-gold">Gold</div>
@@ -765,7 +765,7 @@
               </svg>
               <span>Official Partners</span>
             </div>
-            <div class="sponsor-grid sponsor-grid-partners">
+            <div class="sponsor-grid sponsor-grid-partners" id="sponsorPartners">
               <a href="#" class="sponsor-card sponsor-card-partner" data-tooltip="Official partner">
                 <div class="sponsor-card-inner">
                   <div class="sponsor-badge sponsor-badge-silver">Silver</div>
@@ -978,9 +978,14 @@
   </div>
 
   <!-- Scripts -->
+  <script src="js/site-config.js"></script>
+  <script src="js/sheets-api.js"></script>
   <script src="js/navigation.js"></script>
   <script src="js/components.js"></script>
   <script src="js/utils.js"></script>
   <script src="js/main.js"></script>
+  <script src="js/hero-feed.js"></script>
+  <script src="js/fixtures-feed.js"></script>
+  <script src="js/sponsors-feed.js"></script>
 </body>
 </html>

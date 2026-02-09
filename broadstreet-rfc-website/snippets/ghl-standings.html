@@ -1,0 +1,74 @@
+<!--
+  Broadstreet League Standings (Google Sheets) - GoHighLevel Custom HTML Snippet
+
+  How to use:
+  1) Paste this entire block into a GHL "Custom HTML" element.
+  2) Set the CONFIG values below.
+-->
+
+<style>
+  .bs-standings { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; max-width: 700px; margin: 0 auto; }
+  .bs-standings h2 { margin: 0 0 16px; font-size: 24px; }
+  .bs-standings table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 10px; overflow: hidden; border: 1px solid rgba(0,0,0,0.1); }
+  .bs-standings th { background: #1a1a2e; color: #fff; padding: 10px 12px; font-size: 13px; text-align: left; }
+  .bs-standings td { padding: 10px 12px; border-bottom: 1px solid rgba(0,0,0,0.06); font-size: 14px; }
+  .bs-standings tr.highlight { background: rgba(255, 193, 7, 0.12); font-weight: 600; }
+  .bs-standings .team-name { font-weight: 500; }
+</style>
+
+<section class="bs-standings" data-bs-standings>
+  <h2>League Standings</h2>
+  <table>
+    <thead><tr><th>Pos</th><th>Team</th><th>P</th><th>W</th><th>D</th><th>L</th><th>Pts</th></tr></thead>
+    <tbody data-bs-standings-body><tr><td colspan="7" style="opacity:.7;text-align:center">Loading...</td></tr></tbody>
+  </table>
+</section>
+
+<script>
+(function () {
+  var CONFIG = {
+    apiKey: "AIzaSyDeLiOcwEJuu8sCt6UjN74-Q9pvNljeoq4",
+    sheetId: "1DT5Xti6N6uc9XgXJENQuF7B29uCAVwEQYQX3F6WRVc0",
+    range: "standings!A1:Z",
+  };
+
+  function esc(s) { return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;"); }
+  function normalizeHeader(h) { return String(h||"").trim().toLowerCase().replace(/\s+/g,"_"); }
+  function parseBool(v) { var s=String(v||"").trim().toLowerCase(); return s==="true"||s==="1"||s==="yes"; }
+
+  function rowsToObjects(values) {
+    if (!Array.isArray(values)||values.length<2) return [];
+    var headers=values[0].map(normalizeHeader), out=[];
+    for (var i=1;i<values.length;i++) {
+      var row=values[i]; if(!row||row.every(function(c){return String(c||"").trim()==="";})) continue;
+      var obj={}; for(var c=0;c<headers.length;c++){if(!headers[c]) continue; obj[headers[c]]=row[c]!=null?row[c]:"";} out.push(obj);
+    }
+    return out;
+  }
+
+  async function init() {
+    var tbody = document.querySelector("[data-bs-standings-body]");
+    if (!tbody) return;
+    try {
+      var url = "https://sheets.googleapis.com/v4/spreadsheets/"+encodeURIComponent(CONFIG.sheetId)+"/values/"+encodeURIComponent(CONFIG.range)+"?key="+encodeURIComponent(CONFIG.apiKey)+"&majorDimension=ROWS";
+      var resp = await fetch(url, {headers:{accept:"application/json"}});
+      if (!resp.ok) throw new Error(resp.status);
+      var rows = rowsToObjects((await resp.json()).values);
+      if (!rows.length) return;
+
+      tbody.innerHTML = rows.map(function(r) {
+        return '<tr'+(parseBool(r.highlight)?' class="highlight"':'')+'>' +
+          '<td>'+esc(r.position)+'</td>' +
+          '<td class="team-name">'+esc(r.team)+'</td>' +
+          '<td>'+esc(r.played)+'</td>' +
+          '<td>'+esc(r.won)+'</td>' +
+          '<td>'+esc(r.drawn)+'</td>' +
+          '<td>'+esc(r.lost)+'</td>' +
+          '<td>'+esc(r.points)+'</td></tr>';
+      }).join("");
+    } catch(e) { try{console.error(e);}catch(x){} }
+  }
+
+  if (document.readyState==="loading") document.addEventListener("DOMContentLoaded",init); else init();
+})();
+</script>
