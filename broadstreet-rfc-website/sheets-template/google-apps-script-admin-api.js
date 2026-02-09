@@ -5,6 +5,10 @@
  * AUTHENTICATION: Google Sign-In (OAuth 2.0)
  * Only authorized Google accounts can access the admin panel.
  * 
+ * ⚠️  IMPORTANT: After making changes to this script, you must REDEPLOY:
+ *     Deploy → Manage deployments → Edit → Deploy (or New deployment)
+ *     Without redeploying, changes will not take effect!
+ * 
  * INSTALLATION:
  * 1. Open your Google Sheet
  * 2. Go to Extensions → Apps Script
@@ -22,6 +26,7 @@
  * - Uses Google OAuth 2.0 for authentication
  * - Only emails in ALLOWED_EMAILS can access
  * - No passwords stored or transmitted
+ * - CORS headers configured for cross-origin requests
  */
 
 var CONFIG = {
@@ -42,31 +47,58 @@ var CONFIG = {
 
 /**
  * Main handler for GET and POST requests
+ * 
+ * NOTE: Google Apps Script Web Apps handle CORS automatically
+ * when deployed with "Anyone" access. No custom headers needed.
  */
 function doPost(e) {
-  return handleRequest(e);
+  try {
+    return handleRequest(e);
+  } catch (err) {
+    return jsonResponse({
+      success: false,
+      error: err.toString()
+    }, 500);
+  }
 }
 
 function doGet(e) {
-  return handleRequest(e);
+  try {
+    return handleRequest(e);
+  } catch (err) {
+    return jsonResponse({
+      success: false,
+      error: err.toString()
+    }, 500);
+  }
 }
 
 function handleRequest(e) {
   try {
     var params = e.parameter || {};
-    var postData = {};
+    var data = {};
     
-    // Parse POST body if present
-    if (e.postData && e.postData.contents) {
+    // Check if data is sent as base64-encoded JSON via GET parameter
+    if (params.data) {
       try {
-        postData = JSON.parse(e.postData.contents);
+        var decoded = Utilities.newBlob(Utilities.base64Decode(params.data)).getDataAsString();
+        data = JSON.parse(decoded);
+      } catch (err) {
+        return jsonResponse({ success: false, error: "Invalid data encoding: " + err.toString() }, 400);
+      }
+    }
+    // Also support POST body for backward compatibility
+    else if (e.postData && e.postData.contents) {
+      try {
+        data = JSON.parse(e.postData.contents);
       } catch (err) {
         return jsonResponse({ success: false, error: "Invalid JSON" }, 400);
       }
     }
-    
-    // Merge params
-    var data = Object.assign({}, params, postData);
+    // Fall back to URL parameters
+    else {
+      data = params;
+    }
     
     // Check authentication via Google token
     var authResult = checkGoogleAuth(data);
@@ -405,6 +437,8 @@ function getSheet(tabName) {
 
 /**
  * Helper: Create JSON response
+ * NOTE: Google Apps Script handles CORS automatically for deployed Web Apps.
+ * ContentService does NOT support setHeader() - do not add custom headers.
  */
 function jsonResponse(obj, statusCode) {
   var response = ContentService.createTextOutput(JSON.stringify(obj));

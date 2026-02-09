@@ -19,7 +19,7 @@ const AdminApp = (function () {
   
   // Google Apps Script URL - Deploy your script and paste the URL here
   // Go to Extensions → Apps Script → Deploy → New deployment
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxe8cuvtbt8mjoyWZ9qbvT_AaT6NpEIXBR92EvETITaQPn9dU1OhBml-EI2TQEPhRy_EA/exec';
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw9ubtgljqkSSownb_tXeMYP3AIOM00N7mxHrvgi-DH6jvscveeEUA8qcdonTg_krtrmA/exec';
 
   let currentSection = 'news';
   let currentData = [];
@@ -550,20 +550,22 @@ const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxe8cuvtbt8mjoy
   }
 
   // API call helper - uses Google token for authentication
+  // Uses GET method to avoid CORS redirect issues with Google Apps Script
   async function apiCall(action, tab, data) {
     const payload = {
       action,
       tab,
-      googleToken: config.googleToken,  // Use Google token instead of password
+      googleToken: config.googleToken,
       ...data,
     };
 
-    const response = await fetch(config.apiUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(payload),
+    // Encode payload as base64 URL parameter to avoid CORS preflight
+    const encodedData = btoa(unescape(encodeURIComponent(JSON.stringify(payload))));
+    const url = config.apiUrl + '?data=' + encodeURIComponent(encodedData);
+
+    const response = await fetch(url, {
+      method: 'GET',
+      redirect: 'follow',
     });
 
     if (!response.ok) {
