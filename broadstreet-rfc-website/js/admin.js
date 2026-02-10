@@ -615,7 +615,31 @@ const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw9ubtgljqkSSow
       const summary = result.summary || {};
       const added = Number(summary.added || 0);
       const updated = Number(summary.updated || 0);
-      showToast(`RFU sync complete: ${added} added, ${updated} updated.`, 'success');
+      const totalFeeds = Number(summary.feed_sources_total || 0);
+      const successFeeds = Number(summary.feed_sources_success || 0);
+      const failedFeeds = Number(summary.feed_sources_failed || 0);
+      const fetchedRaw = Number(summary.fetched_raw || summary.fetched || 0);
+      const fetchedDeduped = Number(summary.fetched_deduped || summary.fetched || 0);
+      const removedDuplicates = Number(summary.removed_duplicates || 0);
+
+      const parts = [`RFU sync complete: ${added} added`, `${updated} updated`];
+      if (totalFeeds > 0) {
+        parts.push(`feeds ${successFeeds}/${totalFeeds}`);
+      }
+      if (fetchedRaw > fetchedDeduped) {
+        parts.push(`deduped ${fetchedRaw - fetchedDeduped}`);
+      }
+      if (removedDuplicates > 0) {
+        parts.push(`removed old duplicates ${removedDuplicates}`);
+      }
+
+      showToast(parts.join(', ') + '.', failedFeeds > 0 ? 'info' : 'success');
+      if (failedFeeds > 0) {
+        showToast(
+          `${failedFeeds} feed(s) failed. Check Apps Script logs for details.`,
+          'error'
+        );
+      }
       await loadCurrentSection();
     } catch (error) {
       showError('Error syncing RFU fixtures: ' + error.message);

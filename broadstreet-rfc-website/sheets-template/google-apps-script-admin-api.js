@@ -45,13 +45,38 @@ var ADMIN_CONFIG = {
   READ_ONLY_TABS: ["standings"],
 
   // RFU fixture sync
-  RFU_ICS_URL: "https://ics.ecal.com/ecal-sub/698b2368f249a10002e646ac/RFU.ics",
+  RFU_ICS_URL: "",
+  RFU_TEAM_FEEDS: [
+    { team: "Market Harborough", icsUrl: "webcal://ics.ecal.com/ecal-sub/698b2e81e21aff00022f9704/RFU.ics", logo: "https://images.englandrugby.com/club_images/13377.png" },
+    { team: "Northampton Old Scouts", icsUrl: "webcal://ics.ecal.com/ecal-sub/698b2ea6b22eb2000272b97c/RFU.ics", logo: "https://images.englandrugby.com/club_images/14907.png" },
+    { team: "Broadstreet", icsUrl: "webcal://ics.ecal.com/ecal-sub/698b2ee8e21aff00022f970d/RFU.ics", logo: "https://images.englandrugby.com/club_images/3366.png" },
+    { team: "Bedford Athletic", icsUrl: "webcal://ics.ecal.com/ecal-sub/698b2f75b22eb2000272b985/RFU.ics", logo: "https://images.englandrugby.com/club_images/1822.png" },
+    { team: "Peterborough", icsUrl: "webcal://ics.ecal.com/ecal-sub/698b2fa3b22eb2000272b98d/RFU.ics", logo: "https://images.englandrugby.com/club_images/16819.png" },
+    { team: "Stamford", icsUrl: "webcal://ics.ecal.com/ecal-sub/698b2fcfb22eb2000272b995/RFU.ics", logo: "https://images.englandrugby.com/club_images/20850.png" },
+    { team: "Kettering", icsUrl: "webcal://ics.ecal.com/ecal-sub/698b2ffdb22eb2000272b996/RFU.ics", logo: "https://images.englandrugby.com/club_images/11346.png" },
+    { team: "Oadby Wyggestonians", icsUrl: "webcal://ics.ecal.com/ecal-sub/698b3019b22eb2000272b999/RFU.ics", logo: "https://images.englandrugby.com/club_images/15254.png" },
+    { team: "Olney", icsUrl: "webcal://ics.ecal.com/ecal-sub/698b304ce21aff00022f972b/RFU.ics", logo: "https://images.englandrugby.com/club_images/16184.png" },
+    { team: "Daventry", icsUrl: "webcal://ics.ecal.com/ecal-sub/698b306fb22eb2000272b99f/RFU.ics", logo: "https://images.englandrugby.com/club_images/6224.png" },
+    { team: "Old Coventrians", icsUrl: "webcal://ics.ecal.com/ecal-sub/698b308be21aff00022f972e/RFU.ics", logo: "https://images.englandrugby.com/club_images/15578.png" },
+    { team: "Wellingborough", icsUrl: "webcal://ics.ecal.com/ecal-sub/698b30a8b22eb2000272b9a3/RFU.ics", logo: "https://images.englandrugby.com/club_images/24604.png" }
+  ],
   DEFAULT_FIXTURE_TIME: "3:00 PM",
   SYNC_TIME_ZONE: "Europe/London",
   AUTO_SYNC_WEEKDAY: "MONDAY",
   AUTO_SYNC_HOUR: 6,
   TEAM_ALIASES: {
-    "Broadstreet": "Broadstreet RFC"
+    "Broadstreet RFC": "Broadstreet",
+    "Market Harborough RFC": "Market Harborough",
+    "Northampton Old Scouts RFC": "Northampton Old Scouts",
+    "Bedford Athletic RFC": "Bedford Athletic",
+    "Peterborough RFC": "Peterborough",
+    "Stamford RFC": "Stamford",
+    "Kettering RFC": "Kettering",
+    "Oadby Wyggestonians RFC": "Oadby Wyggestonians",
+    "Olney RFC": "Olney",
+    "Daventry RFC": "Daventry",
+    "Old Coventrians RFC": "Old Coventrians",
+    "Wellingborough RFC": "Wellingborough"
   }
 };
 
@@ -452,13 +477,9 @@ function handleSyncRfuFixtures(tabName, data) {
     return jsonResponse({ success: false, error: "syncRfuFixtures only supports the fixtures tab" }, 400);
   }
 
-  var url = data && data.icsUrl ? String(data.icsUrl).trim() : ADMIN_CONFIG.RFU_ICS_URL;
-  if (!url) {
-    return jsonResponse({ success: false, error: "RFU_ICS_URL is not configured" }, 400);
-  }
-
   try {
-    var summary = performRfuFixturesSync_(url);
+    var overrideUrl = data && data.icsUrl ? String(data.icsUrl).trim() : "";
+    var summary = performRfuFixturesSync_(overrideUrl || null);
 
     return jsonResponse({
       success: true,
@@ -480,14 +501,43 @@ function performRfuFixturesSync_(icsUrl) {
     throw new Error("Tab not found: fixtures");
   }
 
-  var url = icsUrl ? String(icsUrl).trim() : ADMIN_CONFIG.RFU_ICS_URL;
-  if (!url) {
-    throw new Error("RFU_ICS_URL is not configured");
+  var feedSources = resolveRfuFeedSources_(icsUrl);
+  if (!feedSources.length) {
+    throw new Error("No RFU feed sources configured");
   }
 
-  var icsContent = fetchIcsContent(url);
-  var fixtures = parseFixturesFromIcs(icsContent);
-  var summary = syncFixturesToSheet(sheet, fixtures);
+  var allFixtures = [];
+  var successfulFeeds = 0;
+  var failedFeeds = [];
+
+  for (var i = 0; i < feedSources.length; i++) {
+    var source = feedSources[i];
+    try {
+      var icsContent = fetchIcsContent(source.url);
+      var fixtures = parseFixturesFromIcs(icsContent);
+      allFixtures = allFixtures.concat(fixtures);
+      successfulFeeds++;
+    } catch (err) {
+      failedFeeds.push({ source: source.name, error: err.toString() });
+      Logger.log("RFU feed failed [" + source.name + "]: " + err.toString());
+    }
+  }
+
+  if (!allFixtures.length) {
+    throw new Error("No fixtures could be loaded from any RFU feed source");
+  }
+
+  var dedupedFixtures = dedupeFixturesByKey_(allFixtures);
+  var summary = syncFixturesToSheet(sheet, dedupedFixtures);
+  summary.feed_sources_total = feedSources.length;
+  summary.feed_sources_success = successfulFeeds;
+  summary.feed_sources_failed = failedFeeds.length;
+  summary.fetched_raw = allFixtures.length;
+  summary.fetched_deduped = dedupedFixtures.length;
+  if (failedFeeds.length) {
+    summary.failed_sources = failedFeeds;
+  }
+
   recalculateStandingsIfFixturesChanged("fixtures");
   return summary;
 }
@@ -497,11 +547,66 @@ function performRfuFixturesSync_(icsUrl) {
  */
 function syncRfuFixturesScheduled() {
   try {
-    var summary = performRfuFixturesSync_(ADMIN_CONFIG.RFU_ICS_URL);
+    var summary = performRfuFixturesSync_(null);
     Logger.log("Scheduled RFU sync complete: " + JSON.stringify(summary));
   } catch (err) {
     Logger.log("Scheduled RFU sync failed: " + err.toString());
   }
+}
+
+function resolveRfuFeedSources_(icsUrl) {
+  var overrideUrl = icsUrl ? String(icsUrl).trim() : "";
+  if (overrideUrl) {
+    return [{ name: "Manual Override", url: overrideUrl }];
+  }
+
+  var feeds = ADMIN_CONFIG.RFU_TEAM_FEEDS;
+  var out = [];
+
+  if (feeds && Object.prototype.toString.call(feeds) === "[object Array]") {
+    for (var i = 0; i < feeds.length; i++) {
+      var item = feeds[i] || {};
+      var url = String(item.icsUrl || item.url || "").trim();
+      if (!url) continue;
+      var name = String(item.team || item.name || ("Feed " + (i + 1))).trim();
+      out.push({ name: name, url: url });
+    }
+  }
+
+  if (!out.length) {
+    var fallbackUrl = String(ADMIN_CONFIG.RFU_ICS_URL || "").trim();
+    if (fallbackUrl) {
+      out.push({ name: "RFU_ICS_URL", url: fallbackUrl });
+    }
+  }
+
+  return out;
+}
+
+function dedupeFixturesByKey_(fixtures) {
+  var seen = {};
+  var out = [];
+
+  for (var i = 0; i < fixtures.length; i++) {
+    var f = fixtures[i];
+    if (!f) continue;
+
+    var key = buildFixtureKey(f.date, f.home_team, f.away_team);
+    if (!key) continue;
+
+    if (!seen[key]) {
+      seen[key] = f;
+      out.push(f);
+      continue;
+    }
+
+    var existing = seen[key];
+    if (!existing.time && f.time) existing.time = f.time;
+    if (!existing.venue && f.venue) existing.venue = f.venue;
+    if (!existing.competition && f.competition) existing.competition = f.competition;
+  }
+
+  return out;
 }
 
 /**
@@ -838,6 +943,8 @@ function syncFixturesToSheet(sheet, incomingFixtures) {
 
   var fields = getFixtureFieldKeys(headers);
   var rows = readSheetRowsAsObjects(sheet, headers);
+  var dedupeInfo = dedupeExistingFixtureRows_(rows, fields);
+  rows = dedupeInfo.rows;
   var teamMap = buildNormalizedTeamMap(rows, fields);
   var existingByKey = {};
 
@@ -903,8 +1010,64 @@ function syncFixturesToSheet(sheet, incomingFixtures) {
     added: added,
     updated: updated,
     skipped: skipped,
+    removed_duplicates: dedupeInfo.removed,
     total_rows: rows.length
   };
+}
+
+function dedupeExistingFixtureRows_(rows, fields) {
+  var keyed = {};
+  var out = [];
+  var removed = 0;
+
+  for (var i = 0; i < rows.length; i++) {
+    var row = rows[i];
+    var key = buildFixtureKey(row[fields.date], row[fields.home_team], row[fields.away_team]);
+
+    if (!key) {
+      out.push(row);
+      continue;
+    }
+
+    var existing = keyed[key];
+    if (!existing) {
+      keyed[key] = row;
+      out.push(row);
+      continue;
+    }
+
+    mergeFixtureRows_(existing, row, fields);
+    removed++;
+  }
+
+  return {
+    rows: out,
+    removed: removed
+  };
+}
+
+function mergeFixtureRows_(target, source, fields) {
+  if (isBlank(target[fields.time]) && !isBlank(source[fields.time])) {
+    target[fields.time] = source[fields.time];
+  }
+  if (isBlank(target[fields.venue]) && !isBlank(source[fields.venue])) {
+    target[fields.venue] = source[fields.venue];
+  }
+  if (isBlank(target[fields.competition]) && !isBlank(source[fields.competition])) {
+    target[fields.competition] = source[fields.competition];
+  }
+
+  var targetCompleted = hasCompletedResult(target, fields);
+  var sourceCompleted = hasCompletedResult(source, fields);
+  if (!targetCompleted && sourceCompleted) {
+    target[fields.status] = source[fields.status] || "completed";
+    target[fields.home_score] = source[fields.home_score];
+    target[fields.away_score] = source[fields.away_score];
+    target[fields.home_bp] = source[fields.home_bp];
+    target[fields.away_bp] = source[fields.away_bp];
+  } else if (isBlank(target[fields.status]) && !isBlank(source[fields.status])) {
+    target[fields.status] = source[fields.status];
+  }
 }
 
 function getFixtureFieldKeys(headers) {
@@ -1030,7 +1193,7 @@ function applyTeamAlias(name) {
     }
   }
 
-  return clean;
+  return clean.replace(/\s+rfc$/i, "").trim();
 }
 
 function normalizeTeamKey(name) {
