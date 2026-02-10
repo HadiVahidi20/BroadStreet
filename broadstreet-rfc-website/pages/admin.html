@@ -189,12 +189,21 @@
         <section id="section-fixtures" class="admin-section" style="display: none;">
           <div class="section-header">
             <h2>Manage Fixtures & Results</h2>
-            <button class="btn btn-primary" onclick="AdminApp.showAddForm('fixtures')">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M12 4v16m8-8H4"/>
-              </svg>
-              Add Fixture
-            </button>
+            <div class="section-actions">
+              <button class="btn btn-secondary" onclick="AdminApp.syncRfuFixtures()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M4 4v6h6M20 20v-6h-6"/>
+                  <path d="M20 9A8 8 0 005.3 5.3L4 6m0 9a8 8 0 0014.7 3.7L20 18"/>
+                </svg>
+                Sync RFU
+              </button>
+              <button class="btn btn-primary" onclick="AdminApp.showAddForm('fixtures')">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M12 4v16m8-8H4"/>
+                </svg>
+                Add Fixture
+              </button>
+            </div>
           </div>
           
           <div id="fixturesTable" class="data-table-container"></div>

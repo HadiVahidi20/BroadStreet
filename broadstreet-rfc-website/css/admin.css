@@ -470,6 +470,13 @@ body.admin-page {
   margin: 0;
 }
 
+.section-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
 /* Data Table */
 .data-table-container {
   background: var(--admin-white);
@@ -860,6 +867,10 @@ body.admin-page {
   .section-header {
     flex-direction: column;
     align-items: flex-start;
+  }
+
+  .section-actions {
+    width: 100%;
   }
   
   .section-header h2 {

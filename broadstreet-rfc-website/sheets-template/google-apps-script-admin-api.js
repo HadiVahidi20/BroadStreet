@@ -29,7 +29,7 @@
  * - CORS headers configured for cross-origin requests
  */
 
-var CONFIG = {
+var ADMIN_CONFIG = {
   // ⚠️ IMPORTANT: Add authorized Gmail/Google Workspace email addresses here
   // Only these emails can access the admin panel
   ALLOWED_EMAILS: [
@@ -42,7 +42,17 @@ var CONFIG = {
   ALLOWED_TABS: ["news", "fixtures", "sponsors", "players", "hero", "standings", "coaching"],
   
   // Read-only tabs (auto-calculated)
-  READ_ONLY_TABS: ["standings"]
+  READ_ONLY_TABS: ["standings"],
+
+  // RFU fixture sync
+  RFU_ICS_URL: "https://ics.ecal.com/ecal-sub/698b2368f249a10002e646ac/RFU.ics",
+  DEFAULT_FIXTURE_TIME: "3:00 PM",
+  SYNC_TIME_ZONE: "Europe/London",
+  AUTO_SYNC_WEEKDAY: "MONDAY",
+  AUTO_SYNC_HOUR: 6,
+  TEAM_ALIASES: {
+    "Broadstreet": "Broadstreet RFC"
+  }
 };
 
 /**
@@ -120,7 +130,7 @@ function handleRequest(e) {
     }
     
     // Validate tab
-    if (!tab || CONFIG.ALLOWED_TABS.indexOf(tab) === -1) {
+    if (!tab || ADMIN_CONFIG.ALLOWED_TABS.indexOf(tab) === -1) {
       return jsonResponse({ success: false, error: "Invalid tab: " + tab }, 400);
     }
     
@@ -136,6 +146,8 @@ function handleRequest(e) {
         return handleDelete(tab, data);
       case "batch":
         return handleBatch(tab, data);
+      case "syncRfuFixtures":
+        return handleSyncRfuFixtures(tab, data);
       default:
         return jsonResponse({ success: false, error: "Invalid action: " + action }, 400);
     }
@@ -164,7 +176,7 @@ function checkGoogleAuth(data) {
   
   // Check if email is in allowed list
   var email = tokenResult.email.toLowerCase();
-  var isAllowed = CONFIG.ALLOWED_EMAILS.some(function(allowedEmail) {
+  var isAllowed = ADMIN_CONFIG.ALLOWED_EMAILS.some(function(allowedEmail) {
     return allowedEmail.toLowerCase() === email;
   });
   
@@ -306,7 +318,7 @@ function handleRead(tabName) {
  * Create a new row
  */
 function handleCreate(tabName, data) {
-  if (CONFIG.READ_ONLY_TABS.indexOf(tabName) !== -1) {
+  if (ADMIN_CONFIG.READ_ONLY_TABS.indexOf(tabName) !== -1) {
     return jsonResponse({ success: false, error: "Tab is read-only: " + tabName }, 403);
   }
   
@@ -324,6 +336,7 @@ function handleCreate(tabName, data) {
   }
   
   sheet.appendRow(newRow);
+  recalculateStandingsIfFixturesChanged(tabName);
   
   return jsonResponse({ success: true, message: "Row created successfully" });
 }
@@ -332,7 +345,7 @@ function handleCreate(tabName, data) {
  * Update an existing row
  */
 function handleUpdate(tabName, data) {
-  if (CONFIG.READ_ONLY_TABS.indexOf(tabName) !== -1) {
+  if (ADMIN_CONFIG.READ_ONLY_TABS.indexOf(tabName) !== -1) {
     return jsonResponse({ success: false, error: "Tab is read-only: " + tabName }, 403);
   }
   
@@ -355,6 +368,7 @@ function handleUpdate(tabName, data) {
   }
   
   sheet.getRange(rowIndex, 1, 1, rowData.length).setValues([rowData]);
+  recalculateStandingsIfFixturesChanged(tabName);
   
   return jsonResponse({ success: true, message: "Row updated successfully" });
 }
@@ -363,7 +377,7 @@ function handleUpdate(tabName, data) {
  * Delete a row
  */
 function handleDelete(tabName, data) {
-  if (CONFIG.READ_ONLY_TABS.indexOf(tabName) !== -1) {
+  if (ADMIN_CONFIG.READ_ONLY_TABS.indexOf(tabName) !== -1) {
     return jsonResponse({ success: false, error: "Tab is read-only: " + tabName }, 403);
   }
   
@@ -378,6 +392,7 @@ function handleDelete(tabName, data) {
   }
   
   sheet.deleteRow(rowIndex);
+  recalculateStandingsIfFixturesChanged(tabName);
   
   return jsonResponse({ success: true, message: "Row deleted successfully" });
 }
@@ -386,7 +401,7 @@ function handleDelete(tabName, data) {
  * Batch update - replace all data in a tab
  */
 function handleBatch(tabName, data) {
-  if (CONFIG.READ_ONLY_TABS.indexOf(tabName) !== -1) {
+  if (ADMIN_CONFIG.READ_ONLY_TABS.indexOf(tabName) !== -1) {
     return jsonResponse({ success: false, error: "Tab is read-only: " + tabName }, 403);
   }
   
@@ -423,8 +438,725 @@ function handleBatch(tabName, data) {
   if (newRows.length > 0) {
     sheet.getRange(2, 1, newRows.length, headers.length).setValues(newRows);
   }
+  recalculateStandingsIfFixturesChanged(tabName);
   
   return jsonResponse({ success: true, message: "Batch update completed" });
+}
+
+/**
+ * Sync fixtures from RFU ICS feed.
+ * Upserts by date + home + away and preserves existing results/bonus values.
+ */
+function handleSyncRfuFixtures(tabName, data) {
+  if (tabName !== "fixtures") {
+    return jsonResponse({ success: false, error: "syncRfuFixtures only supports the fixtures tab" }, 400);
+  }
+
+  var url = data && data.icsUrl ? String(data.icsUrl).trim() : ADMIN_CONFIG.RFU_ICS_URL;
+  if (!url) {
+    return jsonResponse({ success: false, error: "RFU_ICS_URL is not configured" }, 400);
+  }
+
+  try {
+    var summary = performRfuFixturesSync_(url);
+
+    return jsonResponse({
+      success: true,
+      message: "RFU fixtures synced successfully",
+      summary: summary
+    });
+  } catch (err) {
+    Logger.log("RFU sync failed: " + err.toString());
+    return jsonResponse({ success: false, error: "RFU sync failed: " + err.toString() }, 500);
+  }
+}
+
+/**
+ * Shared sync routine used by manual API action and scheduled trigger.
+ */
+function performRfuFixturesSync_(icsUrl) {
+  var sheet = getSheet("fixtures");
+  if (!sheet) {
+    throw new Error("Tab not found: fixtures");
+  }
+
+  var url = icsUrl ? String(icsUrl).trim() : ADMIN_CONFIG.RFU_ICS_URL;
+  if (!url) {
+    throw new Error("RFU_ICS_URL is not configured");
+  }
+
+  var icsContent = fetchIcsContent(url);
+  var fixtures = parseFixturesFromIcs(icsContent);
+  var summary = syncFixturesToSheet(sheet, fixtures);
+  recalculateStandingsIfFixturesChanged("fixtures");
+  return summary;
+}
+
+/**
+ * Weekly auto-sync handler. Attach this with setupWeeklyRfuSyncTrigger().
+ */
+function syncRfuFixturesScheduled() {
+  try {
+    var summary = performRfuFixturesSync_(ADMIN_CONFIG.RFU_ICS_URL);
+    Logger.log("Scheduled RFU sync complete: " + JSON.stringify(summary));
+  } catch (err) {
+    Logger.log("Scheduled RFU sync failed: " + err.toString());
+  }
+}
+
+/**
+ * Run once from Apps Script editor to create a single weekly trigger.
+ * Uses ADMIN_CONFIG.AUTO_SYNC_WEEKDAY and ADMIN_CONFIG.AUTO_SYNC_HOUR.
+ */
+function setupWeeklyRfuSyncTrigger() {
+  deleteTriggersByHandler_("syncRfuFixturesScheduled");
+
+  var hour = normalizeTriggerHour_(ADMIN_CONFIG.AUTO_SYNC_HOUR);
+  var weekday = getWeekDayEnum_(ADMIN_CONFIG.AUTO_SYNC_WEEKDAY);
+
+  ScriptApp.newTrigger("syncRfuFixturesScheduled")
+    .timeBased()
+    .onWeekDay(weekday)
+    .atHour(hour)
+    .create();
+
+  Logger.log("Weekly RFU sync trigger created: " + String(ADMIN_CONFIG.AUTO_SYNC_WEEKDAY) + " at " + hour + ":00");
+}
+
+/**
+ * Remove all weekly RFU auto-sync triggers.
+ */
+function removeWeeklyRfuSyncTrigger() {
+  deleteTriggersByHandler_("syncRfuFixturesScheduled");
+  Logger.log("Weekly RFU sync trigger(s) removed.");
+}
+
+function deleteTriggersByHandler_(handlerName) {
+  var triggers = ScriptApp.getProjectTriggers();
+  for (var i = 0; i < triggers.length; i++) {
+    if (triggers[i].getHandlerFunction() === handlerName) {
+      ScriptApp.deleteTrigger(triggers[i]);
+    }
+  }
+}
+
+function normalizeTriggerHour_(value) {
+  var n = parseInt(value, 10);
+  if (isNaN(n)) return 6;
+  if (n < 0) return 0;
+  if (n > 23) return 23;
+  return n;
+}
+
+function getWeekDayEnum_(weekdayText) {
+  var key = String(weekdayText || "MONDAY").toUpperCase().trim();
+  var map = {
+    SUNDAY: ScriptApp.WeekDay.SUNDAY,
+    MONDAY: ScriptApp.WeekDay.MONDAY,
+    TUESDAY: ScriptApp.WeekDay.TUESDAY,
+    WEDNESDAY: ScriptApp.WeekDay.WEDNESDAY,
+    THURSDAY: ScriptApp.WeekDay.THURSDAY,
+    FRIDAY: ScriptApp.WeekDay.FRIDAY,
+    SATURDAY: ScriptApp.WeekDay.SATURDAY
+  };
+  return map[key] || ScriptApp.WeekDay.MONDAY;
+}
+
+function fetchIcsContent(url) {
+  var normalizedUrl = normalizeIcsUrl(url);
+  var response = UrlFetchApp.fetch(normalizedUrl, {
+    muteHttpExceptions: true,
+    followRedirects: true,
+    headers: { Accept: "text/calendar,text/plain,*/*" }
+  });
+
+  var code = response.getResponseCode();
+  if (code < 200 || code >= 300) {
+    throw new Error("Unable to fetch ICS feed. HTTP " + code);
+  }
+
+  return response.getContentText();
+}
+
+function normalizeIcsUrl(url) {
+  var raw = String(url || "").trim();
+  if (raw.toLowerCase().indexOf("webcal://") === 0) {
+    return "https://" + raw.substring(9);
+  }
+  return raw;
+}
+
+function parseFixturesFromIcs(icsContent) {
+  var text = unfoldIcsText(icsContent);
+  var blocks = text.match(/BEGIN:VEVENT[\s\S]*?END:VEVENT/g) || [];
+  var fixtures = [];
+  var seen = {};
+
+  for (var i = 0; i < blocks.length; i++) {
+    var fixture = parseIcsEventFixture(blocks[i]);
+    if (!fixture) continue;
+
+    var dedupeKey = buildFixtureKey(fixture.date, fixture.home_team, fixture.away_team);
+    if (!dedupeKey || seen[dedupeKey]) continue;
+
+    seen[dedupeKey] = true;
+    fixtures.push(fixture);
+  }
+
+  return fixtures;
+}
+
+function unfoldIcsText(text) {
+  return String(text || "")
+    .replace(/\r\n/g, "\n")
+    .replace(/\r/g, "\n")
+    .replace(/\n[ \t]/g, "");
+}
+
+function parseIcsEventFixture(eventBlock) {
+  var props = parseIcsProperties(eventBlock);
+  var summary = unescapeIcsText(getIcsPropertyValue(props, "SUMMARY"));
+  var teams = parseTeamsFromSummary(summary);
+  if (!teams) return null;
+
+  var start = parseIcsStartDateTime(props);
+  if (!start) return null;
+
+  var description = unescapeIcsText(getIcsPropertyValue(props, "DESCRIPTION"));
+  var competition = extractCompetitionFromDescription(description);
+  var venue = unescapeIcsText(getIcsPropertyValue(props, "LOCATION"));
+
+  return {
+    date: start.date,
+    time: start.time,
+    home_team: teams.home_team,
+    away_team: teams.away_team,
+    venue: venue || "",
+    competition: competition || "",
+    status: "upcoming",
+    home_score: "",
+    away_score: "",
+    home_bp: "",
+    away_bp: ""
+  };
+}
+
+function parseIcsProperties(eventBlock) {
+  var props = {};
+  var lines = String(eventBlock || "").split("\n");
+
+  for (var i = 0; i < lines.length; i++) {
+    var line = lines[i];
+    if (!line) continue;
+    if (line === "BEGIN:VEVENT" || line === "END:VEVENT") continue;
+
+    var sep = line.indexOf(":");
+    if (sep < 0) continue;
+
+    var keyPart = line.substring(0, sep).trim();
+    var value = line.substring(sep + 1);
+    var baseKey = keyPart.split(";")[0].toUpperCase();
+    if (!baseKey) continue;
+
+    if (!props[baseKey]) {
+      props[baseKey] = {
+        key: keyPart.toUpperCase(),
+        value: value
+      };
+    }
+  }
+
+  return props;
+}
+
+function getIcsPropertyValue(props, key) {
+  return props[key] ? props[key].value : "";
+}
+
+function unescapeIcsText(value) {
+  return String(value || "")
+    .replace(/\\n/gi, "\n")
+    .replace(/\\,/g, ",")
+    .replace(/\\;/g, ";")
+    .replace(/\\\\/g, "\\");
+}
+
+function parseTeamsFromSummary(summary) {
+  var clean = String(summary || "")
+    .replace(/[^\x20-\x7E]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+
+  if (!clean) return null;
+
+  var parts = clean.split(/\s+vs\s+/i);
+  if (parts.length !== 2) {
+    parts = clean.split(/\s+v\s+/i);
+  }
+  if (parts.length !== 2) return null;
+
+  var homeTeam = parts[0].replace(/^[-:]+|[-:]+$/g, "").trim();
+  var awayTeam = parts[1].replace(/^[-:]+|[-:]+$/g, "").trim();
+  if (!homeTeam || !awayTeam) return null;
+
+  return {
+    home_team: homeTeam,
+    away_team: awayTeam
+  };
+}
+
+function parseIcsStartDateTime(props) {
+  var entry = props.DTSTART;
+  if (!entry || !entry.value) return null;
+
+  var key = String(entry.key || "");
+  var value = String(entry.value || "").trim();
+  var tz = ADMIN_CONFIG.SYNC_TIME_ZONE || Session.getScriptTimeZone();
+  var dateObj;
+  var timeText;
+
+  if (key.indexOf("VALUE=DATE") !== -1 || /^\d{8}$/.test(value)) {
+    dateObj = parseIcsDateValue(value);
+    if (!dateObj) return null;
+    timeText = ADMIN_CONFIG.DEFAULT_FIXTURE_TIME || "3:00 PM";
+  } else {
+    dateObj = parseIcsTimestampValue(value);
+    if (!dateObj) return null;
+    timeText = formatFixtureTime(dateObj, tz);
+  }
+
+  return {
+    date: formatFixtureDate(dateObj, tz),
+    time: timeText
+  };
+}
+
+function parseIcsDateValue(value) {
+  var m = String(value || "").match(/^(\d{4})(\d{2})(\d{2})$/);
+  if (!m) return null;
+
+  return new Date(Date.UTC(
+    parseInt(m[1], 10),
+    parseInt(m[2], 10) - 1,
+    parseInt(m[3], 10),
+    12, 0, 0
+  ));
+}
+
+function parseIcsTimestampValue(value) {
+  var s = String(value || "").trim();
+  var m;
+
+  m = s.match(/^(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})Z$/);
+  if (m) {
+    return new Date(Date.UTC(
+      parseInt(m[1], 10),
+      parseInt(m[2], 10) - 1,
+      parseInt(m[3], 10),
+      parseInt(m[4], 10),
+      parseInt(m[5], 10),
+      parseInt(m[6], 10)
+    ));
+  }
+
+  m = s.match(/^(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})$/);
+  if (m) {
+    return new Date(
+      parseInt(m[1], 10),
+      parseInt(m[2], 10) - 1,
+      parseInt(m[3], 10),
+      parseInt(m[4], 10),
+      parseInt(m[5], 10),
+      parseInt(m[6], 10)
+    );
+  }
+
+  m = s.match(/^(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})Z$/);
+  if (m) {
+    return new Date(Date.UTC(
+      parseInt(m[1], 10),
+      parseInt(m[2], 10) - 1,
+      parseInt(m[3], 10),
+      parseInt(m[4], 10),
+      parseInt(m[5], 10),
+      0
+    ));
+  }
+
+  m = s.match(/^(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})$/);
+  if (m) {
+    return new Date(
+      parseInt(m[1], 10),
+      parseInt(m[2], 10) - 1,
+      parseInt(m[3], 10),
+      parseInt(m[4], 10),
+      parseInt(m[5], 10),
+      0
+    );
+  }
+
+  var fallback = new Date(s);
+  return isNaN(fallback.getTime()) ? null : fallback;
+}
+
+function formatFixtureDate(dateObj, tz) {
+  var iso = Utilities.formatDate(dateObj, tz, "yyyy-MM-dd");
+  var parts = iso.split("-");
+  if (parts.length !== 3) return iso;
+
+  var y = parseInt(parts[0], 10);
+  var m = parseInt(parts[1], 10);
+  var d = parseInt(parts[2], 10);
+  var calendarDate = new Date(Date.UTC(y, m - 1, d));
+
+  var dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+  var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+  return dayNames[calendarDate.getUTCDay()] + " " + d + " " + monthNames[m - 1] + " " + y;
+}
+
+function formatFixtureTime(dateObj, tz) {
+  return Utilities.formatDate(dateObj, tz, "h:mm a");
+}
+
+function extractCompetitionFromDescription(description) {
+  var firstLine = String(description || "").split("\n")[0].trim();
+  if (!firstLine) return "";
+  return firstLine.split("|")[0].trim();
+}
+
+function syncFixturesToSheet(sheet, incomingFixtures) {
+  var lastCol = sheet.getLastColumn();
+  if (lastCol < 1) {
+    throw new Error("fixtures sheet has no headers in row 1");
+  }
+
+  var headers = sheet.getRange(1, 1, 1, lastCol).getValues()[0];
+  if (!headers || headers.length === 0) {
+    throw new Error("fixtures sheet has no headers in row 1");
+  }
+
+  var fields = getFixtureFieldKeys(headers);
+  var rows = readSheetRowsAsObjects(sheet, headers);
+  var teamMap = buildNormalizedTeamMap(rows, fields);
+  var existingByKey = {};
+
+  for (var i = 0; i < rows.length; i++) {
+    var existingKey = buildFixtureKey(rows[i][fields.date], rows[i][fields.home_team], rows[i][fields.away_team]);
+    if (existingKey && !existingByKey[existingKey]) {
+      existingByKey[existingKey] = rows[i];
+    }
+  }
+
+  var added = 0;
+  var updated = 0;
+  var skipped = 0;
+
+  for (var j = 0; j < incomingFixtures.length; j++) {
+    var fixture = incomingFixtures[j];
+    var homeTeam = canonicalizeTeamName(fixture.home_team, teamMap);
+    var awayTeam = canonicalizeTeamName(fixture.away_team, teamMap);
+    var key = buildFixtureKey(fixture.date, homeTeam, awayTeam);
+
+    if (!key) {
+      skipped++;
+      continue;
+    }
+
+    var target = existingByKey[key];
+    if (!target) {
+      target = newEmptyRowObject(headers);
+      rows.push(target);
+      existingByKey[key] = target;
+      added++;
+    } else {
+      updated++;
+    }
+
+    target[fields.date] = fixture.date;
+    target[fields.time] = fixture.time || target[fields.time] || ADMIN_CONFIG.DEFAULT_FIXTURE_TIME || "3:00 PM";
+    target[fields.home_team] = homeTeam;
+    target[fields.away_team] = awayTeam;
+    target[fields.venue] = fixture.venue || target[fields.venue] || "";
+    target[fields.competition] = fixture.competition || target[fields.competition] || "";
+
+    var preserveResult = hasCompletedResult(target, fields);
+    if (!preserveResult) {
+      target[fields.status] = "upcoming";
+      target[fields.home_score] = "";
+      target[fields.away_score] = "";
+      target[fields.home_bp] = "";
+      target[fields.away_bp] = "";
+    } else if (isBlank(target[fields.status])) {
+      target[fields.status] = "completed";
+    }
+  }
+
+  rows.sort(function(a, b) {
+    return compareFixtureRows(a, b, fields);
+  });
+
+  writeRowsToSheet(sheet, headers, rows);
+
+  return {
+    fetched: incomingFixtures.length,
+    added: added,
+    updated: updated,
+    skipped: skipped,
+    total_rows: rows.length
+  };
+}
+
+function getFixtureFieldKeys(headers) {
+  var required = ["date", "time", "home_team", "away_team", "venue", "competition", "home_score", "away_score", "status", "home_bp", "away_bp"];
+  var fields = {};
+
+  for (var i = 0; i < required.length; i++) {
+    var fieldName = required[i];
+    var headerName = findHeaderName(headers, fieldName);
+    if (!headerName) {
+      throw new Error("fixtures tab is missing required header: " + fieldName);
+    }
+    fields[fieldName] = headerName;
+  }
+
+  return fields;
+}
+
+function findHeaderName(headers, normalizedFieldName) {
+  for (var i = 0; i < headers.length; i++) {
+    var raw = String(headers[i]);
+    if (normalizeHeaderName(raw) === normalizedFieldName) {
+      return raw;
+    }
+  }
+  return null;
+}
+
+function normalizeHeaderName(name) {
+  return String(name || "").toLowerCase().trim().replace(/\s+/g, "_");
+}
+
+function readSheetRowsAsObjects(sheet, headers) {
+  var rows = [];
+  var lastRow = sheet.getLastRow();
+  var lastCol = headers.length;
+
+  if (lastRow < 2) return rows;
+
+  var values = sheet.getRange(2, 1, lastRow - 1, lastCol).getValues();
+  for (var r = 0; r < values.length; r++) {
+    var obj = {};
+    for (var c = 0; c < headers.length; c++) {
+      obj[String(headers[c])] = values[r][c];
+    }
+    rows.push(obj);
+  }
+
+  return rows;
+}
+
+function writeRowsToSheet(sheet, headers, rows) {
+  var existingRows = sheet.getLastRow();
+  if (existingRows > 1) {
+    sheet.deleteRows(2, existingRows - 1);
+  }
+
+  if (!rows.length) return;
+
+  var out = [];
+  for (var i = 0; i < rows.length; i++) {
+    var rowObj = rows[i];
+    var line = [];
+    for (var c = 0; c < headers.length; c++) {
+      var key = String(headers[c]);
+      line.push(rowObj[key] !== undefined ? rowObj[key] : "");
+    }
+    out.push(line);
+  }
+
+  sheet.getRange(2, 1, out.length, headers.length).setValues(out);
+}
+
+function newEmptyRowObject(headers) {
+  var obj = {};
+  for (var i = 0; i < headers.length; i++) {
+    obj[String(headers[i])] = "";
+  }
+  return obj;
+}
+
+function buildNormalizedTeamMap(rows, fields) {
+  var map = {};
+  for (var i = 0; i < rows.length; i++) {
+    addTeamToMap(map, rows[i][fields.home_team]);
+    addTeamToMap(map, rows[i][fields.away_team]);
+  }
+  return map;
+}
+
+function addTeamToMap(map, name) {
+  var clean = String(name || "").replace(/\s+/g, " ").trim();
+  if (!clean) return;
+
+  var key = normalizeTeamKey(clean);
+  if (!key || map[key]) return;
+  map[key] = clean;
+}
+
+function canonicalizeTeamName(name, teamMap) {
+  var withAlias = applyTeamAlias(name);
+  var clean = String(withAlias || "").replace(/\s+/g, " ").trim();
+  if (!clean) return "";
+
+  var key = normalizeTeamKey(clean);
+  if (key && teamMap[key]) return teamMap[key];
+  if (key) teamMap[key] = clean;
+
+  return clean;
+}
+
+function applyTeamAlias(name) {
+  var clean = String(name || "").replace(/\s+/g, " ").trim();
+  if (!clean) return "";
+
+  var aliases = ADMIN_CONFIG.TEAM_ALIASES || {};
+  var normalized = normalizeTeamKey(clean);
+
+  for (var key in aliases) {
+    if (!aliases.hasOwnProperty(key)) continue;
+    if (normalizeTeamKey(key) === normalized) {
+      return String(aliases[key] || "").replace(/\s+/g, " ").trim();
+    }
+  }
+
+  return clean;
+}
+
+function normalizeTeamKey(name) {
+  return String(name || "")
+    .toLowerCase()
+    .replace(/[^a-z0-9 ]/g, " ")
+    .replace(/\brfc\b/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function buildFixtureKey(dateValue, homeTeam, awayTeam) {
+  var dateKey = normalizeDateKey(dateValue);
+  var homeKey = normalizeTeamKey(homeTeam);
+  var awayKey = normalizeTeamKey(awayTeam);
+  if (!dateKey || !homeKey || !awayKey) return "";
+  return dateKey + "|" + homeKey + "|" + awayKey;
+}
+
+function normalizeDateKey(value) {
+  if (value instanceof Date && !isNaN(value.getTime())) {
+    return Utilities.formatDate(value, "UTC", "yyyy-MM-dd");
+  }
+
+  var text = String(value || "").trim();
+  if (!text) return "";
+
+  var m = text.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (m) return m[1] + "-" + m[2] + "-" + m[3];
+
+  m = text.match(/^(\d{4})(\d{2})(\d{2})$/);
+  if (m) return m[1] + "-" + m[2] + "-" + m[3];
+
+  var parsed = new Date(text);
+  if (!isNaN(parsed.getTime())) {
+    return Utilities.formatDate(parsed, "UTC", "yyyy-MM-dd");
+  }
+
+  return text.toLowerCase().replace(/\s+/g, " ").trim();
+}
+
+function hasCompletedResult(rowObj, fields) {
+  var status = String(rowObj[fields.status] || "").toLowerCase().trim();
+  if (status === "completed") return true;
+
+  var homeScore = String(rowObj[fields.home_score] || "").trim();
+  var awayScore = String(rowObj[fields.away_score] || "").trim();
+  if (homeScore === "" || awayScore === "") return false;
+
+  return !isNaN(parseInt(homeScore, 10)) && !isNaN(parseInt(awayScore, 10));
+}
+
+function compareFixtureRows(a, b, fields) {
+  var dateA = normalizeDateKey(a[fields.date]);
+  var dateB = normalizeDateKey(b[fields.date]);
+  if (dateA < dateB) return -1;
+  if (dateA > dateB) return 1;
+
+  var timeA = normalizeTimeKey(a[fields.time]);
+  var timeB = normalizeTimeKey(b[fields.time]);
+  if (timeA < timeB) return -1;
+  if (timeA > timeB) return 1;
+
+  var homeA = String(a[fields.home_team] || "").toLowerCase();
+  var homeB = String(b[fields.home_team] || "").toLowerCase();
+  if (homeA < homeB) return -1;
+  if (homeA > homeB) return 1;
+
+  var awayA = String(a[fields.away_team] || "").toLowerCase();
+  var awayB = String(b[fields.away_team] || "").toLowerCase();
+  if (awayA < awayB) return -1;
+  if (awayA > awayB) return 1;
+
+  return 0;
+}
+
+function normalizeTimeKey(value) {
+  var s = String(value || "").trim().toUpperCase();
+  if (!s) return "99:99";
+
+  var m = s.match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/);
+  if (m) {
+    var hour = parseInt(m[1], 10);
+    var min = parseInt(m[2], 10);
+    var ap = m[3];
+
+    if (ap === "PM" && hour < 12) hour += 12;
+    if (ap === "AM" && hour === 12) hour = 0;
+
+    var hh = hour < 10 ? "0" + hour : String(hour);
+    var mm = min < 10 ? "0" + min : String(min);
+    return hh + ":" + mm;
+  }
+
+  m = s.match(/^(\d{1,2}):(\d{2})$/);
+  if (m) {
+    var h = parseInt(m[1], 10);
+    var mi = parseInt(m[2], 10);
+    var h2 = h < 10 ? "0" + h : String(h);
+    var m2 = mi < 10 ? "0" + mi : String(mi);
+    return h2 + ":" + m2;
+  }
+
+  return s;
+}
+
+function isBlank(value) {
+  return value === null || value === undefined || String(value).trim() === "";
+}
+
+/**
+ * Recalculate standings automatically after fixtures changes.
+ * The calculateStandings function is defined in google-apps-script.js.
+ */
+function recalculateStandingsIfFixturesChanged(tabName) {
+  if (tabName !== "fixtures") return;
+  if (typeof calculateStandings !== "function") {
+    Logger.log("calculateStandings() not found; skipped auto-standings recalculation.");
+    return;
+  }
+
+  try {
+    calculateStandings();
+  } catch (err) {
+    Logger.log("Auto standings recalculation failed: " + err.toString());
+  }
 }
 
 /**
@@ -450,7 +1182,7 @@ function jsonResponse(obj, statusCode) {
  * Get list of authorized emails (for debugging)
  */
 function getAuthorizedEmails() {
-  return CONFIG.ALLOWED_EMAILS;
+  return ADMIN_CONFIG.ALLOWED_EMAILS;
 }
 
 /**
@@ -459,9 +1191,9 @@ function getAuthorizedEmails() {
  */
 function addAuthorizedEmail() {
   var email = "new.email@example.com"; // Change this
-  CONFIG.ALLOWED_EMAILS.push(email);
+  ADMIN_CONFIG.ALLOWED_EMAILS.push(email);
   Logger.log("Added: " + email);
-  Logger.log("Current list: " + CONFIG.ALLOWED_EMAILS.join(", "));
+  Logger.log("Current list: " + ADMIN_CONFIG.ALLOWED_EMAILS.join(", "));
 }
 
 /**

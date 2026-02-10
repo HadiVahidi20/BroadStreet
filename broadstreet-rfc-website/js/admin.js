@@ -597,6 +597,31 @@ const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw9ubtgljqkSSow
     document.getElementById('formModal').style.display = 'none';
   }
 
+  async function syncRfuFixtures() {
+    const confirmed = confirm(
+      'Sync fixtures from RFU calendar now?\n\nThis keeps existing scores/results and only updates fixture details.'
+    );
+    if (!confirmed) return;
+
+    showLoading();
+
+    try {
+      const result = await apiCall('syncRfuFixtures', 'fixtures', {});
+      if (!result.success) {
+        showError(result.error || 'RFU sync failed');
+        return;
+      }
+
+      const summary = result.summary || {};
+      const added = Number(summary.added || 0);
+      const updated = Number(summary.updated || 0);
+      showToast(`RFU sync complete: ${added} added, ${updated} updated.`, 'success');
+      await loadCurrentSection();
+    } catch (error) {
+      showError('Error syncing RFU fixtures: ' + error.message);
+    }
+  }
+
   // API call helper - uses Google token for authentication
   // Uses GET method to avoid CORS redirect issues with Google Apps Script
   async function apiCall(action, tab, data) {
@@ -678,6 +703,7 @@ const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw9ubtgljqkSSow
     editItem,
     deleteItem,
     submitForm,
+    syncRfuFixtures,
     closeModal,
     loadCurrentSection,
   };
