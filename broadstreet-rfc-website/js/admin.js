@@ -432,7 +432,7 @@ const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw9ubtgljqkSSow
         <thead>
           <tr>
             ${headers.map((h) => `<th>${h}</th>`).join('')}
-            ${!isReadOnly ? '<th>Actions</th>' : ''}
+            ${!isReadOnly ? '<th class="actions-col">Actions</th>' : ''}
           </tr>
         </thead>
         <tbody>
@@ -451,7 +451,7 @@ const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw9ubtgljqkSSow
 
       if (!isReadOnly) {
         tableHtml += `
-          <td>
+          <td class="actions-col">
             <div class="table-actions">
               <button class="btn-edit" onclick="AdminApp.editItem(${index})" title="Edit">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
