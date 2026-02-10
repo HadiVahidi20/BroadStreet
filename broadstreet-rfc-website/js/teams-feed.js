@@ -8,6 +8,163 @@
 
   var defaultPlayerImg = '../assets/photos/player_headshot/player_headshot.png';
   var defaultCoachImg = 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&h=300&q=80&fit=crop';
+  var playerModal = null;
+  var playerModalEscBound = false;
+
+  function clean(value) {
+    return String(value == null ? '' : value).trim();
+  }
+
+  function pickValue(row, keys) {
+    if (!row) return '';
+    for (var i = 0; i < keys.length; i++) {
+      var key = keys[i];
+      var value = clean(row[key]);
+      if (value) return value;
+    }
+    return '';
+  }
+
+  function getPlayerName(player) {
+    var firstName = pickValue(player, ['first_name']);
+    var surname = pickValue(player, ['surname']);
+    if (firstName || surname) {
+      return (firstName + ' ' + surname).trim();
+    }
+    return pickValue(player, ['name']) || 'TBC';
+  }
+
+  function getPlayerPosition(player) {
+    return pickValue(player, ['position', 'position_or_role']);
+  }
+
+  function ensurePlayerModal() {
+    if (playerModal && document.body.contains(playerModal)) {
+      return playerModal;
+    }
+
+    playerModal = document.getElementById('playerProfileModal');
+    if (!playerModal) {
+      playerModal = document.createElement('div');
+      playerModal.id = 'playerProfileModal';
+      playerModal.className = 'player-profile-modal';
+      playerModal.setAttribute('aria-hidden', 'true');
+      playerModal.innerHTML =
+        '<div class="player-profile-backdrop" data-player-close="true"></div>' +
+        '<div class="player-profile-dialog" role="dialog" aria-modal="true" aria-labelledby="playerProfileTitle">' +
+          '<button type="button" class="player-profile-close" aria-label="Close profile" data-player-close="true">&times;</button>' +
+          '<div class="player-profile-content" id="playerProfileContent"></div>' +
+        '</div>';
+      document.body.appendChild(playerModal);
+    }
+
+    playerModal.onclick = function (evt) {
+      var target = evt.target;
+      if (!target) return;
+      if (target.getAttribute('data-player-close') === 'true') {
+        closePlayerModal();
+      }
+    };
+
+    if (!playerModalEscBound) {
+      document.addEventListener('keydown', function (evt) {
+        if (evt.key === 'Escape') {
+          closePlayerModal();
+        }
+      });
+      playerModalEscBound = true;
+    }
+
+    return playerModal;
+  }
+
+  function buildPlayerModalHtml(player) {
+    var name = getPlayerName(player);
+    var position = getPlayerPosition(player);
+    var nickname = pickValue(player, ['nickname']);
+    var image = pickValue(player, ['image']) || defaultPlayerImg;
+    var details = [];
+
+    function addDetail(label, keys) {
+      var value = pickValue(player, keys);
+      if (!value) return;
+      details.push({ label: label, value: value });
+    }
+
+    addDetail('Team', ['team']);
+    addDetail('Jersey Number', ['number']);
+    addDetail('Position Category', ['position_category']);
+    addDetail('Date of Birth', ['date_of_birth']);
+    addDetail('Age', ['age']);
+    addDetail('Birthplace', ['birthplace']);
+    addDetail('Height', ['height', 'height_cm']);
+    addDetail('Weight', ['weight']);
+    addDetail('Caps', ['caps']);
+    addDetail('Sponsor', ['sponsor', 'who_is_your_sponsor']);
+    addDetail('Previous Club 1', ['previous_club_1']);
+    addDetail('Previous Club 2', ['previous_club_2']);
+    addDetail('Coach Age Group', ['coach_age_group']);
+    addDetail('Seasons at Broadstreet', ['seasons_at_broadstreet']);
+
+    var detailsHtml = details.map(function (item) {
+      return (
+        '<div class="player-profile-item">' +
+          '<div class="player-profile-label">' + esc(item.label) + '</div>' +
+          '<div class="player-profile-value">' + esc(item.value) + '</div>' +
+        '</div>'
+      );
+    }).join('');
+
+    if (!detailsHtml) {
+      detailsHtml = '<p class="text-muted mb-0">No additional profile details available.</p>';
+    }
+
+    return (
+      '<div class="player-profile-header">' +
+        '<img src="' + esc(image) + '" alt="' + esc(name) + '" class="player-profile-photo">' +
+        '<div>' +
+          (position ? '<div class="player-profile-position">' + esc(position) + '</div>' : '') +
+          '<h3 id="playerProfileTitle" class="player-profile-name">' + esc(name) + '</h3>' +
+          (nickname ? '<p class="player-profile-nickname">Nickname: ' + esc(nickname) + '</p>' : '') +
+        '</div>' +
+      '</div>' +
+      '<div class="player-profile-grid">' + detailsHtml + '</div>'
+    );
+  }
+
+  function openPlayerModal(player) {
+    if (!player) return;
+    var modal = ensurePlayerModal();
+    var content = modal.querySelector('#playerProfileContent');
+    if (!content) return;
+
+    content.innerHTML = buildPlayerModalHtml(player);
+    modal.classList.add('is-open');
+    modal.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('player-modal-open');
+  }
+
+  function closePlayerModal() {
+    if (!playerModal) return;
+    playerModal.classList.remove('is-open');
+    playerModal.setAttribute('aria-hidden', 'true');
+    document.body.classList.remove('player-modal-open');
+  }
+
+  function bindProfileButtons(grid, players) {
+    if (!grid) return;
+    grid.onclick = function (event) {
+      var target = event.target;
+      if (!target) return;
+
+      var button = target.closest('.player-profile-btn');
+      if (!button) return;
+
+      var index = parseInt(button.getAttribute('data-player-index'), 10);
+      if (isNaN(index) || !players[index]) return;
+      openPlayerModal(players[index]);
+    };
+  }
 
   // ── Coaching Staff ──────────────────────────────────────────────────
   function renderCoaching(coaches) {
@@ -62,40 +219,19 @@
     var grid = document.getElementById('playerGrid');
     if (!grid || !players.length) return;
 
-    grid.innerHTML = players.map(function (p) {
-      var name = esc(p.name || 'TBC');
-      var pos = esc(p.position || '');
-      var num = esc(p.number || '');
-      var img = esc(p.image || defaultPlayerImg);
-      var height = esc(p.height || '');
-      var weight = esc(p.weight || '');
-      var age = esc(p.age || '');
-      var caps = esc(p.caps || '');
+    grid.innerHTML = players.map(function (p, index) {
+      var name = esc(getPlayerName(p));
+      var pos = esc(getPlayerPosition(p));
+      var img = esc(pickValue(p, ['image']) || defaultPlayerImg);
 
       // Build data-position attribute for filter
-      var posLower = (p.position || '').toLowerCase();
+      var posLower = getPlayerPosition(p).toLowerCase();
       var positionClasses = posLower;
       // Add group class (forward/back)
-      if (/prop|hooker|lock|flanker|number.?8/i.test(posLower)) {
+      if (/prop|hooker|lock|flanker|number.?8|back row|second row/i.test(posLower)) {
         positionClasses += ' forward';
-      } else if (/scrum|fly|centre|wing|fullback|half/i.test(posLower)) {
+      } else if (/scrum|fly|centre|wing|full\s*back|half|center/i.test(posLower)) {
         positionClasses += ' back';
-      }
-
-      var statsLine = '';
-      if (height || weight) {
-        statsLine += '<div>';
-        if (height) statsLine += 'Height: ' + height;
-        if (height && weight) statsLine += ' &bull; ';
-        if (weight) statsLine += 'Weight: ' + weight;
-        statsLine += '</div>';
-      }
-      if (age || caps) {
-        statsLine += '<div class="mt-1">';
-        if (age) statsLine += 'Age: ' + age;
-        if (age && caps) statsLine += ' &bull; ';
-        if (caps) statsLine += 'Caps: ' + caps;
-        statsLine += '</div>';
       }
 
       return (
@@ -107,15 +243,16 @@
               '<div class="player-card-overlay"></div>' +
             '</div>' +
             '<div class="card-body text-center">' +
-              '<div class="text-sm text-muted mb-1">' + num + (num && pos ? ' &bull; ' : '') + pos + '</div>' +
-              '<h4 class="mb-2">' + name + '</h4>' +
-              '<div class="text-xs text-muted">' + statsLine + '</div>' +
+              (pos ? '<div class="text-sm text-muted mb-1">' + pos + '</div>' : '') +
+              '<h4 class="mb-3">' + name + '</h4>' +
+              '<button type="button" class="btn btn-outline btn-sm player-profile-btn" data-player-index="' + index + '">View Full Profile</button>' +
             '</div>' +
           '</div>' +
         '</div>'
       );
     }).join('');
 
+    bindProfileButtons(grid, players);
     // Re-bind the position filter to new cards
     rebindFilter();
     // Re-bind 3D tilt effect

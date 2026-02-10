@@ -192,6 +192,155 @@
       color: var(--color-text-muted);
     }
 
+    /* Player profile modal */
+    body.player-modal-open {
+      overflow: hidden;
+    }
+
+    .player-profile-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 1200;
+      display: none;
+    }
+
+    .player-profile-modal.is-open {
+      display: block;
+    }
+
+    .player-profile-backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(12, 20, 34, 0.72);
+    }
+
+    .player-profile-dialog {
+      position: relative;
+      width: min(860px, calc(100% - 2rem));
+      max-height: 90vh;
+      margin: 5vh auto;
+      overflow-y: auto;
+      background: #ffffff;
+      border-radius: 14px;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
+      padding: 1.5rem;
+      z-index: 1;
+    }
+
+    .player-profile-close {
+      position: absolute;
+      top: 10px;
+      right: 12px;
+      width: 38px;
+      height: 38px;
+      border: none;
+      border-radius: 999px;
+      background: #f1f3f5;
+      color: #13223a;
+      font-size: 26px;
+      line-height: 1;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+
+    .player-profile-close:hover {
+      background: #e1e7ed;
+    }
+
+    .player-profile-header {
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      gap: 1.25rem;
+      align-items: center;
+      margin-bottom: 1.25rem;
+      padding-right: 2rem;
+    }
+
+    .player-profile-photo {
+      width: 100%;
+      max-width: 220px;
+      aspect-ratio: 1 / 1;
+      object-fit: cover;
+      object-position: top center;
+      border-radius: 12px;
+      background: #f5f5f5;
+      border: 1px solid rgba(0, 0, 0, 0.08);
+    }
+
+    .player-profile-position {
+      color: #5a6776;
+      font-weight: 600;
+      margin-bottom: 0.35rem;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+      font-size: 0.82rem;
+    }
+
+    .player-profile-name {
+      margin: 0;
+      font-size: clamp(1.4rem, 2vw, 2rem);
+      line-height: 1.2;
+      color: #0f1b2f;
+    }
+
+    .player-profile-nickname {
+      margin: 0.5rem 0 0;
+      color: #5a6776;
+      font-size: 0.95rem;
+    }
+
+    .player-profile-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.85rem;
+    }
+
+    .player-profile-item {
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      border-radius: 10px;
+      padding: 0.65rem 0.8rem;
+      background: #fbfcfd;
+    }
+
+    .player-profile-label {
+      font-size: 0.73rem;
+      color: #6b7684;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      margin-bottom: 0.2rem;
+      font-weight: 700;
+    }
+
+    .player-profile-value {
+      color: #1c2738;
+      font-size: 0.95rem;
+      font-weight: 600;
+      line-height: 1.35;
+      overflow-wrap: anywhere;
+    }
+
+    @media (max-width: 768px) {
+      .player-profile-dialog {
+        width: calc(100% - 1rem);
+        max-height: 93vh;
+        margin: 3.5vh auto;
+        padding: 1rem;
+      }
+
+      .player-profile-header {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+      }
+
+      .player-profile-photo {
+        max-width: 190px;
+      }
+
+      .player-profile-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
     /* Fade in animation */
     @keyframes fadeIn {
       from {

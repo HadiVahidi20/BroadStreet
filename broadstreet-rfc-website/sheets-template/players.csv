@@ -1,16 +1,35 @@
-name,position,number,image,height,weight,age,caps,team
-Tom Roberts,Loosehead Prop,1,,1.85m,115kg,28,47,1st XV
-Dan Mitchell,Hooker,2,,1.80m,108kg,31,89,1st XV
-Steve Johnson,Tighthead Prop,3,,1.88m,120kg,26,35,1st XV
-Chris Evans,Lock,4,,2.00m,115kg,29,62,1st XV
-Michael Davies,Lock,5,,1.98m,112kg,27,41,1st XV
-Ben Taylor,Blindside Flanker,6,,1.90m,105kg,25,38,1st XV
-Luke Anderson,Openside Flanker,7,,1.85m,100kg,24,29,1st XV
-Jake Harris,Number 8,8,,1.92m,110kg,30,71,1st XV
-Ryan Scott,Scrum Half,9,,1.75m,85kg,27,54,1st XV
-Alex Cooper,Fly Half,10,,1.82m,90kg,26,45,1st XV
-Josh Williams,Left Wing,11,,1.80m,88kg,23,27,1st XV
-Matt Lewis,Inside Centre,12,,1.85m,95kg,28,58,1st XV
-Oliver White,Outside Centre,13,,1.88m,98kg,25,36,1st XV
-Charlie Brown,Right Wing,14,,1.83m,92kg,24,31,1st XV
-Sam Hughes,Full Back,15,,1.85m,93kg,29,66,1st XV
+﻿"name","position","number","image","height","weight","age","caps","team","first_name","surname","nickname","date_of_birth","birthplace","sponsor","position_category","coach_age_group","previous_club_1","previous_club_2","height_cm","seasons_at_broadstreet"
+"Ryan O'Neill","Centre","","","180","100","34","","","Ryan","O'Neill","Ryno","05/08/1991","Maidstone","Granlyn Specialist Coatings","Centres","180","Henley Hawks","N/a","",""
+"Rob Knox","Centre","","","186","111","34","","","Rob","Knox","Knocka","04/02/1992","Coventry","N/A","Centres","186","Hinckley","Coventry","","First"
+"Kieran Moore","Hooker","","","177","108kg","25","","","Kieran","Moore","Kieran","05/01/2001","Coventry","Simon Moore","Front Row","177","Barkers Butts","","","1"
+"Jordan Gott","Fly Half","","","185","101","30","","","Jordan","Gott","Gotty","19/04/1995","Soignies, Belgium","Ryan O’Neil 👀","Half Back","185","Cornish pirates","Plymouth Albion","","1"
+"Josh Crosdale","Prop","","","185","122","20","","","Josh","Crosdale","Crozzy","05/09/2005","Coventry","FireAngel safety technology","Front Row","185","Pinley","","","5"
+"Adam Bruce","Prop","","","185","139","25","","","Adam","Bruce","The prawn","09/11/2000","Coventry","Budget skips","Front Row","185","Broadstreet","","","19"
+"Alton Mcvey","Centre","","","192.024","100","29","","","Alton","Mcvey","Rumple","11/02/1996","Nuneaton","The Royal Oak","Centres","192.024","Bourneville","Leicester Lions","","5"
+"Mason O’Meara","Hooker","","","185","120kg","19","","","Mason","O’Meara","NOB","11/07/2006","Coventry","none","Front Row","185","Broadstreet","","","12"
+"Matt Timothy","Back Row","","","185","85","35","","","Matt","Timothy","Timmo","05/08/1990","Coventry","UniFabs","Back Row","185","Broadstreet","","","5"
+"Steven Lam","Back Row","","","184","100","30","","","Steven","Lam","Lammy","13/11/1995","Coventry","MLYLT Ltd","Back Row","184","Coventry Welsh","","","1"
+"Ben Ritchie","Prop","","","178","105","26","","","Ben","Ritchie","Bully","30/08/1999","Coventry","BM Lofts","Front Row","178","Barkers Butts","","","7"
+"Ben Parsons","Scrum Half","","","170","81","21","","","Ben","Parsons","Benny P","19/07/2004","Warwick","N/A","Half Back","170","Leamington","Kenilworth","","3"
+"Michael Ryan","Back Row","","","187cm","113kg","32","","","Michael","Ryan","Micky, big mike, big cunt","15/12/1993","Newtown Powys, Wales","Shannonsode Civil Engineering","Back Row","187cm","Kenilworth","Coventry","","On and off 5"
+"Lewis Kavanagh","Second Row","","","196cm","130","29","","","Lewis","Kavanagh","Kav","30/01/1997","Coventry","Binary Blue","Second Row","196cm","Kenilworth RFC","Broadstreet Rugby Club","","1"
+"Luke Truslove","Hooker","","","238cm I look over everyone","75kg","51","","","Luke","Truslove","Big Daddy/The Poet/LoveDr","20/09/1974","North Pole","Dont need one.","Back 3","238cm I look over everyone","Barcelona Academy","The Octagon/Scholars Garden","","Broadstreet was born when I was"
+"Coby Stanton-Ford","Prop","","","188","121","21","","","Coby","Stanton-Ford","-","29/09/2004","Coventry","-","Front Row","188","None","None","","3"
+"Jos Nightingale","Second Row","","","193","97","19","","","Jos","Nightingale","N/A","13/01/2007","Coventry","Autohaus Werkshoppe Ltd","Second Row","193","N/A","N/A","","9 altogether 2 at seniors"
+"Adam Peters","Back Row","","","194","106","31","","","Adam","Peters","AP","17/08/1994","High Wycombe","Ryan O’Neil","Back Row","194","Birmingham Moseley","RCHCC","","1"
+"Callum Hopkin","Back Row","","","181","100","25","","","Callum","Hopkin","Chopkin","15/06/2000","Rugby","HMS Decorative Surfacing Ltd","Back Row","181","Rugby Lions","Moseley Oak","","5"
+"Jake Clayton","Second Row","","","189","90.2","18","","","Jake","Clayton","Clayton","25/02/2007","Coventry","None","Second Row","189","None","","","13"
+"William Morgan","Full Back","","","173cm","80kg","25","","","William","Morgan","Boycee","13/02/2000","Coventry","Independent forklift services ltd & Stape and Sons ltd","Back 3","173cm","Kenilworth","","","1"
+"Sam Mccosker-New","Back Row","","","177","90kg","24","","","Sam","Mccosker-New","Sammy","26/11/2001","Warwickshire","Harrington’s on the hill","Back Row","177","Kenilworth","Old lurentrains","","2"
+"Rory Fisher","Back Row","","","169cm","88kg","34","","","Rory","Fisher","Fish","02/05/1991","Coventry","The Personal Touch Gym","Back Row","169cm","Earlsdon Rugby Club","Barkers Butts Rugby Club","","4 year"
+"Dylan Robinson","Fly Half","","","180","86","27","","","Dylan","Robinson","Dyl","26/06/1998","Leamington spa","Not sure","Half Back","180","Southam RUFC","Old Halesonian’s","","4"
+"Ollie Coupland","Winger","","","170","80","24","","","Ollie","Coupland","Coup","02/02/2002","Leicester","The Brainbox","Back 3","170","Hinckley","","",""
+"Ambrose Deery","Fly Half","","","178","82","19","","","Ambrose","Deery","n/a","05/10/2006","Rugby","n/a","Half Back","178","Rugby Lions","","",""
+"Jake Gough","Winger","","","185cm","91","20","","","Jake","Gough","Goughy","20/11/2005","Coventry","N/A","Back 3","185cm","N/A","","",""
+"Ben Swords","Fly Half","","","175.26 cm","78 kg","21","","","Ben","Swords","Dagger","09/05/2004","Luton","MOD","Centres","175.26 cm","Dunstable","","",""
+"Harvey Giles","Scrum Half","","","170","78","26","","","Harvey","Giles","H/Harv","30/04/1999","Bristol","N/A","Half Back","170","N/A","","",""
+"Tristan Clark","Centre","","","185cm","81kg","19","","","Tristan","Clark","TC","25/02/2006","Rugby","N/A","Centres","185cm","Broadstreet","","",""
+"Ollie Farquharson","Winger","","","185","86","18","","","Ollie","Farquharson","Farquaad","01/06/2007","Warwick","Don’t have one","Back 3","185","Old leams","N/a","",""
+"Liam O'Brien","Back Row","","","183","106","26","","","Liam","O'Brien","OB","31/03/1999","Coventry","Dave Cummins","Back Row","183","Na","Na","",""
+"Will Squires","Full Back","","","190","82","18","","","Will","Squires","Squires","20/02/2007","Hereford","N/A","Back 3","","Hereford RFC","","190",""
+"Theodore Hutchinson-Hayes","Winger","","","178cm","79kg","21","","","Theodore","Hutchinson-Hayes","Theo","25/01/2005","Coventry","_","Back 3","","N/A","","178cm",""
