@@ -41,8 +41,9 @@ var ADMIN_CONFIG = {
   // Allowed sheet tabs
   ALLOWED_TABS: ["news", "fixtures", "sponsors", "players", "hero", "standings", "coaching"],
   
-  // Read-only tabs (auto-calculated)
-  READ_ONLY_TABS: ["standings"],
+  // Read-only tabs
+  // Standings is intentionally editable from admin for manual corrections.
+  READ_ONLY_TABS: [],
 
   // RFU fixture sync
   RFU_ICS_URL: "",

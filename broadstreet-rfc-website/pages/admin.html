@@ -205,6 +205,9 @@
               </button>
             </div>
           </div>
+          <div class="alert alert-info" style="margin-bottom: 16px;">
+            <strong>Filter:</strong> Only fixtures where one side is Broadstreet are shown in this panel.
+          </div>
           
           <div id="fixturesTable" class="data-table-container"></div>
         </section>
@@ -258,9 +261,15 @@
         <section id="section-standings" class="admin-section" style="display: none;">
           <div class="section-header">
             <h2>Standings Table</h2>
-            <div class="alert alert-info">
-              <strong>Note:</strong> Standings are automatically calculated from fixtures. Edit fixtures to update standings.
-            </div>
+            <button class="btn btn-primary" onclick="AdminApp.showAddForm('standings')">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 4v16m8-8H4"/>
+              </svg>
+              Add Row
+            </button>
+          </div>
+          <div class="alert alert-info">
+            <strong>Note:</strong> Standings can be edited manually here. Automatic recalculation still runs after fixture updates.
           </div>
           
           <div id="standingsTable" class="data-table-container"></div>

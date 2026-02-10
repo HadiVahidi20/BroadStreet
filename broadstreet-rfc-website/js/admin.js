@@ -23,6 +23,7 @@ const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw9ubtgljqkSSow
 
   let currentSection = 'news';
   let currentData = [];
+  let currentHeaders = [];
   let isEditing = false;
   let editingRowIndex = null;
   let googleClient = null;
@@ -91,7 +92,7 @@ const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw9ubtgljqkSSow
       { name: 'cta2_link', label: 'Secondary CTA Link', type: 'text', required: false },
     ],
     standings: [
-      // Read-only, rendered dynamically from data headers
+      // Dynamic headers from sheet
     ],
     coaching: [
       { name: 'name', label: 'Name', type: 'text', required: true },
@@ -101,8 +102,9 @@ const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw9ubtgljqkSSow
     ],
   };
 
-  // Read-only tabs (no edit/delete buttons)
-  const READ_ONLY_TABS = ['standings'];
+  // Read-only tabs (none for now; standings is manually editable)
+  const READ_ONLY_TABS = [];
+  const BROADSTREET_KEY = 'broadstreet';
 
   // Initialize
   function init() {
@@ -387,12 +389,88 @@ const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw9ubtgljqkSSow
     loadCurrentSection();
   }
 
+  function normalizeTeamKey(name) {
+    return String(name || '')
+      .toLowerCase()
+      .replace(/[^a-z0-9 ]/g, ' ')
+      .replace(/\brfc\b/g, '')
+      .replace(/\s+/g, ' ')
+      .trim();
+  }
+
+  function isBroadstreetFixtureRow(row) {
+    if (!row) return false;
+    const home = normalizeTeamKey(row.home_team);
+    const away = normalizeTeamKey(row.away_team);
+    return home.indexOf(BROADSTREET_KEY) !== -1 || away.indexOf(BROADSTREET_KEY) !== -1;
+  }
+
+  function formatLabelFromFieldName(name) {
+    return String(name || '')
+      .split('_')
+      .filter(Boolean)
+      .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+      .join(' ');
+  }
+
+  function inferDynamicFieldType(name, sampleValue) {
+    const key = String(name || '').toLowerCase();
+    if (key === 'highlight' || key === 'featured') {
+      return { type: 'select', options: ['false', 'true'] };
+    }
+
+    if (
+      /(^position$|^played$|^won$|^drawn$|^lost$|^points$|^pf$|^pa$|^pd$|^tb$|^lb$|^bp$|_score$|_bp$)/.test(key)
+    ) {
+      return { type: 'number' };
+    }
+
+    if (typeof sampleValue === 'number') {
+      return { type: 'number' };
+    }
+
+    return { type: 'text' };
+  }
+
+  function buildDynamicFields(headers, data) {
+    let names = [];
+
+    if (Array.isArray(headers) && headers.length > 0) {
+      names = headers.filter((h) => String(h || '').trim() !== '' && h !== '_rowIndex');
+    } else if (Array.isArray(data) && data.length > 0) {
+      names = Object.keys(data[0]).filter((k) => k !== '_rowIndex');
+    }
+
+    return names.map((name) => {
+      const sampleValue = Array.isArray(data) && data.length > 0 ? data[0][name] : '';
+      const inferred = inferDynamicFieldType(name, sampleValue);
+      return {
+        name,
+        label: formatLabelFromFieldName(name),
+        type: inferred.type,
+        options: inferred.options || undefined,
+        required: false,
+      };
+    });
+  }
+
+  function getSectionFields(section, data) {
+    const configured = fieldDefinitions[section] || [];
+    if (configured.length > 0) return configured;
+    return buildDynamicFields(currentHeaders, data || currentData);
+  }
+
   async function loadCurrentSection() {
     showLoading();
     try {
       const result = await apiCall('read', currentSection, {});
       if (result.success) {
-        currentData = result.data || [];
+        currentHeaders = result.headers || [];
+        const allRows = result.data || [];
+        currentData =
+          currentSection === 'fixtures'
+            ? allRows.filter((row) => isBroadstreetFixtureRow(row))
+            : allRows;
         renderTable(currentSection, currentData);
         hideLoading();
       } else {
@@ -410,33 +488,24 @@ const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw9ubtgljqkSSow
     if (!container) return;
 
     if (!data || data.length === 0) {
+      const emptyText =
+        section === 'fixtures'
+          ? 'No Broadstreet fixtures found. Add one or run RFU sync.'
+          : 'No data available. Click "Add" to create your first entry.';
       container.innerHTML = `
         <div class="empty-state">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/>
           </svg>
-          <p>No data available. Click "Add" to create your first entry.</p>
+          <p>${emptyText}</p>
         </div>
       `;
       return;
     }
 
     const isReadOnly = READ_ONLY_TABS.indexOf(section) !== -1;
-    
-    // Get fields - for read-only tabs with no defined fields, build from data keys
-    let fields = fieldDefinitions[section] || [];
-    let headers;
-    let useRawKeys = false;
-    
-    if (fields.length === 0 && data.length > 0) {
-      // Dynamic columns from data (for standings, etc.)
-      const rawKeys = Object.keys(data[0]).filter(k => k !== '_rowIndex');
-      fields = rawKeys.map(k => ({ name: k, label: k.charAt(0).toUpperCase() + k.slice(1).replace(/_/g, ' ') }));
-      headers = fields.map(f => f.label);
-      useRawKeys = true;
-    } else {
-      headers = fields.map((f) => f.label);
-    }
+    const fields = getSectionFields(section, data);
+    const headers = fields.map((f) => f.label);
 
     // Build table
     let tableHtml = `
@@ -489,7 +558,11 @@ const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw9ubtgljqkSSow
   function showAddForm(section) {
     isEditing = false;
     editingRowIndex = null;
-    const fields = fieldDefinitions[section];
+    const fields = getSectionFields(section, currentData);
+    if (!fields.length) {
+      showError('No editable columns found for this section.');
+      return;
+    }
     const formHtml = buildForm(fields, {});
 
     document.getElementById('modalTitle').textContent = `Add ${capitalize(section)}`;
@@ -501,7 +574,11 @@ const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw9ubtgljqkSSow
     isEditing = true;
     editingRowIndex = index;
     const item = currentData[index];
-    const fields = fieldDefinitions[currentSection];
+    const fields = getSectionFields(currentSection, currentData);
+    if (!fields.length) {
+      showError('No editable columns found for this section.');
+      return;
+    }
     const formHtml = buildForm(fields, item);
 
     document.getElementById('modalTitle').textContent = `Edit ${capitalize(currentSection)}`;
@@ -513,20 +590,21 @@ const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw9ubtgljqkSSow
     let html = '';
     fields.forEach((field) => {
       const value = data[field.name] || '';
+      const fieldType = field.type || 'text';
       html += `<div class="form-group">`;
       html += `<label for="field_${field.name}">${field.label}${field.required ? ' *' : ''}</label>`;
 
-      if (field.type === 'textarea') {
+      if (fieldType === 'textarea') {
         html += `<textarea id="field_${field.name}" name="${field.name}" ${field.required ? 'required' : ''} placeholder="${field.placeholder || ''}">${escapeHtml(String(value))}</textarea>`;
-      } else if (field.type === 'select') {
+      } else if (fieldType === 'select') {
         html += `<select id="field_${field.name}" name="${field.name}" ${field.required ? 'required' : ''}>`;
-        field.options.forEach((opt) => {
+        (field.options || []).forEach((opt) => {
           const selected = String(value) === opt ? 'selected' : '';
           html += `<option value="${opt}" ${selected}>${opt}</option>`;
         });
         html += `</select>`;
       } else {
-        html += `<input type="${field.type}" id="field_${field.name}" name="${field.name}" ${field.required ? 'required' : ''} placeholder="${field.placeholder || ''}" value="${escapeHtml(String(value))}">`;
+        html += `<input type="${fieldType}" id="field_${field.name}" name="${field.name}" ${field.required ? 'required' : ''} placeholder="${field.placeholder || ''}" value="${escapeHtml(String(value))}">`;
       }
 
       html += `</div>`;

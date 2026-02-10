@@ -1,16 +1,97 @@
 /**
- * Fixtures, Results & Standings feed from Google Sheets.
- * Populates: homepage next-match card, standings table, recent results.
- * Also populates fixtures.html if present.
+ * Fixtures, Results and Standings feed from Google Sheets.
+ * Filters fixtures to Broadstreet matches and renders team logos.
  * Depends on: site-config.js, sheets-api.js
  */
 
 (function () {
   var esc = SheetsAPI.esc;
   var parseBool = SheetsAPI.parseBool;
+  var BROADSTREET_KEY = "broadstreet";
+
+  var TEAM_LOGOS = [
+    { team: "Market Harborough", logo: "https://images.englandrugby.com/club_images/13377.png" },
+    { team: "Northampton Old Scouts", logo: "https://images.englandrugby.com/club_images/14907.png" },
+    { team: "Broadstreet", logo: "https://images.englandrugby.com/club_images/3366.png" },
+    { team: "Bedford Athletic", logo: "https://images.englandrugby.com/club_images/1822.png" },
+    { team: "Peterborough", logo: "https://images.englandrugby.com/club_images/16819.png" },
+    { team: "Stamford", logo: "https://images.englandrugby.com/club_images/20850.png" },
+    { team: "Kettering", logo: "https://images.englandrugby.com/club_images/11346.png" },
+    { team: "Oadby Wyggestonians", logo: "https://images.englandrugby.com/club_images/15254.png" },
+    { team: "Olney", logo: "https://images.englandrugby.com/club_images/16184.png" },
+    { team: "Daventry", logo: "https://images.englandrugby.com/club_images/6224.png" },
+    { team: "Old Coventrians", logo: "https://images.englandrugby.com/club_images/15578.png" },
+    { team: "Wellingborough", logo: "https://images.englandrugby.com/club_images/24604.png" }
+  ];
+
+  var TEAM_LOGO_MAP = buildTeamLogoMap_(TEAM_LOGOS);
+  var FALLBACK_LOGO = resolveAssetPath_("assets/logos/opponent-placeholder.svg");
+
+  function resolveAssetPath_(path) {
+    var pathname = String((window && window.location && window.location.pathname) || "");
+    return pathname.indexOf("/pages/") !== -1 ? "../" + path : path;
+  }
+
+  function normalizeTeamKey(name) {
+    return String(name || "")
+      .toLowerCase()
+      .replace(/[^a-z0-9 ]/g, " ")
+      .replace(/\brfc\b/g, "")
+      .replace(/\s+/g, " ")
+      .trim();
+  }
+
+  function canonicalTeamName(name) {
+    return String(name || "").replace(/\s+/g, " ").replace(/\s+rfc$/i, "").trim();
+  }
+
+  function buildTeamLogoMap_(rows) {
+    var map = {};
+    for (var i = 0; i < rows.length; i++) {
+      var item = rows[i];
+      var key = normalizeTeamKey(item.team);
+      if (!key) continue;
+      map[key] = item.logo;
+    }
+    return map;
+  }
+
+  function getTeamLogo(teamName) {
+    var key = normalizeTeamKey(teamName);
+    return TEAM_LOGO_MAP[key] || FALLBACK_LOGO;
+  }
+
+  function getDisplayTeamName(teamName) {
+    var clean = canonicalTeamName(teamName);
+    return clean || "TBC";
+  }
 
   function isBroadstreet(teamName) {
-    return String(teamName || "").toLowerCase().indexOf("broadstreet") !== -1;
+    return normalizeTeamKey(teamName).indexOf(BROADSTREET_KEY) !== -1;
+  }
+
+  function isBroadstreetFixture(fixture) {
+    if (!fixture) return false;
+    return isBroadstreet(fixture.home_team) || isBroadstreet(fixture.away_team);
+  }
+
+  function renderTeamWithLogo(teamName, className) {
+    var displayName = getDisplayTeamName(teamName);
+    var logo = getTeamLogo(teamName);
+    return (
+      '<span class="' +
+      esc(className || "team-inline") +
+      '">' +
+      '<img class="team-inline-logo" src="' +
+      esc(logo) +
+      '" alt="' +
+      esc(displayName) +
+      ' logo" loading="lazy">' +
+      "<span>" +
+      esc(displayName) +
+      "</span>" +
+      "</span>"
+    );
   }
 
   function getDateParts(dateStr) {
@@ -21,7 +102,7 @@
       return {
         weekday: dayNames[d.getDay()],
         day: String(d.getDate()),
-        month: monthNames[d.getMonth()],
+        month: monthNames[d.getMonth()]
       };
     }
 
@@ -30,7 +111,7 @@
       return {
         weekday: match[1].slice(0, 3),
         day: match[2],
-        month: match[3].slice(0, 3),
+        month: match[3].slice(0, 3)
       };
     }
 
@@ -64,17 +145,40 @@
     return String(n);
   }
 
-  // Homepage next match card
+  function sortFixturesByDate(fixtures, direction) {
+    var copy = (fixtures || []).slice();
+    copy.sort(function (a, b) {
+      var left = toSortTime(a.date, a.time);
+      var right = toSortTime(b.date, b.time);
+      return direction === "desc" ? right - left : left - right;
+    });
+    return copy;
+  }
+
   function renderNextMatch(fixture) {
     var el = document.getElementById("homeNextMatch");
     if (!el || !fixture) return;
 
+    var homeName = el.querySelector(".next-match-team:first-child .next-match-team-name");
     var awayName = el.querySelector(".next-match-team:last-child .next-match-team-name");
+    var homeLogo = el.querySelector(".next-match-team:first-child .next-match-team-logo img");
+    var awayLogo = el.querySelector(".next-match-team:last-child .next-match-team-logo img");
     var competition = el.querySelector(".next-match-competition");
     var details = el.querySelectorAll(".next-match-detail-item span");
     var countdown = el.querySelector("[data-countdown]");
 
-    if (awayName) awayName.textContent = fixture.away_team || "TBC";
+    if (homeName) homeName.textContent = getDisplayTeamName(fixture.home_team);
+    if (awayName) awayName.textContent = getDisplayTeamName(fixture.away_team);
+
+    if (homeLogo) {
+      homeLogo.src = getTeamLogo(fixture.home_team);
+      homeLogo.alt = getDisplayTeamName(fixture.home_team);
+    }
+    if (awayLogo) {
+      awayLogo.src = getTeamLogo(fixture.away_team);
+      awayLogo.alt = getDisplayTeamName(fixture.away_team);
+    }
+
     if (competition) competition.textContent = fixture.competition || "";
 
     var dateStr = fixture.date || "";
@@ -90,17 +194,17 @@
 
     var badge = el.querySelector(".next-match-badge");
     if (badge) {
-      var isHome =
-        String(fixture.venue || "").toLowerCase().indexOf("broadstreet") !== -1 ||
-        String(fixture.home_team || "").toLowerCase().indexOf("broadstreet") !== -1;
-      var badgeSpan = badge.querySelector("span") || badge.childNodes[badge.childNodes.length - 1];
-      if (badgeSpan && badgeSpan.nodeType === 3) {
-        badgeSpan.textContent = isHome ? "Home Match" : "Away Match";
+      var broadstreetAtHome = isBroadstreet(fixture.home_team);
+      var badgeText = broadstreetAtHome ? "Home Match" : "Away Match";
+      var textNode = badge.childNodes[badge.childNodes.length - 1];
+      if (textNode && textNode.nodeType === 3) {
+        textNode.textContent = " " + badgeText;
+      } else {
+        badge.appendChild(document.createTextNode(" " + badgeText));
       }
     }
   }
 
-  // Homepage league standings
   function renderHomeStandings(rows) {
     var tbody = document.getElementById("homeStandings");
     if (!tbody || !rows.length) return;
@@ -116,7 +220,7 @@
           esc(row.position) +
           "</td>" +
           '<td class="team-name">' +
-          esc(row.team) +
+          renderTeamWithLogo(row.team, "team-inline") +
           "</td>" +
           "<td>" +
           esc(row.played) +
@@ -139,7 +243,6 @@
       .join("");
   }
 
-  // Homepage recent results
   function renderHomeResults(results) {
     var grid = document.getElementById("homeResults");
     if (!grid || !results.length) return;
@@ -158,9 +261,7 @@
           esc(r.home_score) +
           "</div>" +
           '<div class="result-team">' +
-          "<span>" +
-          esc(r.home_team) +
-          "</span>" +
+          renderTeamWithLogo(r.home_team, "result-team-inline") +
           "</div>" +
           "</div>" +
           '<div class="result-final" aria-hidden="true"><span></span></div>' +
@@ -169,9 +270,7 @@
           esc(r.away_score) +
           "</div>" +
           '<div class="result-team">' +
-          "<span>" +
-          esc(r.away_team) +
-          "</span>" +
+          renderTeamWithLogo(r.away_team, "result-team-inline") +
           "</div>" +
           "</div>" +
           "</div>" +
@@ -181,7 +280,6 @@
       .join("");
   }
 
-  // Fixtures page standings table
   function renderFixturesStandings(rows) {
     var tbody = document.getElementById("fixturesStandings");
     if (!tbody) return;
@@ -202,7 +300,7 @@
           esc(row.position) +
           "</td>" +
           '<td class="team-name">' +
-          esc(row.team) +
+          renderTeamWithLogo(row.team, "team-inline") +
           "</td>" +
           "<td>" +
           esc(row.played) +
@@ -252,31 +350,28 @@
     title.textContent = competition ? competition + " Standings" : "League Standings";
   }
 
-  // Fixtures page cards
   function renderFixturesPage(fixtures) {
     var upcoming = document.getElementById("fixturesList");
     var resultsList = document.getElementById("resultsList");
     if (!upcoming && !resultsList) return;
 
-    var upcomingItems = fixtures
-      .filter(function (f) {
+    var upcomingItems = sortFixturesByDate(
+      fixtures.filter(function (f) {
         return String(f.status || "").toLowerCase() === "upcoming";
-      })
-      .sort(function (a, b) {
-        return toSortTime(a.date, a.time) - toSortTime(b.date, b.time);
-      });
+      }),
+      "asc"
+    );
 
-    var completedItems = fixtures
-      .filter(function (f) {
+    var completedItems = sortFixturesByDate(
+      fixtures.filter(function (f) {
         return String(f.status || "").toLowerCase() === "completed";
-      })
-      .sort(function (a, b) {
-        return toSortTime(b.date, b.time) - toSortTime(a.date, a.time);
-      });
+      }),
+      "desc"
+    );
 
     if (upcoming) {
       if (!upcomingItems.length) {
-        upcoming.innerHTML = '<div class="card"><div class="card-body"><p class="text-muted">No upcoming fixtures found.</p></div></div>';
+        upcoming.innerHTML = '<div class="card"><div class="card-body"><p class="text-muted">No upcoming Broadstreet fixtures found.</p></div></div>';
       } else {
         upcoming.innerHTML = upcomingItems
           .map(function (f) {
@@ -303,10 +398,10 @@
               ' mb-2">' +
               (isHome ? "Home" : "Away") +
               "</span>" +
-              '<h3 class="text-lg font-bold mb-1">' +
-              esc(f.home_team) +
-              " vs " +
-              esc(f.away_team) +
+              '<h3 class="text-lg font-bold mb-1 fixture-teams-line">' +
+              renderTeamWithLogo(f.home_team, "fixture-team-inline") +
+              '<span class="fixture-vs">vs</span>' +
+              renderTeamWithLogo(f.away_team, "fixture-team-inline") +
               "</h3>" +
               '<p class="text-sm text-muted">' +
               esc(f.competition || "") +
@@ -326,7 +421,7 @@
 
     if (resultsList) {
       if (!completedItems.length) {
-        resultsList.innerHTML = '<div class="card"><div class="card-body"><p class="text-muted">No completed results found.</p></div></div>';
+        resultsList.innerHTML = '<div class="card"><div class="card-body"><p class="text-muted">No completed Broadstreet results found.</p></div></div>';
       } else {
         resultsList.innerHTML = completedItems
           .map(function (f) {
@@ -345,13 +440,13 @@
               } else if ((homeScore > awayScore && broadHome) || (awayScore > homeScore && broadAway)) {
                 outcome = "Win";
                 outcomeClass = "badge-success";
-              } else if (broadHome || broadAway) {
+              } else {
                 outcome = "Loss";
                 outcomeClass = "badge-primary";
               }
             }
 
-            var venueType = broadHome ? "Home" : broadAway ? "Away" : "";
+            var venueType = broadHome ? "Home" : "Away";
 
             return (
               '<div class="card">' +
@@ -374,14 +469,16 @@
               ' mb-2">' +
               outcome +
               "</span>" +
-              '<h3 class="text-lg font-bold mb-1">' +
-              esc(f.home_team) +
-              " " +
+              '<h3 class="text-lg font-bold mb-1 fixture-score-line">' +
+              renderTeamWithLogo(f.home_team, "fixture-team-inline") +
+              '<span class="fixture-score-value">' +
               esc(f.home_score) +
-              " - " +
+              "</span>" +
+              '<span class="fixture-score-sep">-</span>' +
+              '<span class="fixture-score-value">' +
               esc(f.away_score) +
-              " " +
-              esc(f.away_team) +
+              "</span>" +
+              renderTeamWithLogo(f.away_team, "fixture-team-inline") +
               "</h3>" +
               '<p class="text-sm text-muted">' +
               esc(f.competition || "") +
@@ -398,7 +495,6 @@
     }
   }
 
-  // Load all relevant blocks on page
   async function load() {
     try {
       var isHomepage = !!document.getElementById("homeNextMatch");
@@ -411,21 +507,28 @@
       if (needsStandings) promises.push(SheetsAPI.fetchTab("standings"));
 
       var results = await Promise.all(promises);
-      var fixtures = results[0] || [];
+      var allFixtures = results[0] || [];
+      var fixtures = allFixtures.filter(isBroadstreetFixture);
       var standings = needsStandings ? results[1] || [] : [];
 
       if (isHomepage) {
-        var upcoming = fixtures.filter(function (f) {
-          return String(f.status || "").toLowerCase() === "upcoming";
-        });
+        var upcoming = sortFixturesByDate(
+          fixtures.filter(function (f) {
+            return String(f.status || "").toLowerCase() === "upcoming";
+          }),
+          "asc"
+        );
         if (upcoming.length) renderNextMatch(upcoming[0]);
 
         if (standings.length) renderHomeStandings(standings);
 
-        var completed = fixtures.filter(function (f) {
-          return String(f.status || "").toLowerCase() === "completed";
-        });
-        var recent = completed.slice(-3).reverse();
+        var completed = sortFixturesByDate(
+          fixtures.filter(function (f) {
+            return String(f.status || "").toLowerCase() === "completed";
+          }),
+          "desc"
+        );
+        var recent = completed.slice(0, 3);
         if (recent.length) renderHomeResults(recent);
       }
 
@@ -435,12 +538,12 @@
         if (hasFixturesStandings) renderFixturesStandings(standings);
       }
     } catch (e) {
-      var upcoming = document.getElementById("fixturesList");
+      var upcomingEl = document.getElementById("fixturesList");
       var resultsList = document.getElementById("resultsList");
       var standingsBody = document.getElementById("fixturesStandings");
 
-      if (upcoming) {
-        upcoming.innerHTML = '<div class="card"><div class="card-body"><p class="text-muted">Unable to load fixtures right now.</p></div></div>';
+      if (upcomingEl) {
+        upcomingEl.innerHTML = '<div class="card"><div class="card-body"><p class="text-muted">Unable to load fixtures right now.</p></div></div>';
       }
       if (resultsList) {
         resultsList.innerHTML = '<div class="card"><div class="card-body"><p class="text-muted">Unable to load results right now.</p></div></div>';

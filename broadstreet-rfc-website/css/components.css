@@ -1287,6 +1287,72 @@
   object-fit: contain;
 }
 
+.team-inline {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.team-inline-logo {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+  border-radius: 999px;
+  background-color: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  padding: 1px;
+}
+
+.fixture-teams-line {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.fixture-team-inline {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.fixture-vs {
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-text-muted);
+}
+
+.fixture-score-line {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.fixture-score-value {
+  font-size: 1.08rem;
+  font-weight: 800;
+  min-width: 20px;
+  text-align: center;
+}
+
+.fixture-score-sep {
+  color: var(--color-text-muted);
+  font-weight: 700;
+}
+
+.result-team-inline {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.result-team-inline .team-inline-logo {
+  width: 20px;
+  height: 20px;
+}
+
 @media (max-width: 640px) {
   .standings-card {
     padding: var(--space-4);
@@ -1316,7 +1382,7 @@
     line-height: var(--line-height-snug);
   }
 
-  .standings-table .team-logo {
+  .standings-table .team-inline-logo {
     display: none;
   }
 }
