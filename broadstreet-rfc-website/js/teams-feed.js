@@ -7,7 +7,12 @@
   var esc = SheetsAPI.esc;
 
   var defaultPlayerImg = '../assets/photos/player_headshot/player_headshot.png';
-  var defaultCoachImg = 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&h=300&q=80&fit=crop';
+  var defaultCoachImgs = [
+    'https://storage.googleapis.com/msgsndr/su6QlYYHk7V0zo5SCC0s/media/698b5e630708e4126801c291.png',
+    'https://storage.googleapis.com/msgsndr/su6QlYYHk7V0zo5SCC0s/media/698b5e63ca717c948eb9a788.png',
+    'https://storage.googleapis.com/msgsndr/su6QlYYHk7V0zo5SCC0s/media/698b5e630708e4742101c292.png',
+    'https://storage.googleapis.com/msgsndr/su6QlYYHk7V0zo5SCC0s/media/698b5e63a41b876ab95644a5.png'
+  ];
   var playerModal = null;
   var playerModalEscBound = false;
 
@@ -36,6 +41,12 @@
 
   function getPlayerPosition(player) {
     return pickValue(player, ['position', 'position_or_role']);
+  }
+
+  function getCoachImage(coach, index) {
+    var image = pickValue(coach, ['image']);
+    if (image) return image;
+    return defaultCoachImgs[index % defaultCoachImgs.length];
   }
 
   function ensurePlayerModal() {
@@ -178,14 +189,14 @@
     var otherCoaches = coaches.slice(3);
 
     if (mainGrid && mainCoaches.length) {
-      mainGrid.innerHTML = mainCoaches.map(function (c) {
-        var img = esc(c.image || defaultCoachImg);
+      mainGrid.innerHTML = mainCoaches.map(function (c, index) {
+        var img = esc(getCoachImage(c, index));
         var name = esc(c.name || 'TBC');
         var role = esc(c.role || '');
         var team = esc(c.team || '');
         return (
           '<div class="card text-center">' +
-            '<img src="' + img + '" alt="' + name + '" style="width: 100%; aspect-ratio: 1; object-fit: cover;">' +
+            '<img src="' + img + '" alt="' + name + '" class="coach-card-image coach-card-image-main">' +
             '<div class="card-body">' +
               '<span class="badge badge-primary mb-2">' + role + '</span>' +
               '<h3>' + name + '</h3>' +
@@ -197,13 +208,13 @@
     }
 
     if (otherGrid && otherCoaches.length) {
-      otherGrid.innerHTML = otherCoaches.map(function (c) {
-        var img = esc(c.image || defaultCoachImg);
+      otherGrid.innerHTML = otherCoaches.map(function (c, index) {
+        var img = esc(getCoachImage(c, index + 3));
         var name = esc(c.name || 'TBC');
         var role = esc(c.role || '');
         return (
           '<div class="card text-center">' +
-            '<img src="' + img + '" alt="' + name + '" style="width: 100%; aspect-ratio: 1; object-fit: cover;">' +
+            '<img src="' + img + '" alt="' + name + '" class="coach-card-image coach-card-image-compact">' +
             '<div class="card-body">' +
               '<h4 class="text-base">' + name + '</h4>' +
               '<p class="text-xs text-muted">' + role + '</p>' +
