@@ -118,23 +118,154 @@
     return { weekday: "TBD", day: "-", month: "" };
   }
 
-  function parseMatchDateTime(dateStr, timeStr) {
-    try {
-      var combined = String(dateStr || "") + " " + String(timeStr || "");
-      var d = new Date(combined.trim());
-      if (!isNaN(d.getTime())) return d.toISOString();
-    } catch (e) {
-      // ignore parse errors
+  function pad2(n) {
+    return n < 10 ? "0" + n : String(n);
+  }
+
+  function monthNameToIndex(name) {
+    var key = String(name || "").toLowerCase();
+    var map = {
+      jan: 0,
+      january: 0,
+      feb: 1,
+      february: 1,
+      mar: 2,
+      march: 2,
+      apr: 3,
+      april: 3,
+      may: 4,
+      jun: 5,
+      june: 5,
+      jul: 6,
+      july: 6,
+      aug: 7,
+      august: 7,
+      sep: 8,
+      sept: 8,
+      september: 8,
+      oct: 9,
+      october: 9,
+      nov: 10,
+      november: 10,
+      dec: 11,
+      december: 11
+    };
+    return map.hasOwnProperty(key) ? map[key] : -1;
+  }
+
+  function normalizeTimeValue(timeValue) {
+    if (timeValue === null || timeValue === undefined) return "";
+
+    if (typeof timeValue === "number" && !isNaN(timeValue)) {
+      if (timeValue >= 0 && timeValue < 1) {
+        var totalMinutes = Math.round(timeValue * 24 * 60);
+        var h = Math.floor(totalMinutes / 60) % 24;
+        var m = totalMinutes % 60;
+        return pad2(h) + ":" + pad2(m);
+      }
     }
+
+    var text = String(timeValue).trim();
+    if (!text) return "";
+
+    var m;
+    m = text.match(/^(?:1899-12-(?:30|31)|1900-01-0[01])T(\d{2}):(\d{2})(?::\d{2}(?:\.\d+)?)?Z?$/i);
+    if (m) return m[1] + ":" + m[2];
+
+    m = text.match(/^(\d{1,2}):(\d{2})$/);
+    if (m) return pad2(parseInt(m[1], 10)) + ":" + pad2(parseInt(m[2], 10));
+
+    m = text.match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
+    if (m) {
+      var hour = parseInt(m[1], 10);
+      var minute = parseInt(m[2], 10);
+      var ampm = m[3].toUpperCase();
+      if (ampm === "PM" && hour < 12) hour += 12;
+      if (ampm === "AM" && hour === 12) hour = 0;
+      return pad2(hour) + ":" + pad2(minute);
+    }
+
+    m = text.match(/^\d{4}-\d{2}-\d{2}T(\d{2}):(\d{2})/);
+    if (m) return m[1] + ":" + m[2];
+
+    var d = new Date(text);
+    if (!isNaN(d.getTime())) {
+      var useUtc = /z$/i.test(text) || /[+-]\d{2}:\d{2}$/.test(text);
+      var hh = useUtc ? d.getUTCHours() : d.getHours();
+      var mm = useUtc ? d.getUTCMinutes() : d.getMinutes();
+      return pad2(hh) + ":" + pad2(mm);
+    }
+
+    return text;
+  }
+
+  function parseFixtureDateValue(dateValue) {
+    if (dateValue instanceof Date && !isNaN(dateValue.getTime())) {
+      return new Date(dateValue.getFullYear(), dateValue.getMonth(), dateValue.getDate(), 0, 0, 0, 0);
+    }
+
+    var text = String(dateValue || "").trim();
+    if (!text) return null;
+
+    var m = text.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+    if (m) {
+      return new Date(parseInt(m[1], 10), parseInt(m[2], 10) - 1, parseInt(m[3], 10), 0, 0, 0, 0);
+    }
+
+    m = text.match(/^(?:[A-Za-z]+,?\s+)?(\d{1,2})\s+([A-Za-z]{3,})\.?,?\s+(\d{4})$/);
+    if (m) {
+      var day = parseInt(m[1], 10);
+      var month = monthNameToIndex(m[2]);
+      var year = parseInt(m[3], 10);
+      if (month >= 0) {
+        return new Date(year, month, day, 0, 0, 0, 0);
+      }
+    }
+
+    var fallback = new Date(text);
+    if (!isNaN(fallback.getTime())) {
+      return new Date(fallback.getFullYear(), fallback.getMonth(), fallback.getDate(), 0, 0, 0, 0);
+    }
+
     return null;
   }
 
-  function toSortTime(dateStr, timeStr) {
-    var iso = parseMatchDateTime(dateStr, timeStr);
-    if (iso) return new Date(iso).getTime();
+  function parseFixtureDateTime(dateStr, timeStr) {
+    var dateObj = parseFixtureDateValue(dateStr);
+    if (!dateObj) return null;
 
-    var d = new Date(dateStr || "");
-    if (!isNaN(d.getTime())) return d.getTime();
+    var normalizedTime = normalizeTimeValue(timeStr);
+    var m = normalizedTime.match(/^(\d{2}):(\d{2})$/);
+    var hh = 12;
+    var mm = 0;
+
+    if (m) {
+      hh = parseInt(m[1], 10);
+      mm = parseInt(m[2], 10);
+    }
+
+    return new Date(
+      dateObj.getFullYear(),
+      dateObj.getMonth(),
+      dateObj.getDate(),
+      hh,
+      mm,
+      0,
+      0
+    );
+  }
+
+  function parseMatchDateTime(dateStr, timeStr) {
+    var dt = parseFixtureDateTime(dateStr, timeStr);
+    return dt ? dt.toISOString() : null;
+  }
+
+  function toSortTime(dateStr, timeStr) {
+    var dt = parseFixtureDateTime(dateStr, timeStr);
+    if (dt) return dt.getTime();
+
+    var d = parseFixtureDateValue(dateStr);
+    if (d) return d.getTime();
     return 0;
   }
 
@@ -182,14 +313,26 @@
     if (competition) competition.textContent = fixture.competition || "";
 
     var dateStr = fixture.date || "";
-    var timeStr = fixture.time || "";
-    if (details[0] && dateStr) details[0].textContent = dateStr;
-    if (details[1] && timeStr) details[1].textContent = "Kick-off: " + timeStr;
-    if (details[2] && fixture.venue) details[2].textContent = fixture.venue;
+    var timeStr = normalizeTimeValue(fixture.time || "");
+    if (details[0]) details[0].textContent = dateStr || "To be confirmed";
+    if (details[1]) details[1].textContent = "Kick-off: " + (timeStr || "TBC");
+    if (details[2]) details[2].textContent = fixture.venue || "Venue: TBC";
 
     if (countdown && dateStr && timeStr) {
       var isoDate = parseMatchDateTime(dateStr, timeStr);
-      if (isoDate) countdown.setAttribute("data-countdown", isoDate);
+      if (isoDate) {
+        countdown.setAttribute("data-countdown", isoDate);
+      } else {
+        countdown.setAttribute("data-countdown", "");
+      }
+      if (typeof Components !== "undefined" && Components && typeof Components.initCountdown === "function") {
+        Components.initCountdown();
+      }
+    } else if (countdown) {
+      countdown.setAttribute("data-countdown", "");
+      if (typeof Components !== "undefined" && Components && typeof Components.initCountdown === "function") {
+        Components.initCountdown();
+      }
     }
 
     var badge = el.querySelector(".next-match-badge");
@@ -201,6 +344,54 @@
         textNode.textContent = " " + badgeText;
       } else {
         badge.appendChild(document.createTextNode(" " + badgeText));
+      }
+    }
+  }
+
+  function renderNoUpcomingNextMatch() {
+    var el = document.getElementById("homeNextMatch");
+    if (!el) return;
+
+    var homeName = el.querySelector(".next-match-team:first-child .next-match-team-name");
+    var awayName = el.querySelector(".next-match-team:last-child .next-match-team-name");
+    var homeLogo = el.querySelector(".next-match-team:first-child .next-match-team-logo img");
+    var awayLogo = el.querySelector(".next-match-team:last-child .next-match-team-logo img");
+    var competition = el.querySelector(".next-match-competition");
+    var details = el.querySelectorAll(".next-match-detail-item span");
+    var countdown = el.querySelector("[data-countdown]");
+    var badge = el.querySelector(".next-match-badge");
+
+    if (homeName) homeName.textContent = "Broadstreet";
+    if (awayName) awayName.textContent = "TBC";
+    if (homeLogo) {
+      homeLogo.src = getTeamLogo("Broadstreet");
+      homeLogo.alt = "Broadstreet";
+    }
+    if (awayLogo) {
+      awayLogo.src = FALLBACK_LOGO;
+      awayLogo.alt = "TBC";
+    }
+
+    if (competition) competition.textContent = "No Upcoming Fixture";
+    if (details[0]) details[0].textContent = "To be confirmed";
+    if (details[1]) details[1].textContent = "Kick-off: TBC";
+    if (details[2]) details[2].textContent = "Venue: TBC";
+
+    if (countdown) {
+      countdown.setAttribute("data-countdown", "");
+      if (typeof Components !== "undefined" && Components && typeof Components.initCountdown === "function") {
+        Components.initCountdown();
+      } else {
+        countdown.innerHTML = '<span class="countdown-expired">Fixture Time TBC</span>';
+      }
+    }
+
+    if (badge) {
+      var textNode = badge.childNodes[badge.childNodes.length - 1];
+      if (textNode && textNode.nodeType === 3) {
+        textNode.textContent = " Fixture TBC";
+      } else {
+        badge.appendChild(document.createTextNode(" Fixture TBC"));
       }
     }
   }
@@ -377,6 +568,8 @@
           .map(function (f) {
             var parts = getDateParts(f.date);
             var isHome = isBroadstreet(f.home_team);
+            var kickOff = normalizeTimeValue(f.time || "");
+
             return (
               '<div class="card">' +
               '<div class="card-body flex items-center justify-between flex-wrap gap-4">' +
@@ -405,7 +598,7 @@
               "</h3>" +
               '<p class="text-sm text-muted">' +
               esc(f.competition || "") +
-              (f.time ? " - Kick-off " + esc(f.time) : "") +
+              (kickOff ? " - Kick-off " + esc(kickOff) : "") +
               (f.venue ? " - " + esc(f.venue) : "") +
               "</p>" +
               "</div>" +
@@ -518,7 +711,19 @@
           }),
           "asc"
         );
-        if (upcoming.length) renderNextMatch(upcoming[0]);
+        if (!upcoming.length) {
+          upcoming = sortFixturesByDate(
+            fixtures.filter(function (f) {
+              return String(f.status || "").toLowerCase() !== "completed";
+            }),
+            "asc"
+          );
+        }
+        if (upcoming.length) {
+          renderNextMatch(upcoming[0]);
+        } else {
+          renderNoUpcomingNextMatch();
+        }
 
         if (standings.length) renderHomeStandings(standings);
 
@@ -538,6 +743,10 @@
         if (hasFixturesStandings) renderFixturesStandings(standings);
       }
     } catch (e) {
+      if (document.getElementById("homeNextMatch")) {
+        renderNoUpcomingNextMatch();
+      }
+
       var upcomingEl = document.getElementById("fixturesList");
       var resultsList = document.getElementById("resultsList");
       var standingsBody = document.getElementById("fixturesStandings");

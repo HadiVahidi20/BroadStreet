@@ -332,12 +332,48 @@ function handleRead(tabName) {
     var row = {};
     row._rowIndex = i + 1; // Store row index for updates/deletes
     for (var j = 0; j < headers.length; j++) {
-      row[String(headers[j])] = data[i][j];
+      var headerName = String(headers[j]);
+      row[headerName] = normalizeReadCellValue_(tabName, headerName, data[i][j]);
     }
     rows.push(row);
   }
   
   return jsonResponse({ success: true, data: rows, headers: headers });
+}
+
+function normalizeReadCellValue_(tabName, headerName, value) {
+  if (!(value instanceof Date) || isNaN(value.getTime())) {
+    return value;
+  }
+
+  var key = normalizeReadHeaderKey_(headerName);
+  var tz = ADMIN_CONFIG.SYNC_TIME_ZONE || Session.getScriptTimeZone();
+
+  if (tabName === "fixtures") {
+    if (key === "time") {
+      // Time-only cells are often serialized as 1899-12-30 dates. Return HH:mm.
+      return Utilities.formatDate(value, "UTC", "HH:mm");
+    }
+    if (key === "date") {
+      return formatFixtureDate(value, tz);
+    }
+  }
+
+  if (key.indexOf("time") !== -1) {
+    return Utilities.formatDate(value, tz, "HH:mm");
+  }
+  if (key.indexOf("date") !== -1) {
+    return Utilities.formatDate(value, tz, "yyyy-MM-dd");
+  }
+
+  return Utilities.formatDate(value, tz, "yyyy-MM-dd'T'HH:mm:ss");
+}
+
+function normalizeReadHeaderKey_(name) {
+  return String(name || "")
+    .toLowerCase()
+    .trim()
+    .replace(/\s+/g, "_");
 }
 
 /**

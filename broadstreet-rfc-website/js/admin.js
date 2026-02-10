@@ -398,6 +398,45 @@ const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw9ubtgljqkSSow
       .trim();
   }
 
+  function pad2(n) {
+    return n < 10 ? `0${n}` : String(n);
+  }
+
+  function normalizeTimeDisplay(value) {
+    if (value === null || value === undefined) return '';
+    const text = String(value).trim();
+    if (!text) return '';
+
+    let m = text.match(/^(?:1899-12-(?:30|31)|1900-01-0[01])T(\d{2}):(\d{2})(?::\d{2}(?:\.\d+)?)?Z?$/i);
+    if (m) return `${m[1]}:${m[2]}`;
+
+    m = text.match(/^(\d{1,2}):(\d{2})$/);
+    if (m) return `${pad2(parseInt(m[1], 10))}:${pad2(parseInt(m[2], 10))}`;
+
+    m = text.match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
+    if (m) {
+      let hour = parseInt(m[1], 10);
+      const minute = parseInt(m[2], 10);
+      const ampm = m[3].toUpperCase();
+      if (ampm === 'PM' && hour < 12) hour += 12;
+      if (ampm === 'AM' && hour === 12) hour = 0;
+      return `${pad2(hour)}:${pad2(minute)}`;
+    }
+
+    m = text.match(/^\d{4}-\d{2}-\d{2}T(\d{2}):(\d{2})/);
+    if (m) return `${m[1]}:${m[2]}`;
+
+    const d = new Date(text);
+    if (!isNaN(d.getTime())) {
+      const useUtc = /z$/i.test(text) || /[+-]\d{2}:\d{2}$/.test(text);
+      const hh = useUtc ? d.getUTCHours() : d.getHours();
+      const mm = useUtc ? d.getUTCMinutes() : d.getMinutes();
+      return `${pad2(hh)}:${pad2(mm)}`;
+    }
+
+    return text;
+  }
+
   function isBroadstreetFixtureRow(row) {
     if (!row) return false;
     const home = normalizeTeamKey(row.home_team);
@@ -523,6 +562,9 @@ const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw9ubtgljqkSSow
       tableHtml += '<tr>';
       fields.forEach((field) => {
         let value = row[field.name] || '';
+        if (section === 'fixtures' && field.name === 'time') {
+          value = normalizeTimeDisplay(value);
+        }
         // Truncate long text
         if (typeof value === 'string' && value.length > 50) {
           value = value.substring(0, 50) + '...';
@@ -589,7 +631,10 @@ const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw9ubtgljqkSSow
   function buildForm(fields, data) {
     let html = '';
     fields.forEach((field) => {
-      const value = data[field.name] || '';
+      let value = data[field.name] || '';
+      if (currentSection === 'fixtures' && field.name === 'time') {
+        value = normalizeTimeDisplay(value);
+      }
       const fieldType = field.type || 'text';
       html += `<div class="form-group">`;
       html += `<label for="field_${field.name}">${field.label}${field.required ? ' *' : ''}</label>`;

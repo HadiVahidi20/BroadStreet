@@ -212,9 +212,18 @@ const Components = {
     const countdowns = document.querySelectorAll('[data-countdown]');
 
     countdowns.forEach((el) => {
-      const targetDate = new Date(el.dataset.countdown).getTime();
+      if (el._countdownIntervalId) {
+        clearInterval(el._countdownIntervalId);
+      }
 
       const updateCountdown = () => {
+        const targetText = String(el.dataset.countdown || '').trim();
+        const targetDate = new Date(targetText).getTime();
+        if (!targetText || isNaN(targetDate)) {
+          el.innerHTML = '<span class="countdown-expired">Fixture Time TBC</span>';
+          return;
+        }
+
         const now = new Date().getTime();
         const distance = targetDate - now;
 
@@ -249,7 +258,7 @@ const Components = {
       };
 
       updateCountdown();
-      setInterval(updateCountdown, 1000);
+      el._countdownIntervalId = setInterval(updateCountdown, 1000);
     });
   },
 
