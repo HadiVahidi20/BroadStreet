@@ -23,19 +23,12 @@
 
     .player-card .card {
       height: 100%;
-      transition: all 0.1s ease-out;
+      transition: box-shadow 0.3s ease;
       overflow: hidden;
-      transform-style: preserve-3d;
-      will-change: transform;
     }
 
     .player-card .card:hover {
       box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
-    }
-
-    /* Inner elements for parallax effect */
-    .player-card .card > * {
-      transform-style: preserve-3d;
     }
 
     /* Player Card Image Container with Layers */
@@ -44,6 +37,9 @@
       overflow: hidden;
       border-radius: 8px 8px 0 0;
       height: 320px;
+      transition: transform 0.1s ease-out;
+      will-change: transform;
+      transform-origin: center;
     }
 
     /* Background Layer with Logo Pattern */
@@ -126,11 +122,11 @@
       }
 
       .player-card .card {
-        transform-style: flat;
+        transition: box-shadow 0.2s ease;
       }
 
       .player-card .card:hover {
-        transform: translateY(-5px) !important;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.18);
       }
 
       .player-card .card:hover .player-card-photo {
@@ -1873,28 +1869,30 @@
 
       cards.forEach(card => {
         const cardElement = card;
+        const imageLayer = card.querySelector('.player-card-image');
         const bg = card.querySelector('.player-card-bg');
         const photo = card.querySelector('.player-card-photo');
+        if (!imageLayer) return;
 
         cardElement.addEventListener('mousemove', (e) => {
-          const rect = cardElement.getBoundingClientRect();
+          const rect = imageLayer.getBoundingClientRect();
           const x = e.clientX - rect.left;
           const y = e.clientY - rect.top;
 
           const centerX = rect.width / 2;
           const centerY = rect.height / 2;
 
-          const rotateX = (y - centerY) / 10;
-          const rotateY = (centerX - x) / 10;
+          const rotateX = (y - centerY) / 16;
+          const rotateY = (centerX - x) / 16;
 
-          // Apply tilt to card
-          cardElement.style.transform = `perspective(1500px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
+          // Apply tilt only to image area, keep text/buttons stable
+          imageLayer.style.transform = `perspective(1200px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.01, 1.01, 1.01)`;
 
           // Parallax effect on background (moves opposite direction)
           if (bg) {
-            const bgX = (x - centerX) / 30;
-            const bgY = (y - centerY) / 30;
-            bg.style.transform = `translate(${bgX}px, ${bgY}px) scale(1.1)`;
+            const bgX = (x - centerX) / 32;
+            const bgY = (y - centerY) / 32;
+            bg.style.transform = `translate(${bgX}px, ${bgY}px) scale(1.08)`;
           }
 
           // Parallax effect on photo (moves more than card)
@@ -1907,7 +1905,7 @@
 
         cardElement.addEventListener('mouseleave', () => {
           // Reset transformations
-          cardElement.style.transform = 'perspective(1500px) rotateX(0) rotateY(0) scale3d(1, 1, 1)';
+          imageLayer.style.transform = 'perspective(1200px) rotateX(0) rotateY(0) scale3d(1, 1, 1)';
 
           if (bg) {
             bg.style.transform = 'translate(0, 0) scale(1)';
@@ -1920,13 +1918,13 @@
 
         // Smooth transition on mouse leave
         cardElement.addEventListener('mouseenter', () => {
-          cardElement.style.transition = 'box-shadow 0.3s ease';
+          imageLayer.style.transition = 'transform 0.1s ease-out';
           if (bg) bg.style.transition = 'transform 0.1s ease-out';
           if (photo) photo.style.transition = 'transform 0.1s ease-out, filter 0.3s ease';
         });
 
         cardElement.addEventListener('mouseleave', () => {
-          cardElement.style.transition = 'all 0.5s ease';
+          imageLayer.style.transition = 'transform 0.5s ease';
           if (bg) bg.style.transition = 'transform 0.5s ease';
           if (photo) photo.style.transition = 'transform 0.5s ease, filter 0.3s ease';
         });

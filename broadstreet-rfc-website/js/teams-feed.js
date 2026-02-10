@@ -297,21 +297,23 @@
   function rebindTiltEffect() {
     var cards = document.querySelectorAll('.player-card .card');
     cards.forEach(function (cardElement) {
+      var imageLayer = cardElement.querySelector('.player-card-image');
       var bg = cardElement.querySelector('.player-card-bg');
       var photo = cardElement.querySelector('.player-card-photo');
+      if (!imageLayer) return;
 
       cardElement.addEventListener('mousemove', function (e) {
-        var rect = cardElement.getBoundingClientRect();
+        var rect = imageLayer.getBoundingClientRect();
         var x = e.clientX - rect.left;
         var y = e.clientY - rect.top;
         var centerX = rect.width / 2;
         var centerY = rect.height / 2;
-        var rotateX = (y - centerY) / 10;
-        var rotateY = (centerX - x) / 10;
+        var rotateX = (y - centerY) / 16;
+        var rotateY = (centerX - x) / 16;
 
-        cardElement.style.transform = 'perspective(1500px) rotateX(' + rotateX + 'deg) rotateY(' + rotateY + 'deg) scale3d(1.02, 1.02, 1.02)';
+        imageLayer.style.transform = 'perspective(1200px) rotateX(' + rotateX + 'deg) rotateY(' + rotateY + 'deg) scale3d(1.01, 1.01, 1.01)';
         if (bg) {
-          bg.style.transform = 'translate(' + ((x - centerX) / 30) + 'px, ' + ((y - centerY) / 30) + 'px) scale(1.1)';
+          bg.style.transform = 'translate(' + ((x - centerX) / 32) + 'px, ' + ((y - centerY) / 32) + 'px) scale(1.08)';
         }
         if (photo) {
           photo.style.transform = 'translateX(calc(-50% + ' + ((centerX - x) / 20) + 'px)) translateY(' + ((centerY - y) / 20) + 'px) scale(1.05)';
@@ -319,19 +321,19 @@
       });
 
       cardElement.addEventListener('mouseleave', function () {
-        cardElement.style.transform = 'perspective(1500px) rotateX(0) rotateY(0) scale3d(1, 1, 1)';
+        imageLayer.style.transform = 'perspective(1200px) rotateX(0) rotateY(0) scale3d(1, 1, 1)';
         if (bg) bg.style.transform = 'translate(0, 0) scale(1)';
         if (photo) photo.style.transform = 'translateX(-50%) translateY(0) scale(1)';
       });
 
       cardElement.addEventListener('mouseenter', function () {
-        cardElement.style.transition = 'box-shadow 0.3s ease';
+        imageLayer.style.transition = 'transform 0.1s ease-out';
         if (bg) bg.style.transition = 'transform 0.1s ease-out';
         if (photo) photo.style.transition = 'transform 0.1s ease-out, filter 0.3s ease';
       });
 
       cardElement.addEventListener('mouseleave', function () {
-        cardElement.style.transition = 'all 0.5s ease';
+        imageLayer.style.transition = 'transform 0.5s ease';
         if (bg) bg.style.transition = 'transform 0.5s ease';
         if (photo) photo.style.transition = 'transform 0.5s ease, filter 0.3s ease';
       });
