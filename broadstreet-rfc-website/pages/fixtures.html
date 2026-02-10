@@ -109,59 +109,10 @@
 
           <!-- Fixtures Tab -->
           <div data-tab-panel="fixtures" class="active">
-            <div class="grid gap-4">
-              <!-- Fixture Item -->
+            <div id="fixturesList" class="grid gap-4">
               <div class="card">
-                <div class="card-body flex items-center justify-between flex-wrap gap-4">
-                  <div class="flex items-center gap-6">
-                    <div class="text-center">
-                      <div class="text-sm text-muted uppercase tracking-wider">Sat</div>
-                      <div class="text-2xl font-bold">15</div>
-                      <div class="text-sm text-muted">Feb</div>
-                    </div>
-                    <div>
-                      <span class="badge badge-secondary mb-2">Home</span>
-                      <h3 class="text-lg font-bold mb-1">Broadstreet vs Opponent RFC</h3>
-                      <p class="text-sm text-muted">Coventry NL2N - Kick-off 3:00 PM</p>
-                    </div>
-                  </div>
-                  <a href="matchday.html" class="btn btn-primary btn-sm">Matchday Info</a>
-                </div>
-              </div>
-
-              <div class="card">
-                <div class="card-body flex items-center justify-between flex-wrap gap-4">
-                  <div class="flex items-center gap-6">
-                    <div class="text-center">
-                      <div class="text-sm text-muted uppercase tracking-wider">Sat</div>
-                      <div class="text-2xl font-bold">22</div>
-                      <div class="text-sm text-muted">Feb</div>
-                    </div>
-                    <div>
-                      <span class="badge badge-info mb-2">Away</span>
-                      <h3 class="text-lg font-bold mb-1">Away Team RFC vs Broadstreet</h3>
-                      <p class="text-sm text-muted">Coventry NL2N - Kick-off 2:30 PM</p>
-                    </div>
-                  </div>
-                  <a href="#" class="btn btn-outline btn-sm">View Details</a>
-                </div>
-              </div>
-
-              <div class="card">
-                <div class="card-body flex items-center justify-between flex-wrap gap-4">
-                  <div class="flex items-center gap-6">
-                    <div class="text-center">
-                      <div class="text-sm text-muted uppercase tracking-wider">Sat</div>
-                      <div class="text-2xl font-bold">1</div>
-                      <div class="text-sm text-muted">Mar</div>
-                    </div>
-                    <div>
-                      <span class="badge badge-secondary mb-2">Home</span>
-                      <h3 class="text-lg font-bold mb-1">Broadstreet vs Another RFC</h3>
-                      <p class="text-sm text-muted">Coventry NL2N - Kick-off 3:00 PM</p>
-                    </div>
-                  </div>
-                  <a href="matchday.html" class="btn btn-primary btn-sm">Matchday Info</a>
+                <div class="card-body">
+                  <p class="text-muted">Loading upcoming fixtures...</p>
                 </div>
               </div>
             </div>
@@ -169,58 +120,10 @@
 
           <!-- Results Tab -->
           <div data-tab-panel="results" style="display: none;">
-            <div class="grid gap-4">
+            <div id="resultsList" class="grid gap-4">
               <div class="card">
-                <div class="card-body flex items-center justify-between flex-wrap gap-4">
-                  <div class="flex items-center gap-6">
-                    <div class="text-center">
-                      <div class="text-sm text-muted uppercase tracking-wider">Sat</div>
-                      <div class="text-2xl font-bold">1</div>
-                      <div class="text-sm text-muted">Feb</div>
-                    </div>
-                    <div>
-                      <span class="badge badge-success mb-2">Win</span>
-                      <h3 class="text-lg font-bold mb-1">Broadstreet 24 - 17 Opponent A</h3>
-                      <p class="text-sm text-muted">Coventry NL2N - Home</p>
-                    </div>
-                  </div>
-                  <a href="#" class="btn btn-outline btn-sm">Match Report</a>
-                </div>
-              </div>
-
-              <div class="card">
-                <div class="card-body flex items-center justify-between flex-wrap gap-4">
-                  <div class="flex items-center gap-6">
-                    <div class="text-center">
-                      <div class="text-sm text-muted uppercase tracking-wider">Sat</div>
-                      <div class="text-2xl font-bold">25</div>
-                      <div class="text-sm text-muted">Jan</div>
-                    </div>
-                    <div>
-                      <span class="badge badge-success mb-2">Win</span>
-                      <h3 class="text-lg font-bold mb-1">Opponent B 21 - 28 Broadstreet</h3>
-                      <p class="text-sm text-muted">Coventry NL2N - Away</p>
-                    </div>
-                  </div>
-                  <a href="#" class="btn btn-outline btn-sm">Match Report</a>
-                </div>
-              </div>
-
-              <div class="card">
-                <div class="card-body flex items-center justify-between flex-wrap gap-4">
-                  <div class="flex items-center gap-6">
-                    <div class="text-center">
-                      <div class="text-sm text-muted uppercase tracking-wider">Sat</div>
-                      <div class="text-2xl font-bold">18</div>
-                      <div class="text-sm text-muted">Jan</div>
-                    </div>
-                    <div>
-                      <span class="badge badge-primary mb-2">Loss</span>
-                      <h3 class="text-lg font-bold mb-1">Broadstreet 15 - 18 Opponent C</h3>
-                      <p class="text-sm text-muted">Coventry NL2N - Home</p>
-                    </div>
-                  </div>
-                  <a href="#" class="btn btn-outline btn-sm">Match Report</a>
+                <div class="card-body">
+                  <p class="text-muted">Loading results...</p>
                 </div>
               </div>
             </div>
@@ -230,7 +133,7 @@
           <div data-tab-panel="table" style="display: none;">
             <div class="card">
               <div class="card-body">
-                <h2 class="mb-4">Coventry NL2N Standings</h2>
+                <h2 id="fixturesStandingsTitle" class="mb-4">League Standings</h2>
                 <div class="overflow-x-auto">
                   <table class="standings-table">
                     <thead>
@@ -247,102 +150,9 @@
                         <th>Pts</th>
                       </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="fixturesStandings">
                       <tr>
-                        <td>1</td>
-                        <td class="team-name">Team Alpha</td>
-                        <td>14</td>
-                        <td>12</td>
-                        <td>1</td>
-                        <td>1</td>
-                        <td>358</td>
-                        <td>198</td>
-                        <td>+160</td>
-                        <td><strong>53</strong></td>
-                      </tr>
-                      <tr>
-                        <td>2</td>
-                        <td class="team-name">Team Beta</td>
-                        <td>14</td>
-                        <td>11</td>
-                        <td>0</td>
-                        <td>3</td>
-                        <td>312</td>
-                        <td>205</td>
-                        <td>+107</td>
-                        <td><strong>48</strong></td>
-                      </tr>
-                      <tr class="highlight">
-                        <td>3</td>
-                        <td class="team-name">Broadstreet RFC</td>
-                        <td>14</td>
-                        <td>10</td>
-                        <td>1</td>
-                        <td>3</td>
-                        <td>298</td>
-                        <td>212</td>
-                        <td>+86</td>
-                        <td><strong>45</strong></td>
-                      </tr>
-                      <tr>
-                        <td>4</td>
-                        <td class="team-name">Team Gamma</td>
-                        <td>14</td>
-                        <td>9</td>
-                        <td>2</td>
-                        <td>3</td>
-                        <td>276</td>
-                        <td>218</td>
-                        <td>+58</td>
-                        <td><strong>42</strong></td>
-                      </tr>
-                      <tr>
-                        <td>5</td>
-                        <td class="team-name">Team Delta</td>
-                        <td>14</td>
-                        <td>8</td>
-                        <td>1</td>
-                        <td>5</td>
-                        <td>264</td>
-                        <td>235</td>
-                        <td>+29</td>
-                        <td><strong>37</strong></td>
-                      </tr>
-                      <tr>
-                        <td>6</td>
-                        <td class="team-name">Team Epsilon</td>
-                        <td>14</td>
-                        <td>7</td>
-                        <td>0</td>
-                        <td>7</td>
-                        <td>248</td>
-                        <td>252</td>
-                        <td>-4</td>
-                        <td><strong>31</strong></td>
-                      </tr>
-                      <tr>
-                        <td>7</td>
-                        <td class="team-name">Team Zeta</td>
-                        <td>14</td>
-                        <td>5</td>
-                        <td>2</td>
-                        <td>7</td>
-                        <td>225</td>
-                        <td>268</td>
-                        <td>-43</td>
-                        <td><strong>26</strong></td>
-                      </tr>
-                      <tr>
-                        <td>8</td>
-                        <td class="team-name">Team Eta</td>
-                        <td>14</td>
-                        <td>4</td>
-                        <td>1</td>
-                        <td>9</td>
-                        <td>198</td>
-                        <td>285</td>
-                        <td>-87</td>
-                        <td><strong>21</strong></td>
+                        <td colspan="10" class="text-center text-muted">Loading standings...</td>
                       </tr>
                     </tbody>
                   </table>
