@@ -24,6 +24,22 @@
   --admin-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
 }
 
+/* Override base.css body styles for admin page */
+body.admin-page {
+  background: var(--admin-bg);
+  margin: 0;
+  padding: 0;
+}
+
+/* Override base.css heading styles inside admin */
+.admin-page h1,
+.admin-page h2,
+.admin-page h3,
+.admin-page h4 {
+  margin-bottom: 0;
+  font-family: 'Sen', sans-serif;
+}
+
 /* ========================================
    Login Screen
    ======================================== */
@@ -40,7 +56,7 @@
 .login-container {
   background: var(--admin-white);
   border-radius: 16px;
-  padding: 3rem 2rem;
+  padding: 3rem 2.5rem;
   max-width: 450px;
   width: 100%;
   box-shadow: var(--admin-shadow-lg);
@@ -52,22 +68,25 @@
   height: 80px;
   object-fit: contain;
   margin: 0 auto 1.5rem;
+  display: block;
 }
 
 .login-container h1 {
-  font-size: 2rem;
+  font-size: 1.75rem;
   font-weight: 800;
   color: var(--admin-text);
   margin: 0 0 0.5rem;
+  letter-spacing: -0.02em;
 }
 
 .login-subtitle {
   color: var(--admin-text-muted);
   margin: 0 0 2rem;
+  font-size: 0.95rem;
 }
 
 .login-form {
-  text-align: left;
+  text-align: center;
 }
 
 /* Google Sign-In Styles */
@@ -75,11 +94,19 @@
   display: flex;
   justify-content: center;
   margin: 1.5rem 0;
+  min-height: 44px;
 }
 
 #googleSignInBtn {
   display: flex;
   justify-content: center;
+  width: 100%;
+}
+
+/* Make Google button wider */
+#googleSignInBtn > div {
+  width: 100% !important;
+  max-width: 320px;
 }
 
 .divider {
@@ -100,7 +127,8 @@
 .divider span {
   padding: 0 1rem;
   color: var(--admin-text-muted);
-  font-size: 0.85rem;
+  font-size: 0.8rem;
+  white-space: nowrap;
 }
 
 .login-note {
@@ -109,12 +137,17 @@
   justify-content: center;
   gap: 0.5rem;
   margin-top: 1.5rem;
-  padding: 1rem;
+  padding: 0.875rem 1rem;
   background: #f0fdf4;
   color: #065f46;
   border-radius: 8px;
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   text-align: center;
+  line-height: 1.4;
+}
+
+.login-note svg {
+  flex-shrink: 0;
 }
 
 .login-loading {
@@ -150,6 +183,7 @@
 
 .form-group {
   margin-bottom: 1.5rem;
+  text-align: left;
 }
 
 .form-group label {
@@ -192,8 +226,8 @@
   resize: vertical;
 }
 
-/* Buttons */
-.btn {
+/* Buttons - scoped to admin-page to override main site components.css */
+.admin-page .btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -209,50 +243,50 @@
   font-family: inherit;
 }
 
-.btn-primary {
+.admin-page .btn-primary {
   background: var(--admin-primary);
   color: white;
 }
 
-.btn-primary:hover {
+.admin-page .btn-primary:hover {
   background: var(--admin-primary-dark);
   transform: translateY(-1px);
   box-shadow: var(--admin-shadow);
 }
 
-.btn-secondary {
+.admin-page .btn-secondary {
   background: var(--admin-secondary);
   color: var(--admin-text);
 }
 
-.btn-secondary:hover {
+.admin-page .btn-secondary:hover {
   background: #e5e7eb;
 }
 
-.btn-danger {
+.admin-page .btn-danger {
   background: var(--admin-danger);
   color: white;
 }
 
-.btn-danger:hover {
+.admin-page .btn-danger:hover {
   background: #dc2626;
 }
 
-.btn-success {
+.admin-page .btn-success {
   background: var(--admin-success);
   color: white;
 }
 
-.btn-block {
+.admin-page .btn-block {
   width: 100%;
 }
 
-.btn-sm {
+.admin-page .btn-sm {
   padding: 0.5rem 1rem;
   font-size: 0.875rem;
 }
 
-.btn:disabled {
+.admin-page .btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
@@ -442,6 +476,14 @@
   border-top: 1px solid var(--admin-border);
   color: var(--admin-text);
   font-size: 0.95rem;
+  max-width: 250px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.data-table td:first-child {
+  font-weight: 600;
 }
 
 .data-table tbody tr:hover {
@@ -685,6 +727,52 @@
   }
 }
 
+/* Mobile tab bar for sidebar replacement */
+.mobile-tab-bar {
+  display: none;
+  background: var(--admin-white);
+  border-bottom: 1px solid var(--admin-border);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.mobile-tab-bar::-webkit-scrollbar {
+  display: none;
+}
+
+.mobile-tab-bar .mobile-tabs {
+  display: flex;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  min-width: max-content;
+}
+
+.mobile-tab-bar .mobile-tab {
+  flex-shrink: 0;
+  padding: 0.75rem 1rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--admin-text-muted);
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  cursor: pointer;
+  white-space: nowrap;
+  font-family: inherit;
+  transition: all 0.2s;
+}
+
+.mobile-tab-bar .mobile-tab.active {
+  color: var(--admin-primary);
+  border-bottom-color: var(--admin-primary);
+}
+
+.mobile-tab-bar .mobile-tab:hover {
+  color: var(--admin-text);
+}
+
 @media (max-width: 768px) {
   .admin-main {
     grid-template-columns: 1fr;
@@ -692,6 +780,10 @@
   
   .admin-sidebar {
     display: none;
+  }
+  
+  .mobile-tab-bar {
+    display: block;
   }
   
   .admin-content {
@@ -703,14 +795,34 @@
     align-items: flex-start;
   }
   
+  .section-header h2 {
+    font-size: 1.25rem;
+  }
+  
   .data-table-container {
     overflow-x: auto;
+  }
+  
+  .data-table td {
+    max-width: 150px;
   }
   
   .modal-content {
     max-width: 100%;
     margin: 0;
     border-radius: 0;
+  }
+  
+  .admin-header-content {
+    padding: 0.75rem 1rem;
+  }
+  
+  .admin-logo h1 {
+    font-size: 1.1rem;
+  }
+  
+  .admin-user {
+    display: none;
   }
   
   .toast-container {

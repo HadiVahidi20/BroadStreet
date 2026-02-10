@@ -79,9 +79,18 @@ const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw9ubtgljqkSSow
       { name: 'cta2_link', label: 'Secondary CTA Link', type: 'text', required: false },
     ],
     standings: [
-      // Read-only, displayed as table only
+      // Read-only, rendered dynamically from data headers
+    ],
+    coaching: [
+      { name: 'name', label: 'Name', type: 'text', required: true },
+      { name: 'role', label: 'Role', type: 'text', required: true, placeholder: 'e.g., Head Coach' },
+      { name: 'image', label: 'Image URL', type: 'url', required: false },
+      { name: 'team', label: 'Team', type: 'text', required: true, placeholder: 'e.g., 1st XV' },
     ],
   };
+
+  // Read-only tabs (no edit/delete buttons)
+  const READ_ONLY_TABS = ['standings'];
 
   // Initialize
   function init() {
@@ -94,8 +103,16 @@ const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw9ubtgljqkSSow
     // Logout button
     document.getElementById('logoutBtn').addEventListener('click', handleLogout);
 
-    // Navigation buttons
+    // Sidebar navigation buttons
     document.querySelectorAll('.admin-nav-item').forEach((btn) => {
+      btn.addEventListener('click', (e) => {
+        const section = e.currentTarget.dataset.section;
+        switchSection(section);
+      });
+    });
+    
+    // Mobile tab bar buttons
+    document.querySelectorAll('.mobile-tab').forEach((btn) => {
       btn.addEventListener('click', (e) => {
         const section = e.currentTarget.dataset.section;
         switchSection(section);
@@ -332,11 +349,19 @@ const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw9ubtgljqkSSow
   function switchSection(section) {
     currentSection = section;
 
-    // Update nav
+    // Update sidebar nav
     document.querySelectorAll('.admin-nav-item').forEach((btn) => {
       btn.classList.remove('active');
     });
-    document.querySelector(`[data-section="${section}"]`).classList.add('active');
+    const sidebarBtn = document.querySelector(`.admin-nav-item[data-section="${section}"]`);
+    if (sidebarBtn) sidebarBtn.classList.add('active');
+    
+    // Update mobile tab bar
+    document.querySelectorAll('.mobile-tab').forEach((btn) => {
+      btn.classList.remove('active');
+    });
+    const mobileBtn = document.querySelector(`.mobile-tab[data-section="${section}"]`);
+    if (mobileBtn) mobileBtn.classList.add('active');
 
     // Hide all sections
     document.querySelectorAll('.admin-section').forEach((sec) => {
@@ -344,7 +369,8 @@ const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw9ubtgljqkSSow
     });
 
     // Show current section
-    document.getElementById(`section-${section}`).style.display = 'block';
+    const sectionEl = document.getElementById(`section-${section}`);
+    if (sectionEl) sectionEl.style.display = 'block';
 
     loadCurrentSection();
   }
@@ -383,9 +409,22 @@ const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw9ubtgljqkSSow
       return;
     }
 
-    // Get fields
-    const fields = fieldDefinitions[section] || [];
-    const headers = fields.map((f) => f.label);
+    const isReadOnly = READ_ONLY_TABS.indexOf(section) !== -1;
+    
+    // Get fields - for read-only tabs with no defined fields, build from data keys
+    let fields = fieldDefinitions[section] || [];
+    let headers;
+    let useRawKeys = false;
+    
+    if (fields.length === 0 && data.length > 0) {
+      // Dynamic columns from data (for standings, etc.)
+      const rawKeys = Object.keys(data[0]).filter(k => k !== '_rowIndex');
+      fields = rawKeys.map(k => ({ name: k, label: k.charAt(0).toUpperCase() + k.slice(1).replace(/_/g, ' ') }));
+      headers = fields.map(f => f.label);
+      useRawKeys = true;
+    } else {
+      headers = fields.map((f) => f.label);
+    }
 
     // Build table
     let tableHtml = `
@@ -393,7 +432,7 @@ const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw9ubtgljqkSSow
         <thead>
           <tr>
             ${headers.map((h) => `<th>${h}</th>`).join('')}
-            <th>Actions</th>
+            ${!isReadOnly ? '<th>Actions</th>' : ''}
           </tr>
         </thead>
         <tbody>
@@ -407,16 +446,13 @@ const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw9ubtgljqkSSow
         if (typeof value === 'string' && value.length > 50) {
           value = value.substring(0, 50) + '...';
         }
-        tableHtml += `<td>${escapeHtml(String(value))}</td>`;
+        tableHtml += `<td title="${escapeHtml(String(row[field.name] || ''))}">${escapeHtml(String(value))}</td>`;
       });
 
-      const isReadOnly = fieldDefinitions.READ_ONLY_TABS && 
-                         fieldDefinitions.READ_ONLY_TABS.indexOf(section) !== -1;
-
-      tableHtml += `
-        <td>
-          <div class="table-actions">
-            ${!isReadOnly ? `
+      if (!isReadOnly) {
+        tableHtml += `
+          <td>
+            <div class="table-actions">
               <button class="btn-edit" onclick="AdminApp.editItem(${index})" title="Edit">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <path d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
@@ -427,10 +463,10 @@ const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw9ubtgljqkSSow
                   <path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
                 </svg>
               </button>
-            ` : ''}
-          </div>
-        </td>
-      `;
+            </div>
+          </td>
+        `;
+      }
       tableHtml += '</tr>';
     });
 

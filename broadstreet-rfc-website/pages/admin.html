@@ -82,6 +82,19 @@
     <!-- Main Content -->
     <div class="admin-main">
       
+      <!-- Mobile Tab Bar (replaces sidebar on mobile) -->
+      <div class="mobile-tab-bar">
+        <div class="mobile-tabs">
+          <button class="mobile-tab active" data-section="news">News</button>
+          <button class="mobile-tab" data-section="fixtures">Fixtures</button>
+          <button class="mobile-tab" data-section="sponsors">Sponsors</button>
+          <button class="mobile-tab" data-section="players">Players</button>
+          <button class="mobile-tab" data-section="hero">Hero</button>
+          <button class="mobile-tab" data-section="standings">Standings</button>
+          <button class="mobile-tab" data-section="coaching">Coaching</button>
+        </div>
+      </div>
+      
       <!-- Sidebar -->
       <aside class="admin-sidebar">
         <nav class="admin-nav">
@@ -125,6 +138,13 @@
               <path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
             </svg>
             <span>Standings</span>
+          </button>
+          
+          <button class="admin-nav-item" data-section="coaching">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422A12.083 12.083 0 0124 21H0a12.083 12.083 0 015.84-10.422L12 14z"/>
+            </svg>
+            <span>Coaching</span>
           </button>
         </nav>
         
@@ -235,6 +255,21 @@
           </div>
           
           <div id="standingsTable" class="data-table-container"></div>
+        </section>
+        
+        <!-- Section: Coaching -->
+        <section id="section-coaching" class="admin-section" style="display: none;">
+          <div class="section-header">
+            <h2>Manage Coaching Staff</h2>
+            <button class="btn btn-primary" onclick="AdminApp.showAddForm('coaching')">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 4v16m8-8H4"/>
+              </svg>
+              Add Coach
+            </button>
+          </div>
+          
+          <div id="coachingTable" class="data-table-container"></div>
         </section>
         
       </main>
