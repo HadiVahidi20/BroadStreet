@@ -40,6 +40,32 @@ body.admin-page {
   font-family: 'Sen', sans-serif;
 }
 
+/* Override base.css img { height: auto; } which makes logos huge */
+.admin-page img {
+  height: auto;
+}
+
+.admin-page .admin-logo img {
+  width: 40px;
+  height: 40px !important;
+  object-fit: contain;
+  display: block;
+}
+
+.admin-page .login-logo {
+  width: 80px;
+  height: 80px !important;
+  object-fit: contain;
+  display: block;
+  margin: 0 auto 1.5rem;
+}
+
+.admin-page .user-avatar {
+  width: 32px;
+  height: 32px !important;
+  object-fit: cover;
+}
+
 /* ========================================
    Login Screen
    ======================================== */
