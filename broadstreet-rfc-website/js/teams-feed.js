@@ -13,6 +13,7 @@
     'https://storage.googleapis.com/msgsndr/su6QlYYHk7V0zo5SCC0s/media/698b5e630708e4742101c292.png',
     'https://storage.googleapis.com/msgsndr/su6QlYYHk7V0zo5SCC0s/media/698b5e63a41b876ab95644a5.png'
   ];
+
   var playerModal = null;
   var playerModalEscBound = false;
 
@@ -102,7 +103,7 @@
       details.push({ label: label, value: value });
     }
 
-    addDetail('Team', ['team']);
+    addDetail('Team', ['team', 'team_name', 'squad']);
     addDetail('Jersey Number', ['number']);
     addDetail('Position Category', ['position_category']);
     addDetail('Date of Birth', ['date_of_birth']);
@@ -177,14 +178,13 @@
     };
   }
 
-  // ── Coaching Staff ──────────────────────────────────────────────────
+  // Coaching Staff
   function renderCoaching(coaches) {
     var mainGrid = document.getElementById('coachingMain');
     var otherGrid = document.getElementById('coachingOther');
     if (!mainGrid && !otherGrid) return;
     if (!coaches.length) return;
 
-    // First 3 coaches go into the main grid (larger cards)
     var mainCoaches = coaches.slice(0, 3);
     var otherCoaches = coaches.slice(3);
 
@@ -225,25 +225,59 @@
     }
   }
 
-  // ── Player Cards ────────────────────────────────────────────────────
-  function renderPlayers(players) {
-    var grid = document.getElementById('playerGrid');
-    if (!grid || !players.length) return;
+  // Player Cards
+  function buildPositionClasses(player) {
+    var posLower = getPlayerPosition(player).toLowerCase();
+    var compact = posLower.replace(/[^a-z0-9]+/g, '');
+    var classes = posLower;
+
+    if (compact && compact !== posLower) {
+      classes += ' ' + compact;
+    }
+
+    if (/number\s*8|no\.?\s*8/.test(posLower)) {
+      classes += ' number8';
+    }
+    if (/scrum\s*half/.test(posLower)) {
+      classes += ' scrumhalf';
+    }
+    if (/fly\s*half/.test(posLower)) {
+      classes += ' flyhalf';
+    }
+    if (/full\s*back/.test(posLower)) {
+      classes += ' fullback';
+    }
+    if (/centre/.test(posLower)) {
+      classes += ' center';
+    }
+    if (/center/.test(posLower)) {
+      classes += ' centre';
+    }
+
+    if (/prop|hooker|lock|flanker|number.?8|back row|second row/i.test(posLower)) {
+      classes += ' forward';
+    } else if (/scrum|fly|centre|wing|full\s*back|half|center/i.test(posLower)) {
+      classes += ' back';
+    }
+
+    return classes;
+  }
+
+  function renderPlayers(players, gridOrId) {
+    var grid = typeof gridOrId === 'string' ? document.getElementById(gridOrId) : gridOrId;
+    if (!grid) return false;
+
+    if (!players || !players.length) {
+      grid.innerHTML = '';
+      grid.onclick = null;
+      return false;
+    }
 
     grid.innerHTML = players.map(function (p, index) {
       var name = esc(getPlayerName(p));
       var pos = esc(getPlayerPosition(p));
       var img = esc(pickValue(p, ['image']) || defaultPlayerImg);
-
-      // Build data-position attribute for filter
-      var posLower = getPlayerPosition(p).toLowerCase();
-      var positionClasses = posLower;
-      // Add group class (forward/back)
-      if (/prop|hooker|lock|flanker|number.?8|back row|second row/i.test(posLower)) {
-        positionClasses += ' forward';
-      } else if (/scrum|fly|centre|wing|full\s*back|half|center/i.test(posLower)) {
-        positionClasses += ' back';
-      }
+      var positionClasses = buildPositionClasses(p);
 
       return (
         '<div class="player-card" data-position="' + esc(positionClasses) + '">' +
@@ -264,95 +298,278 @@
     }).join('');
 
     bindProfileButtons(grid, players);
-    // Re-bind the position filter to new cards
-    rebindFilter();
-    // Re-bind 3D tilt effect
-    rebindTiltEffect();
+    return true;
   }
 
-  function rebindFilter() {
+  function setSectionVisible(sectionId, visible) {
+    var section = document.getElementById(sectionId);
+    if (!section) return;
+    section.style.display = visible ? '' : 'none';
+  }
+
+  function normalizeTeamKey(teamName) {
+    return clean(teamName)
+      .toLowerCase()
+      .replace(/['\u2019]/g, '')
+      .replace(/[^a-z0-9]+/g, ' ')
+      .trim();
+  }
+
+  function hasAnyHint(text, hints) {
+    for (var i = 0; i < hints.length; i++) {
+      if (text.indexOf(hints[i]) !== -1) return true;
+    }
+    return false;
+  }
+
+  function hasAgeInRange(teamKey, minAge, maxAge) {
+    if (!teamKey) return false;
+    var re = /(?:^|\s)(?:u|under)\s*([0-9]{1,2})s?(?=\s|$)/g;
+    var match = re.exec(teamKey);
+    while (match) {
+      var age = parseInt(match[1], 10);
+      if (!isNaN(age) && age >= minAge && age <= maxAge) {
+        return true;
+      }
+      match = re.exec(teamKey);
+    }
+    return false;
+  }
+
+  function classifyTeamBucket(teamName) {
+    var teamKey = normalizeTeamKey(teamName);
+    if (!teamKey) return 'first';
+
+    if (hasAnyHint(teamKey, ['touch'])) return 'touch';
+
+    if (hasAnyHint(teamKey, ['mini', 'minis']) || hasAgeInRange(teamKey, 5, 12)) {
+      return 'minis';
+    }
+
+    if (
+      hasAnyHint(teamKey, ['youth', 'junior', 'juniors', 'colts', 'academy', 'girls', 'boys']) ||
+      hasAgeInRange(teamKey, 13, 18)
+    ) {
+      return 'youth';
+    }
+
+    if (hasAnyHint(teamKey, ['women', 'womens', 'ladies', 'female'])) {
+      return 'women';
+    }
+
+    if (
+      /(?:^|\s)(?:2|2nd|second)\s*xv(?=\s|$)/.test(teamKey) ||
+      hasAnyHint(teamKey, ['2nd', 'second', 'seconds', 'development', 'dev squad', 'dev'])
+    ) {
+      return 'second';
+    }
+
+    if (
+      /(?:^|\s)(?:1|1st|first)\s*xv(?=\s|$)/.test(teamKey) ||
+      hasAnyHint(teamKey, ['1st', 'first', 'firsts', 'senior'])
+    ) {
+      return 'first';
+    }
+
+    return 'other';
+  }
+
+  function groupPlayersByTeam(players) {
+    var grouped = {
+      first: [],
+      second: [],
+      women: [],
+      youth: [],
+      minis: [],
+      touch: [],
+      other: {},
+    };
+
+    for (var i = 0; i < players.length; i++) {
+      var player = players[i];
+      var teamName = pickValue(player, ['team', 'team_name', 'squad']);
+      var bucket = classifyTeamBucket(teamName);
+
+      if (bucket === 'other') {
+        var otherKey = normalizeTeamKey(teamName) || 'other-team';
+        if (!grouped.other[otherKey]) {
+          grouped.other[otherKey] = {
+            label: teamName || 'Other Team',
+            players: [],
+          };
+        }
+        grouped.other[otherKey].players.push(player);
+      } else {
+        grouped[bucket].push(player);
+      }
+    }
+
+    return grouped;
+  }
+
+  function renderOptionalRoster(sectionId, gridId, players) {
+    var hasPlayers = renderPlayers(players, gridId);
+    setSectionVisible(sectionId, hasPlayers);
+  }
+
+  function renderOtherTeamRosters(otherTeams) {
+    var section = document.getElementById('otherTeamsSection');
+    var container = document.getElementById('otherTeamsDynamic');
+    if (!section || !container) return;
+
+    var keys = Object.keys(otherTeams || {});
+    if (!keys.length) {
+      container.innerHTML = '';
+      section.style.display = 'none';
+      return;
+    }
+
+    keys.sort(function (a, b) {
+      return otherTeams[a].label.localeCompare(otherTeams[b].label);
+    });
+
+    container.innerHTML = keys.map(function (key, index) {
+      var team = otherTeams[key];
+      return (
+        '<div class="dynamic-team-roster">' +
+          '<h3 class="dynamic-team-roster-title">' + esc(team.label) + ' Squad Profiles</h3>' +
+          '<div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6" id="otherTeamPlayerGrid-' + index + '"></div>' +
+        '</div>'
+      );
+    }).join('');
+
+    for (var i = 0; i < keys.length; i++) {
+      renderPlayers(otherTeams[keys[i]].players, 'otherTeamPlayerGrid-' + i);
+    }
+
+    section.style.display = '';
+  }
+
+  function renderTeamRosters(players) {
+    var grouped = groupPlayersByTeam(players);
+    var firstGrid = document.getElementById('playerGrid');
+
+    if (firstGrid) {
+      if (grouped.first.length) {
+        renderPlayers(grouped.first, firstGrid);
+      } else {
+        firstGrid.innerHTML =
+          '<div class="card">' +
+            '<div class="card-body text-center">' +
+              '<p class="text-muted mb-0">First XV squad profiles will appear here soon.</p>' +
+            '</div>' +
+          '</div>';
+        firstGrid.onclick = null;
+      }
+    }
+
+    renderOptionalRoster('secondXVRosterSection', 'secondXVPlayerGrid', grouped.second);
+    renderOptionalRoster('womenRosterSection', 'womenPlayerGrid', grouped.women);
+    renderOptionalRoster('youthRosterSection', 'youthPlayerGrid', grouped.youth);
+    renderOptionalRoster('minisRosterSection', 'minisPlayerGrid', grouped.minis);
+    renderOptionalRoster('touchRosterSection', 'touchPlayerGrid', grouped.touch);
+    renderOtherTeamRosters(grouped.other);
+  }
+
+  function bindFirstTeamFilter() {
     var filterSelect = document.getElementById('positionFilter');
-    var playerCards = document.querySelectorAll('.player-card');
-    if (!filterSelect || !playerCards.length) return;
+    var firstGrid = document.getElementById('playerGrid');
+    if (!filterSelect || !firstGrid) return;
 
-    // Reset filter to 'all'
-    filterSelect.value = 'all';
-
-    // Clone and replace to remove old listener
     var newSelect = filterSelect.cloneNode(true);
-    filterSelect.parentNode.replaceChild(newSelect, filterSelect);
+    if (filterSelect.parentNode) {
+      filterSelect.parentNode.replaceChild(newSelect, filterSelect);
+    }
 
-    newSelect.addEventListener('change', function () {
-      var selected = this.value;
-      var cards = document.querySelectorAll('.player-card');
-      cards.forEach(function (card) {
-        var positions = card.getAttribute('data-position') || '';
+    function applyFilter() {
+      var selected = newSelect.value;
+      var cards = firstGrid.querySelectorAll('.player-card');
+
+      for (var i = 0; i < cards.length; i++) {
+        var positions = cards[i].getAttribute('data-position') || '';
         if (selected === 'all' || positions.indexOf(selected) !== -1) {
-          card.classList.remove('hidden');
+          cards[i].classList.remove('hidden');
         } else {
-          card.classList.add('hidden');
+          cards[i].classList.add('hidden');
         }
-      });
-      // Fade-in animation
+      }
+
       setTimeout(function () {
-        document.querySelectorAll('.player-card:not(.hidden)').forEach(function (card, index) {
-          card.style.animation = 'none';
-          setTimeout(function () {
-            card.style.animation = 'fadeIn 0.4s ease ' + (index * 0.05) + 's forwards';
-          }, 10);
-        });
+        var visible = firstGrid.querySelectorAll('.player-card:not(.hidden)');
+        for (var j = 0; j < visible.length; j++) {
+          visible[j].style.animation = 'none';
+          (function (card, index) {
+            setTimeout(function () {
+              card.style.animation = 'fadeIn 0.4s ease ' + (index * 0.05) + 's forwards';
+            }, 10);
+          })(visible[j], j);
+        }
       }, 10);
-    });
+    }
+
+    newSelect.value = 'all';
+    newSelect.disabled = firstGrid.querySelectorAll('.player-card').length === 0;
+    newSelect.addEventListener('change', applyFilter);
+    applyFilter();
   }
 
-  function rebindTiltEffect() {
+  function bindTiltEffect() {
     var cards = document.querySelectorAll('.player-card .card');
-    cards.forEach(function (cardElement) {
-      var imageLayer = cardElement.querySelector('.player-card-image');
-      var bg = cardElement.querySelector('.player-card-bg');
-      var photo = cardElement.querySelector('.player-card-photo');
-      if (!imageLayer) return;
+    for (var i = 0; i < cards.length; i++) {
+      var cardElement = cards[i];
+      if (cardElement.getAttribute('data-tilt-bound') === 'true') continue;
+      cardElement.setAttribute('data-tilt-bound', 'true');
 
-      cardElement.addEventListener('mousemove', function (e) {
-        var rect = imageLayer.getBoundingClientRect();
-        var x = e.clientX - rect.left;
-        var y = e.clientY - rect.top;
-        var centerX = rect.width / 2;
-        var centerY = rect.height / 2;
-        var rotateX = (y - centerY) / 16;
-        var rotateY = (centerX - x) / 16;
+      (function (cardNode) {
+        var imageLayer = cardNode.querySelector('.player-card-image');
+        var bg = cardNode.querySelector('.player-card-bg');
+        var photo = cardNode.querySelector('.player-card-photo');
+        if (!imageLayer) return;
 
-        imageLayer.style.transform = 'perspective(1200px) rotateX(' + rotateX + 'deg) rotateY(' + rotateY + 'deg) scale3d(1.01, 1.01, 1.01)';
-        if (bg) {
-          bg.style.transform = 'translate(' + ((x - centerX) / 32) + 'px, ' + ((y - centerY) / 32) + 'px) scale(1.08)';
-        }
-        if (photo) {
-          photo.style.transform = 'translateX(calc(-50% + ' + ((centerX - x) / 20) + 'px)) translateY(' + ((centerY - y) / 20) + 'px) scale(1.05)';
-        }
-      });
+        cardNode.addEventListener('mousemove', function (e) {
+          var rect = imageLayer.getBoundingClientRect();
+          var x = e.clientX - rect.left;
+          var y = e.clientY - rect.top;
+          var centerX = rect.width / 2;
+          var centerY = rect.height / 2;
+          var rotateX = (y - centerY) / 16;
+          var rotateY = (centerX - x) / 16;
 
-      cardElement.addEventListener('mouseleave', function () {
-        imageLayer.style.transform = 'perspective(1200px) rotateX(0) rotateY(0) scale3d(1, 1, 1)';
-        if (bg) bg.style.transform = 'translate(0, 0) scale(1)';
-        if (photo) photo.style.transform = 'translateX(-50%) translateY(0) scale(1)';
-      });
+          imageLayer.style.transform = 'perspective(1200px) rotateX(' + rotateX + 'deg) rotateY(' + rotateY + 'deg) scale3d(1.01, 1.01, 1.01)';
+          if (bg) {
+            bg.style.transform = 'translate(' + ((x - centerX) / 32) + 'px, ' + ((y - centerY) / 32) + 'px) scale(1.08)';
+          }
+          if (photo) {
+            photo.style.transform = 'translateX(calc(-50% + ' + ((centerX - x) / 20) + 'px)) translateY(' + ((centerY - y) / 20) + 'px) scale(1.05)';
+          }
+        });
 
-      cardElement.addEventListener('mouseenter', function () {
-        imageLayer.style.transition = 'transform 0.1s ease-out';
-        if (bg) bg.style.transition = 'transform 0.1s ease-out';
-        if (photo) photo.style.transition = 'transform 0.1s ease-out, filter 0.3s ease';
-      });
+        cardNode.addEventListener('mouseleave', function () {
+          imageLayer.style.transform = 'perspective(1200px) rotateX(0) rotateY(0) scale3d(1, 1, 1)';
+          if (bg) bg.style.transform = 'translate(0, 0) scale(1)';
+          if (photo) photo.style.transform = 'translateX(-50%) translateY(0) scale(1)';
+        });
 
-      cardElement.addEventListener('mouseleave', function () {
-        imageLayer.style.transition = 'transform 0.5s ease';
-        if (bg) bg.style.transition = 'transform 0.5s ease';
-        if (photo) photo.style.transition = 'transform 0.5s ease, filter 0.3s ease';
-      });
-    });
+        cardNode.addEventListener('mouseenter', function () {
+          imageLayer.style.transition = 'transform 0.1s ease-out';
+          if (bg) bg.style.transition = 'transform 0.1s ease-out';
+          if (photo) photo.style.transition = 'transform 0.1s ease-out, filter 0.3s ease';
+        });
+
+        cardNode.addEventListener('mouseleave', function () {
+          imageLayer.style.transition = 'transform 0.5s ease';
+          if (bg) bg.style.transition = 'transform 0.5s ease';
+          if (photo) photo.style.transition = 'transform 0.5s ease, filter 0.3s ease';
+        });
+      })(cardElement);
+    }
   }
 
-  // ── Load ─────────────────────────────────────────────────────────────
+  // Load
   async function load() {
+    bindFirstTeamFilter();
+    bindTiltEffect();
+
     try {
       var results = await Promise.all([
         SheetsAPI.fetchTab('coaching'),
@@ -363,12 +580,11 @@
       var players = results[1] || [];
 
       if (coaches.length) renderCoaching(coaches);
+      if (!players.length) return;
 
-      // Filter to 1st XV players for the main page grid
-      var firstXV = players.filter(function (p) {
-        return !p.team || p.team === '1st XV';
-      });
-      if (firstXV.length) renderPlayers(firstXV);
+      renderTeamRosters(players);
+      bindFirstTeamFilter();
+      bindTiltEffect();
     } catch (e) {
       // Keep hardcoded placeholders on error
     }

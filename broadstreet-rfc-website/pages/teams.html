@@ -371,6 +371,15 @@
       aspect-ratio: 1 / 1;
     }
 
+    /* Dynamic team rosters loaded from Google Sheet (players.team) */
+    .dynamic-team-roster {
+      margin-top: var(--space-8);
+    }
+
+    .dynamic-team-roster-title {
+      margin-bottom: var(--space-4);
+    }
+
     /* Team Hero Section Styles */
     .team-hero-wrapper {
       position: relative;
@@ -1452,6 +1461,11 @@
               </div>
             </div>
           </div>
+
+          <div class="dynamic-team-roster" id="secondXVRosterSection" style="display: none;">
+            <h4 class="dynamic-team-roster-title">2nd XV Squad Profiles</h4>
+            <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6" id="secondXVPlayerGrid"></div>
+          </div>
         </div>
       </section>
 
@@ -1495,6 +1509,11 @@
                 </div>
               </div>
             </div>
+          </div>
+
+          <div class="dynamic-team-roster" id="womenRosterSection" style="display: none;">
+            <h4 class="dynamic-team-roster-title">Women's Squad Profiles</h4>
+            <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6" id="womenPlayerGrid"></div>
           </div>
         </div>
       </section>
@@ -1545,6 +1564,11 @@
                 <a href="contact.html?subject=youth" class="btn btn-white btn-sm mt-2">Register Interest</a>
               </div>
             </div>
+          </div>
+
+          <div class="dynamic-team-roster" id="youthRosterSection" style="display: none;">
+            <h4 class="dynamic-team-roster-title">Youth & Junior Squad Profiles</h4>
+            <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6" id="youthPlayerGrid"></div>
           </div>
         </div>
       </section>
@@ -1638,6 +1662,11 @@
               </div>
             </div>
           </div>
+
+          <div class="dynamic-team-roster" id="minisRosterSection" style="display: none;">
+            <h4 class="dynamic-team-roster-title">Mini Rugby Profiles</h4>
+            <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6" id="minisPlayerGrid"></div>
+          </div>
         </div>
       </section>
 
@@ -1683,6 +1712,19 @@
               </div>
             </div>
           </div>
+
+          <div class="dynamic-team-roster" id="touchRosterSection" style="display: none;">
+            <h4 class="dynamic-team-roster-title">Touch Rugby Profiles</h4>
+            <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6" id="touchPlayerGrid"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Additional Team Squads (from sheet team column) -->
+      <section class="section bg-gray-50" id="otherTeamsSection" style="display: none;">
+        <div class="container">
+          <h2 class="text-center mb-8">Additional Team Squads</h2>
+          <div id="otherTeamsDynamic"></div>
         </div>
       </section>
 
@@ -1837,118 +1879,6 @@
   <script src="../js/utils.js"></script>
   <script src="../js/main.js"></script>
   <script src="../js/teams-feed.js"></script>
-
-  <!-- Player Filter Script -->
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      const filterSelect = document.getElementById('positionFilter');
-      const playerCards = document.querySelectorAll('.player-card');
-
-      if (!filterSelect || playerCards.length === 0) return;
-
-      filterSelect.addEventListener('change', function() {
-        // Get selected position
-        const selectedPosition = this.value;
-
-        // Filter players
-        playerCards.forEach(card => {
-          const cardPositions = card.getAttribute('data-position');
-
-          if (selectedPosition === 'all') {
-            // Show all cards
-            card.classList.remove('hidden');
-          } else {
-            // Check if card has the selected position
-            if (cardPositions.includes(selectedPosition)) {
-              card.classList.remove('hidden');
-            } else {
-              card.classList.add('hidden');
-            }
-          }
-        });
-
-        // Add fade-in animation to visible cards
-        setTimeout(() => {
-          document.querySelectorAll('.player-card:not(.hidden)').forEach((card, index) => {
-            card.style.animation = 'none';
-            setTimeout(() => {
-              card.style.animation = `fadeIn 0.4s ease ${index * 0.05}s forwards`;
-            }, 10);
-          });
-        }, 10);
-      });
-    });
-  </script>
-
-  <!-- 3D Tilt Effect Script -->
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      const cards = document.querySelectorAll('.player-card .card');
-
-      cards.forEach(card => {
-        const cardElement = card;
-        const imageLayer = card.querySelector('.player-card-image');
-        const bg = card.querySelector('.player-card-bg');
-        const photo = card.querySelector('.player-card-photo');
-        if (!imageLayer) return;
-
-        cardElement.addEventListener('mousemove', (e) => {
-          const rect = imageLayer.getBoundingClientRect();
-          const x = e.clientX - rect.left;
-          const y = e.clientY - rect.top;
-
-          const centerX = rect.width / 2;
-          const centerY = rect.height / 2;
-
-          const rotateX = (y - centerY) / 16;
-          const rotateY = (centerX - x) / 16;
-
-          // Apply tilt only to image area, keep text/buttons stable
-          imageLayer.style.transform = `perspective(1200px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.01, 1.01, 1.01)`;
-
-          // Parallax effect on background (moves opposite direction)
-          if (bg) {
-            const bgX = (x - centerX) / 32;
-            const bgY = (y - centerY) / 32;
-            bg.style.transform = `translate(${bgX}px, ${bgY}px) scale(1.08)`;
-          }
-
-          // Parallax effect on photo (moves more than card)
-          if (photo) {
-            const photoX = (centerX - x) / 20;
-            const photoY = (centerY - y) / 20;
-            photo.style.transform = `translateX(calc(-50% + ${photoX}px)) translateY(${photoY}px) scale(1.05)`;
-          }
-        });
-
-        cardElement.addEventListener('mouseleave', () => {
-          // Reset transformations
-          imageLayer.style.transform = 'perspective(1200px) rotateX(0) rotateY(0) scale3d(1, 1, 1)';
-
-          if (bg) {
-            bg.style.transform = 'translate(0, 0) scale(1)';
-          }
-
-          if (photo) {
-            photo.style.transform = 'translateX(-50%) translateY(0) scale(1)';
-          }
-        });
-
-        // Smooth transition on mouse leave
-        cardElement.addEventListener('mouseenter', () => {
-          imageLayer.style.transition = 'transform 0.1s ease-out';
-          if (bg) bg.style.transition = 'transform 0.1s ease-out';
-          if (photo) photo.style.transition = 'transform 0.1s ease-out, filter 0.3s ease';
-        });
-
-        cardElement.addEventListener('mouseleave', () => {
-          imageLayer.style.transition = 'transform 0.5s ease';
-          if (bg) bg.style.transition = 'transform 0.5s ease';
-          if (photo) photo.style.transition = 'transform 0.5s ease, filter 0.3s ease';
-        });
-      });
-    });
-  </script>
 
   <!-- Mobile Carousel Grouping Script -->
   <script>
