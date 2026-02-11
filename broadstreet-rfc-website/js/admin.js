@@ -745,6 +745,11 @@ const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw9ubtgljqkSSow
       const fetchedDeduped = Number(summary.fetched_deduped || summary.fetched || 0);
       const removedDuplicates = Number(summary.removed_duplicates || 0);
 
+      const resultsUpdated = Number(summary.results_updated || 0);
+      const resultsMatched = Number(summary.results_matched || 0);
+      const resultsFetched = Number(summary.results_fetched || 0);
+      const resultsError = summary.results_error || '';
+
       const parts = [`RFU sync complete: ${added} added`, `${updated} updated`];
       if (totalFeeds > 0) {
         parts.push(`feeds ${successFeeds}/${totalFeeds}`);
@@ -757,6 +762,15 @@ const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw9ubtgljqkSSow
       }
 
       showToast(parts.join(', ') + '.', failedFeeds > 0 ? 'info' : 'success');
+
+      if (resultsFetched > 0) {
+        showToast(
+          `Results sync: ${resultsFetched} fetched, ${resultsMatched} matched, ${resultsUpdated} scores updated.`,
+          resultsUpdated > 0 ? 'success' : 'info'
+        );
+      } else if (resultsError) {
+        showToast('Results sync failed: ' + resultsError, 'error');
+      }
       if (failedFeeds > 0) {
         showToast(
           `${failedFeeds} feed(s) failed. Check Apps Script logs for details.`,
