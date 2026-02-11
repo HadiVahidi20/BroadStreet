@@ -697,7 +697,8 @@ function performRfuResultsSync_() {
     if (!result) continue;
 
     var resultType = String(result.Type || "").toUpperCase();
-    if (resultType !== "RESULT" && resultType !== "HOMEWALKOVER" && resultType !== "AWAYWALKOVER") {
+    // Only accept actual played results — skip walkovers (cancelled/forfeited matches)
+    if (resultType !== "RESULT") {
       skipped++;
       continue;
     }
@@ -1458,6 +1459,18 @@ function normalizeDateKey(value) {
   m = text.match(/^(\d{4})(\d{2})(\d{2})$/);
   if (m) return m[1] + "-" + m[2] + "-" + m[3];
 
+  // DD/MM/YYYY — Google Sheets auto-converted dates
+  m = text.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+  if (m) {
+    var dd = parseInt(m[1], 10);
+    var mm = parseInt(m[2], 10);
+    var yyyy = parseInt(m[3], 10);
+    if (yyyy > 1900 && mm >= 1 && mm <= 12) {
+      var pad = function(n) { return n < 10 ? "0" + n : String(n); };
+      return yyyy + "-" + pad(mm) + "-" + pad(dd);
+    }
+  }
+
   var parsed = new Date(text);
   if (!isNaN(parsed.getTime())) {
     return Utilities.formatDate(parsed, "UTC", "yyyy-MM-dd");
@@ -1544,6 +1557,18 @@ function isFixtureDatePast_(dateValue) {
 
   var m = text.match(/^(\d{4})-(\d{2})-(\d{2})$/);
   if (m) return text < today;
+
+  // DD/MM/YYYY — Google Sheets auto-converted dates
+  m = text.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+  if (m) {
+    var dd = parseInt(m[1], 10);
+    var mm = parseInt(m[2], 10);
+    var yyyy = parseInt(m[3], 10);
+    if (yyyy > 1900 && mm >= 1 && mm <= 12) {
+      var pad = function(n) { return n < 10 ? "0" + n : String(n); };
+      return yyyy + "-" + pad(mm) + "-" + pad(dd) < today;
+    }
+  }
 
   m = text.match(/^(?:[A-Za-z]+,?\s+)?(\d{1,2})\s+([A-Za-z]{3,})\.?,?\s+(\d{4})$/);
   if (m) {

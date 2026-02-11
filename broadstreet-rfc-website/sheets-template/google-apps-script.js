@@ -348,6 +348,17 @@ function parseFixtureDate_(value) {
   var iso = parseIsoDate_(text);
   if (iso) return iso;
 
+  // DD/MM/YYYY — Google Sheets auto-converted dates
+  var slashMatch = text.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+  if (slashMatch) {
+    var sd = parseInt(slashMatch[1], 10);
+    var sm = parseInt(slashMatch[2], 10);
+    var sy = parseInt(slashMatch[3], 10);
+    if (sy > 1900 && sm >= 1 && sm <= 12) {
+      return new Date(Date.UTC(sy, sm - 1, sd, 12, 0, 0));
+    }
+  }
+
   var match = text.match(/(\d{1,2})\s+([A-Za-z]{3,})\.?,?\s+(\d{4})/i);
   if (match) {
     var day = parseInt(match[1], 10);
