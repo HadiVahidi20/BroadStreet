@@ -44,10 +44,10 @@ const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw9ubtgljqkSSow
     news: [
       { name: 'title', label: 'Title', type: 'text', required: true },
       { name: 'date', label: 'Date', type: 'text', required: true, placeholder: 'e.g., 1 Feb 2026' },
-      { name: 'category', label: 'Category', type: 'text', required: true, placeholder: 'e.g., Match Report, Club News' },
-      { name: 'excerpt', label: 'Excerpt', type: 'textarea', required: true },
-      { name: 'image', label: 'Image URL', type: 'url', required: false },
-      { name: 'link', label: 'Link URL', type: 'url', required: false, placeholder: 'Leave # for no link' },
+      { name: 'category', label: 'Category', type: 'select-other', options: ['Match Report', 'Club News', 'Community', 'Youth', 'Social'], required: true },
+      { name: 'excerpt', label: 'Excerpt / Summary', type: 'textarea', required: true },
+      { name: 'content', label: 'Full Article', type: 'richtext', required: false },
+      { name: 'image', label: 'Cover Image URL', type: 'url', required: false },
       { name: 'featured', label: 'Featured', type: 'select', options: ['false', 'true'], required: true },
     ],
     fixtures: [
@@ -733,6 +733,22 @@ const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw9ubtgljqkSSow
         html += `<option value="__other__" ${isOther ? 'selected' : ''}>Other...</option>`;
         html += `</select>`;
         html += `<input type="text" id="${otherId}" name="${isOther ? field.name : ''}" placeholder="Enter custom value" value="${isOther ? escapeHtml(String(value)) : ''}" style="display:${isOther ? 'block' : 'none'};margin-top:6px" ${isOther && field.required ? 'required' : ''}>`;
+      } else if (fieldType === 'richtext') {
+        const editorId = `richtext_${field.name}`;
+        const hiddenId = `field_${field.name}`;
+        html += `<div class="richtext-wrap">`;
+        html += `<div class="richtext-toolbar">`;
+        html += `<button type="button" class="rt-btn" title="Bold" onclick="document.execCommand('bold')"><b>B</b></button>`;
+        html += `<button type="button" class="rt-btn" title="Italic" onclick="document.execCommand('italic')"><i>I</i></button>`;
+        html += `<button type="button" class="rt-btn" title="Heading" onclick="document.execCommand('formatBlock',false,'H3')">H</button>`;
+        html += `<button type="button" class="rt-btn" title="Paragraph" onclick="document.execCommand('formatBlock',false,'P')">P</button>`;
+        html += `<button type="button" class="rt-btn" title="Insert Link" onclick="(function(){var u=prompt('Enter URL:');if(u)document.execCommand('createLink',false,u)})()">&#128279;</button>`;
+        html += `<button type="button" class="rt-btn" title="Insert Image" onclick="(function(){var u=prompt('Enter image URL:');if(u){document.execCommand('insertHTML',false,'<img src=&quot;'+u+'&quot; style=&quot;max-width:100%&quot;>')}})()">&#128247;</button>`;
+        html += `<button type="button" class="rt-btn" title="Bullet List" onclick="document.execCommand('insertUnorderedList')">&#8226;</button>`;
+        html += `</div>`;
+        html += `<div class="richtext-editor" id="${editorId}" contenteditable="true">${value}</div>`;
+        html += `<input type="hidden" id="${hiddenId}" name="${field.name}" value="${escapeHtml(String(value))}">`;
+        html += `</div>`;
       } else {
         html += `<input type="${fieldType}" id="field_${field.name}" name="${field.name}" ${field.required ? 'required' : ''} placeholder="${field.placeholder || ''}" value="${escapeHtml(String(value))}">`;
       }
@@ -744,6 +760,19 @@ const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw9ubtgljqkSSow
 
   async function submitForm() {
     const form = document.getElementById('itemForm');
+
+    // Sync richtext editors to hidden inputs before validation
+    const fields = getSectionFields(currentSection, currentData);
+    fields.forEach((field) => {
+      if (field.type === 'richtext') {
+        const editor = document.getElementById(`richtext_${field.name}`);
+        const hidden = document.getElementById(`field_${field.name}`);
+        if (editor && hidden) {
+          hidden.value = editor.innerHTML.trim();
+        }
+      }
+    });
+
     if (!form.checkValidity()) {
       form.reportValidity();
       return;
