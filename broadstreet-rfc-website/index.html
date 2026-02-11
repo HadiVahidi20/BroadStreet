@@ -191,6 +191,19 @@
         </div>
       </section>
 
+      <!-- Recent Results (Minimal Strip) -->
+      <section class="home-results-strip" aria-label="Recent Results">
+        <div class="container">
+          <div class="home-results-strip-header">
+            <h2 class="home-results-strip-title">Recent Results</h2>
+            <a href="pages/fixtures.html" class="btn btn-outline btn-sm">View All Results</a>
+          </div>
+          <div class="home-results-strip-track" id="homeResultsMini">
+            <div class="home-results-strip-empty">Loading recent results...</div>
+          </div>
+        </div>
+      </section>
+
       <!-- Team Pathways Section -->
       <section class="section">
         <div class="container">
@@ -485,6 +498,37 @@
         </div>
       </section>
 
+      <!-- Players Showcase (Full Width Carousel) -->
+      <section class="home-players-showcase" aria-label="Featured Players">
+        <div class="container">
+          <div class="home-players-showcase-header">
+            <div>
+              <h2 class="home-players-showcase-title">Meet The Squad</h2>
+              <p class="home-players-showcase-subtitle">A quick look at the players representing Broadstreet RFC this season.</p>
+            </div>
+            <a href="pages/teams.html" class="btn btn-primary btn-sm">View Full Team</a>
+          </div>
+        </div>
+
+        <div class="home-players-carousel-shell">
+          <div class="home-players-carousel" id="homePlayersCarousel">
+            <div class="home-players-track" id="homePlayersTrack">
+              <article class="home-player-card home-player-card-loading">
+                <div class="home-player-card-image">
+                  <div class="home-player-card-bg"></div>
+                  <img src="assets/photos/player_headshot/player_headshot.png" alt="Player loading" class="home-player-card-photo">
+                </div>
+                <div class="home-player-card-body">
+                  <p class="home-player-position">Loading</p>
+                  <h3 class="home-player-name">Player data</h3>
+                  <p class="home-player-team">Please wait...</p>
+                </div>
+              </article>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <!-- Recent Results -->
       <section class="section bg-white">
         <div class="container">
@@ -682,7 +726,7 @@
       </section>
 
       <!-- Sponsors Section -->
-      <section class="section bg-gray-100">
+      <section class="section bg-gray-100 sponsors-section--compact">
         <div class="container">
           <div class="sponsors-header">
             <h2 class="text-center mb-4">Our Sponsors</h2>
@@ -989,6 +1033,7 @@
   <script src="js/main.js"></script>
   <script src="js/hero-feed.js"></script>
   <script src="js/fixtures-feed.js"></script>
+  <script src="js/home-players-carousel.js"></script>
   <script src="js/sponsors-feed.js"></script>
 </body>
 </html>

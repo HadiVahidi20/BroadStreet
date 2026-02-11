@@ -116,6 +116,23 @@
     );
   }
 
+  function renderResultsStripTeam(teamName) {
+    var displayName = getDisplayTeamName(teamName);
+    var logo = getTeamLogo(teamName);
+    return (
+      '<span class="home-results-strip-team">' +
+      '<img src="' +
+      esc(logo) +
+      '" alt="' +
+      esc(displayName) +
+      ' logo" loading="lazy">' +
+      '<span class="home-results-strip-team-name">' +
+      esc(displayName) +
+      "</span>" +
+      "</span>"
+    );
+  }
+
   function getDateParts(dateStr) {
     var dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
     var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
@@ -525,6 +542,40 @@
       .join("");
   }
 
+  function renderHomeResultsMini(results) {
+    var strip = document.getElementById("homeResultsMini");
+    if (!strip) return;
+
+    if (!results || !results.length) {
+      strip.innerHTML = '<div class="home-results-strip-empty">No recent results available yet.</div>';
+      return;
+    }
+
+    strip.innerHTML = results
+      .map(function (r) {
+        var parts = getDateParts(r.date);
+        return (
+          '<article class="home-results-strip-item">' +
+          '<div class="home-results-strip-meta">' +
+          '<span class="home-results-strip-date">' +
+          esc(parts.weekday + " " + parts.day + " " + parts.month) +
+          "</span>" +
+          "</div>" +
+          '<div class="home-results-strip-line">' +
+          renderResultsStripTeam(r.home_team) +
+          '<span class="home-results-strip-score">' +
+          esc(r.home_score) +
+          "-" +
+          esc(r.away_score) +
+          "</span>" +
+          renderResultsStripTeam(r.away_team) +
+          "</div>" +
+          "</article>"
+        );
+      })
+      .join("");
+  }
+
   function renderFixturesStandings(rows) {
     var tbody = document.getElementById("fixturesStandings");
     if (!tbody) return;
@@ -781,6 +832,7 @@
         );
         var recent = completed.slice(0, 3);
         if (recent.length) renderHomeResults(recent);
+        renderHomeResultsMini(completed.slice(0, 8));
       }
 
       if (isFixturesPage) {
@@ -791,6 +843,10 @@
     } catch (e) {
       if (document.getElementById("homeNextMatch")) {
         renderNoUpcomingNextMatch();
+      }
+      var resultsStrip = document.getElementById("homeResultsMini");
+      if (resultsStrip) {
+        resultsStrip.innerHTML = '<div class="home-results-strip-empty">Unable to load recent results right now.</div>';
       }
 
       var upcomingEl = document.getElementById("fixturesList");

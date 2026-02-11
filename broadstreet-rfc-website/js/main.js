@@ -20,6 +20,8 @@ const BroadstreetRFC = {
     this.initContactForm();
     this.initSmoothScroll();
     this.initLazyLoad();
+    this.initParallaxEffects();
+    this.initScrollReveal();
     console.log('Broadstreet RFC Website Initialized');
   },
 
@@ -172,6 +174,179 @@ const BroadstreetRFC = {
         img.removeAttribute('data-src');
       });
     }
+  },
+
+  /**
+   * Lightweight parallax effects (no external deps)
+   */
+  initParallaxEffects() {
+    const isHomePage = !!document.getElementById('homeNextMatch') && !!document.querySelector('.hero');
+    if (!isHomePage) return;
+
+    const prefersReducedMotion =
+      window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReducedMotion) return;
+
+    const targets = {
+      heroBackgrounds: Array.from(document.querySelectorAll('.hero-bg')),
+      nextMatchBackgrounds: Array.from(document.querySelectorAll('.next-match-card-bg')),
+      playerShowcase: document.querySelector('.home-players-showcase'),
+    };
+
+    const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
+
+    const getShift = (el, speed, maxShift) => {
+      if (!el) return 0;
+      const rect = el.getBoundingClientRect();
+      const viewportCenter = window.innerHeight / 2;
+      const elementCenter = rect.top + rect.height / 2;
+      const delta = viewportCenter - elementCenter;
+      return clamp(delta * speed, -maxShift, maxShift);
+    };
+
+    let rafId = 0;
+    let ticking = false;
+
+    const update = () => {
+      ticking = false;
+
+      targets.heroBackgrounds.forEach((bg) => {
+        const shiftY = getShift(bg, 0.09, 26);
+        bg.style.setProperty('--hero-pan-y', `${shiftY}px`);
+      });
+
+      targets.nextMatchBackgrounds.forEach((bg) => {
+        const shiftY = getShift(bg, 0.08, 20);
+        bg.style.setProperty('--parallax-shift', `${shiftY}px`);
+      });
+
+      if (targets.playerShowcase) {
+        const shiftY = getShift(targets.playerShowcase, 0.04, 18);
+        targets.playerShowcase.style.setProperty('--home-players-parallax', `${shiftY}px`);
+      }
+    };
+
+    const queueUpdate = () => {
+      if (ticking) return;
+      ticking = true;
+      rafId = window.requestAnimationFrame(update);
+    };
+
+    window.addEventListener('scroll', queueUpdate, { passive: true });
+    window.addEventListener('resize', queueUpdate);
+
+    // Initial paint after layout settles.
+    queueUpdate();
+    window.setTimeout(queueUpdate, 160);
+
+    // Keep hero parallax aligned when carousel changes slides.
+    const heroCarousel = document.querySelector('.hero-carousel');
+    if (heroCarousel) {
+      const mo = new MutationObserver(queueUpdate);
+      mo.observe(heroCarousel, { subtree: true, attributes: true, attributeFilter: ['class', 'style'] });
+    }
+
+    // Prevent orphan RAF callback during tab switches.
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden) {
+        queueUpdate();
+      } else if (rafId) {
+        window.cancelAnimationFrame(rafId);
+        rafId = 0;
+        ticking = false;
+      }
+    });
+  },
+
+  /**
+   * Homepage scroll reveal effects (no external deps)
+   */
+  initScrollReveal() {
+    const isHomePage = !!document.getElementById('homeNextMatch') && !!document.querySelector('.hero');
+    if (!isHomePage) return;
+
+    const prefersReducedMotion =
+      window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReducedMotion || !('IntersectionObserver' in window)) return;
+
+    const observer = new IntersectionObserver(
+      (entries, obs) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          entry.target.classList.add('is-visible');
+          obs.unobserve(entry.target);
+        });
+      },
+      {
+        threshold: 0.14,
+        rootMargin: '0px 0px -10% 0px',
+      }
+    );
+
+    const seen = new WeakSet();
+
+    const registerReveal = (el, effect = 'up', delay = 0) => {
+      if (!el || seen.has(el)) return;
+      seen.add(el);
+      el.classList.add('scroll-reveal');
+      el.setAttribute('data-reveal', effect);
+      if (delay > 0) {
+        el.style.transitionDelay = `${delay}ms`;
+      }
+      observer.observe(el);
+    };
+
+    const revealGroup = (selector, options = {}) => {
+      const {
+        effect = 'up',
+        startDelay = 0,
+        step = 70,
+        maxDelay = 420,
+      } = options;
+      const nodes = document.querySelectorAll(selector);
+      nodes.forEach((el, index) => {
+        const delay = Math.min(maxDelay, startDelay + index * step);
+        registerReveal(el, effect, delay);
+      });
+    };
+
+    // Major sections
+    revealGroup('main > section:not(.hero)', { effect: 'up', startDelay: 0, step: 0 });
+
+    // Staggered cards / content blocks
+    revealGroup('.team-pathway-card', { effect: 'up', startDelay: 50, step: 70 });
+    revealGroup('.facility-stat', { effect: 'up', startDelay: 60, step: 70 });
+    revealGroup('.standings-wrapper', { effect: 'up', startDelay: 80, step: 120 });
+    revealGroup('.home-player-card', { effect: 'up', startDelay: 40, step: 35 });
+    revealGroup('.home-results-strip-item', { effect: 'up', startDelay: 50, step: 45 });
+    revealGroup('.result-poster', { effect: 'up', startDelay: 50, step: 90 });
+    revealGroup('.news-card', { effect: 'up', startDelay: 60, step: 80 });
+    revealGroup('.sponsor-tier', { effect: 'up', startDelay: 70, step: 90 });
+
+    // Dynamic feeds update after initial render; watch and reveal new children.
+    const observeDynamicChildren = (containerSelector, childSelector, effect, step) => {
+      const container = document.querySelector(containerSelector);
+      if (!container) return;
+
+      const apply = () => {
+        const children = container.querySelectorAll(childSelector);
+        children.forEach((el, index) => {
+          registerReveal(el, effect, Math.min(360, index * step));
+        });
+      };
+
+      apply();
+
+      const mo = new MutationObserver(() => apply());
+      mo.observe(container, { childList: true, subtree: true });
+    };
+
+    observeDynamicChildren('#homeResultsMini', '.home-results-strip-item', 'up', 40);
+    observeDynamicChildren('#homePlayersTrack', '.home-player-card', 'up', 25);
+    observeDynamicChildren('#homeResults', '.result-poster', 'up', 80);
+    observeDynamicChildren('#homeNews', '.news-card', 'up', 70);
+    observeDynamicChildren('#sponsorPremium', '.sponsor-card', 'up', 55);
+    observeDynamicChildren('#sponsorPartners', '.sponsor-card', 'up', 45);
   },
 };
 
