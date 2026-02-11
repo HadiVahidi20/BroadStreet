@@ -10,8 +10,9 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Sen:wght@400;600;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../css/main.css">
+  <link rel="stylesheet" href="../css/clubhouse-page.css">
 </head>
-<body>
+<body class="page-clubhouse">
   <div class="page-wrapper">
     <!-- Top Bar -->
     <div class="top-bar">
@@ -81,12 +82,12 @@
     <div class="mobile-overlay"></div>
 
     <!-- Main Content -->
-    <main class="main-content">
+    <main class="main-content clubhouse-page">
       <!-- Page Header -->
-      <section class="hero" style="padding: var(--space-16) 0;">
-        <div class="hero-bg" style="background-image: url('https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=1920&q=80&fit=crop');"></div>
+      <section class="hero clubhouse-hero">
+        <div class="hero-bg clubhouse-hero-bg"></div>
         <div class="container">
-          <div class="hero-content text-center">
+          <div class="hero-content clubhouse-hero-content text-center">
             <nav class="breadcrumb justify-center">
               <a href="../index.html">Home</a>
               <span class="breadcrumb-separator">/</span>
@@ -94,24 +95,29 @@
             </nav>
             <h1 class="hero-title">The Clubhouse</h1>
             <p class="hero-subtitle">Your perfect venue for events, celebrations, and corporate functions in Coventry.</p>
+            <div class="clubhouse-hero-highlights">
+              <span class="clubhouse-hero-highlight">Up to 150 Guests</span>
+              <span class="clubhouse-hero-highlight">Bar & Catering Available</span>
+              <span class="clubhouse-hero-highlight">Coventry Location</span>
+            </div>
             <a href="#enquiry" class="btn btn-primary btn-lg mt-6">Make an Enquiry</a>
           </div>
         </div>
       </section>
 
       <!-- Introduction -->
-      <section class="section">
+      <section class="section clubhouse-intro">
         <div class="container">
-          <div class="two-col-equal">
+          <div class="two-col-equal clubhouse-intro-grid">
             <div>
               <h2>A Unique Venue for Every Occasion</h2>
-              <p class="text-lg mb-4">
+              <p class="text-lg mb-4 clubhouse-intro-lead">
                 The Clubhouse at Broadstreet RFC offers a versatile, welcoming space for your next event. Whether you're planning a corporate meeting, birthday celebration, wedding reception, or community gathering, our facilities can accommodate your needs.
               </p>
               <p class="mb-4">
                 Set within the grounds of our historic rugby club, The Clubhouse combines modern amenities with traditional character. With views over the pitches, ample parking, and flexible spaces, we provide a memorable backdrop for events of all sizes.
               </p>
-              <ul class="mb-6">
+              <ul class="clubhouse-key-points mb-6">
                 <li>Capacity up to 150 guests</li>
                 <li>Licensed bar and catering available</li>
                 <li>Free on-site parking</li>
@@ -121,23 +127,26 @@
               </ul>
             </div>
             <div>
-              <img src="https://images.unsplash.com/photo-1524758631624-e2822e304c36?w=1200&q=80&fit=crop" alt="The Clubhouse interior" class="rounded-lg shadow-lg w-full" style="aspect-ratio: 4/3; object-fit: cover; background: var(--color-gray-200);">
+              <img src="https://images.unsplash.com/photo-1524758631624-e2822e304c36?w=1200&q=80&fit=crop" alt="The Clubhouse interior" class="clubhouse-intro-image rounded-lg shadow-lg w-full">
             </div>
           </div>
         </div>
       </section>
 
       <!-- Spaces -->
-      <section class="section bg-gray-50">
+      <section class="section clubhouse-spaces">
         <div class="container">
-          <h2 class="text-center mb-8">Our Spaces</h2>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div class="card">
-              <img src="https://images.unsplash.com/photo-1528605248644-14dd04022da1?w=1200&q=80&fit=crop" alt="Main Hall" class="card-img" style="background: var(--color-gray-200);">
+          <div class="text-center mb-8">
+            <h2>Our Spaces</h2>
+            <p class="clubhouse-section-lead">Flexible rooms and outdoor areas designed for events of every size.</p>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 clubhouse-spaces-grid">
+            <article class="card clubhouse-space-card">
+              <img src="https://images.unsplash.com/photo-1528605248644-14dd04022da1?w=1200&q=80&fit=crop" alt="Main Hall" class="card-img clubhouse-space-image">
               <div class="card-body">
                 <h3>Main Function Room</h3>
                 <p class="text-muted mb-4">Our largest space, perfect for receptions, parties, and corporate events.</p>
-                <ul class="text-sm mb-4">
+                <ul class="text-sm mb-4 clubhouse-space-features">
                   <li>Capacity: 100-150 guests</li>
                   <li>Dance floor available</li>
                   <li>Stage area for entertainment</li>
@@ -145,14 +154,14 @@
                 </ul>
                 <span class="badge badge-secondary">Most Popular</span>
               </div>
-            </div>
+            </article>
 
-            <div class="card">
-              <img src="https://images.unsplash.com/photo-1515165562835-c3b8f19f9f1c?w=1200&q=80&fit=crop" alt="Meeting Room" class="card-img" style="background: var(--color-gray-200);">
+            <article class="card clubhouse-space-card">
+              <img src="https://images.unsplash.com/photo-1515165562835-c3b8f19f9f1c?w=1200&q=80&fit=crop" alt="Meeting Room" class="card-img clubhouse-space-image">
               <div class="card-body">
                 <h3>Conference Room</h3>
                 <p class="text-muted mb-4">Ideal for business meetings, training sessions, and smaller gatherings.</p>
-                <ul class="text-sm mb-4">
+                <ul class="text-sm mb-4 clubhouse-space-features">
                   <li>Capacity: 20-40 guests</li>
                   <li>Projector and screen</li>
                   <li>Whiteboard and flip chart</li>
@@ -160,14 +169,14 @@
                 </ul>
                 <span class="badge badge-info">Great for Business</span>
               </div>
-            </div>
+            </article>
 
-            <div class="card">
-              <img src="https://images.unsplash.com/photo-1525268323446-0505b6fe7778?w=1200&q=80&fit=crop" alt="Bar Area" class="card-img" style="background: var(--color-gray-200);">
+            <article class="card clubhouse-space-card">
+              <img src="https://images.unsplash.com/photo-1525268323446-0505b6fe7778?w=1200&q=80&fit=crop" alt="Bar Area" class="card-img clubhouse-space-image">
               <div class="card-body">
                 <h3>The Bar & Lounge</h3>
                 <p class="text-muted mb-4">Relaxed atmosphere for social events, after-parties, and informal gatherings.</p>
-                <ul class="text-sm mb-4">
+                <ul class="text-sm mb-4 clubhouse-space-features">
                   <li>Capacity: 50-80 guests</li>
                   <li>Fully licensed bar</li>
                   <li>TV screens for sports viewing</li>
@@ -175,14 +184,14 @@
                 </ul>
                 <span class="badge badge-success">Social Events</span>
               </div>
-            </div>
+            </article>
 
-            <div class="card">
-              <img src="https://images.unsplash.com/photo-1529692236671-f1f6cf9683ba?w=1200&q=80&fit=crop" alt="Outdoor Area" class="card-img" style="background: var(--color-gray-200);">
+            <article class="card clubhouse-space-card">
+              <img src="https://images.unsplash.com/photo-1529692236671-f1f6cf9683ba?w=1200&q=80&fit=crop" alt="Outdoor Area" class="card-img clubhouse-space-image">
               <div class="card-body">
                 <h3>Outdoor Terrace & Grounds</h3>
                 <p class="text-muted mb-4">Beautiful outdoor space with pitch views, perfect for summer events.</p>
-                <ul class="text-sm mb-4">
+                <ul class="text-sm mb-4 clubhouse-space-features">
                   <li>Marquee options available</li>
                   <li>BBQ facilities</li>
                   <li>Children's play area nearby</li>
@@ -190,46 +199,49 @@
                 </ul>
                 <span class="badge badge-warning">Summer Events</span>
               </div>
-            </div>
+            </article>
           </div>
         </div>
       </section>
 
       <!-- Events We Host -->
-      <section class="section">
+      <section class="section clubhouse-events">
         <div class="container">
-          <h2 class="text-center mb-8">Events We Host</h2>
-          <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div class="text-center p-4">
-              <div class="text-4xl mb-2">&#127881;</div>
+          <div class="text-center mb-8">
+            <h2>Events We Host</h2>
+            <p class="clubhouse-section-lead">From intimate celebrations to large-scale functions, our team helps you shape the right setup.</p>
+          </div>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4 clubhouse-events-grid">
+            <div class="clubhouse-event-tile">
+              <div class="clubhouse-event-icon">&#127881;</div>
               <h4>Birthday Parties</h4>
             </div>
-            <div class="text-center p-4">
-              <div class="text-4xl mb-2">&#128141;</div>
+            <div class="clubhouse-event-tile">
+              <div class="clubhouse-event-icon">&#128141;</div>
               <h4>Wedding Receptions</h4>
             </div>
-            <div class="text-center p-4">
-              <div class="text-4xl mb-2">&#128188;</div>
+            <div class="clubhouse-event-tile">
+              <div class="clubhouse-event-icon">&#128188;</div>
               <h4>Corporate Events</h4>
             </div>
-            <div class="text-center p-4">
-              <div class="text-4xl mb-2">&#127891;</div>
+            <div class="clubhouse-event-tile">
+              <div class="clubhouse-event-icon">&#127891;</div>
               <h4>Training Days</h4>
             </div>
-            <div class="text-center p-4">
-              <div class="text-4xl mb-2">&#127880;</div>
+            <div class="clubhouse-event-tile">
+              <div class="clubhouse-event-icon">&#127880;</div>
               <h4>Anniversaries</h4>
             </div>
-            <div class="text-center p-4">
-              <div class="text-4xl mb-2">&#127942;</div>
+            <div class="clubhouse-event-tile">
+              <div class="clubhouse-event-icon">&#127942;</div>
               <h4>Award Ceremonies</h4>
             </div>
-            <div class="text-center p-4">
-              <div class="text-4xl mb-2">&#128106;</div>
+            <div class="clubhouse-event-tile">
+              <div class="clubhouse-event-icon">&#128106;</div>
               <h4>Family Gatherings</h4>
             </div>
-            <div class="text-center p-4">
-              <div class="text-4xl mb-2">&#127926;</div>
+            <div class="clubhouse-event-tile">
+              <div class="clubhouse-event-icon">&#127926;</div>
               <h4>Live Music Events</h4>
             </div>
           </div>
@@ -237,14 +249,14 @@
       </section>
 
       <!-- Enquiry Form -->
-      <section class="section bg-gray-100" id="enquiry">
+      <section class="section clubhouse-enquiry" id="enquiry">
         <div class="container">
-          <div class="two-col-equal">
+          <div class="two-col-equal clubhouse-enquiry-grid">
             <div>
               <h2>Make an Enquiry</h2>
-              <p class="mb-6">Interested in booking The Clubhouse for your event? Fill in the form and our events team will get back to you within 48 hours.</p>
+              <p class="mb-6 clubhouse-enquiry-lead">Interested in booking The Clubhouse for your event? Fill in the form and our events team will get back to you within 48 hours.</p>
 
-              <div class="card">
+              <div class="card clubhouse-form-card">
                 <div class="card-body">
                   <form class="contact-form">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -292,22 +304,22 @@
                       <textarea id="venue-message" name="message" class="form-textarea" rows="4" placeholder="Any specific requirements or questions?"></textarea>
                     </div>
 
-                    <button type="submit" class="btn btn-primary btn-lg">Send Enquiry</button>
+                    <button type="submit" class="btn btn-primary btn-lg clubhouse-submit-btn">Send Enquiry</button>
                   </form>
                 </div>
               </div>
             </div>
 
-            <div>
-              <div class="card mb-6">
+            <aside class="clubhouse-enquiry-sidebar">
+              <div class="card clubhouse-contact-card mb-6">
                 <div class="card-body">
                   <h3 class="mb-4">Contact Our Events Team</h3>
-                  <div class="mb-4">
+                  <div class="mb-4 clubhouse-contact-block">
                     <strong>Clubhouse Manager</strong><br>
                     <a href="mailto:clubhouse@broadstreet-rugby.co.uk">clubhouse@broadstreet-rugby.co.uk</a><br>
                     <a href="tel:+441234567890">+44 1234 567 890</a>
                   </div>
-                  <div>
+                  <div class="clubhouse-contact-block">
                     <strong>Address</strong><br>
                     The Clubhouse<br>
                     Broadstreet RFC<br>
@@ -317,10 +329,10 @@
                 </div>
               </div>
 
-              <div class="card bg-primary text-white">
+              <div class="card clubhouse-benefits-card">
                 <div class="card-body">
                   <h3 class="text-white mb-4">Why Choose The Clubhouse?</h3>
-                  <ul style="color: rgba(255,255,255,0.9);">
+                  <ul class="clubhouse-benefits-list">
                     <li class="mb-2">Competitive pricing</li>
                     <li class="mb-2">Flexible room configurations</li>
                     <li class="mb-2">In-house catering options</li>
@@ -330,7 +342,7 @@
                   </ul>
                 </div>
               </div>
-            </div>
+            </aside>
           </div>
         </div>
       </section>

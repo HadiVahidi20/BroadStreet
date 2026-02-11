@@ -3651,3 +3651,153 @@
     transition: none;
   }
 }
+
+/* ----------------
+   Matchday Page
+   ---------------- */
+.matchday-next-match {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.matchday-hero-card {
+  background-color: var(--color-white);
+  color: var(--color-ink);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  text-align: center;
+  box-shadow: var(--shadow-md);
+}
+
+.matchday-badge {
+  display: inline-block;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-wider);
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-full);
+  margin-bottom: var(--space-3);
+}
+
+.matchday-badge--home {
+  background-color: var(--color-primary);
+  color: var(--color-white);
+}
+
+.matchday-badge--away {
+  background-color: var(--color-gray-700);
+  color: var(--color-white);
+}
+
+.matchday-competition {
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-500);
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-wider);
+  margin-bottom: var(--space-4);
+}
+
+.matchday-teams {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4);
+  margin-bottom: var(--space-4);
+}
+
+.matchday-team {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  min-width: 80px;
+}
+
+.matchday-team-logo {
+  width: 72px;
+  height: 72px;
+  object-fit: contain;
+}
+
+.matchday-team-logo-placeholder {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background-color: var(--color-gray-200);
+}
+
+.matchday-team-name {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+}
+
+.matchday-vs {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-gray-400);
+}
+
+.matchday-hero-card .countdown {
+  margin-bottom: var(--space-4);
+}
+
+.matchday-hero-card .countdown-item {
+  border-color: rgba(0, 0, 0, 0.1);
+}
+
+.matchday-hero-card .countdown-value {
+  color: var(--color-primary);
+}
+
+.matchday-hero-card .countdown-label {
+  color: var(--color-gray-500);
+}
+
+.matchday-date {
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-600);
+}
+
+.matchday-notes {
+  margin-top: var(--space-3);
+  font-size: var(--font-size-sm);
+  color: var(--color-primary);
+  font-weight: var(--font-weight-semibold);
+  padding: var(--space-2) var(--space-3);
+  background-color: rgba(var(--color-primary-rgb, 0, 0, 0), 0.06);
+  border-radius: var(--radius-md);
+}
+
+.matchday-map-placeholder {
+  background: var(--color-gray-200);
+  height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-lg);
+}
+
+.matchday-map-inner {
+  text-align: center;
+}
+
+@media (max-width: 480px) {
+  .matchday-hero-card {
+    padding: var(--space-4);
+  }
+
+  .matchday-team-logo {
+    width: 56px;
+    height: 56px;
+  }
+
+  .matchday-team-logo-placeholder {
+    width: 56px;
+    height: 56px;
+  }
+
+  .matchday-teams {
+    gap: var(--space-3);
+  }
+}

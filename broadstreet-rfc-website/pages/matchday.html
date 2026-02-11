@@ -93,75 +93,50 @@
               <span class="breadcrumb-current">Matchday</span>
             </nav>
             <h1 class="hero-title">Matchday Information</h1>
-            <p class="hero-subtitle">Everything you need to know for your visit to Broadstreet RFC.</p>
+            <p class="hero-subtitle">Everything you need to know for our next fixture.</p>
           </div>
         </div>
       </section>
 
-      <!-- Next Match Highlight -->
+      <!-- Next Match Highlight (dynamic) -->
       <section class="section bg-primary text-white">
         <div class="container">
           <div class="text-center">
-            <h2 class="text-white mb-4">Next Home Match</h2>
-            <div class="match-card bg-white text-ink" style="max-width: 500px; margin: 0 auto;">
-              <div class="match-card-header">Coventry NL2N</div>
-              <div class="match-card-teams">
-                <div class="match-card-team">
-                  <img src="https://storage.googleapis.com/msgsndr/su6QlYYHk7V0zo5SCC0s/media/698cba8f33e4ec634d172d19.png" alt="Broadstreet RFC" style="width: 60px; height: 60px;">
-                  <span>Broadstreet</span>
+            <h2 class="text-white mb-4">Next Match</h2>
+            <div id="matchdayNextMatch" class="matchday-next-match">
+              <div class="matchday-hero-card">
+                <div class="matchday-competition">Loading...</div>
+                <div class="matchday-teams">
+                  <div class="matchday-team">
+                    <div class="matchday-team-logo-placeholder"></div>
+                    <span class="matchday-team-name">&nbsp;</span>
+                  </div>
+                  <span class="matchday-vs">vs</span>
+                  <div class="matchday-team">
+                    <div class="matchday-team-logo-placeholder"></div>
+                    <span class="matchday-team-name">&nbsp;</span>
+                  </div>
                 </div>
-                <span class="match-card-vs">vs</span>
-                <div class="match-card-team">
-                  <img src="../assets/logos/opponent-placeholder.svg" alt="Opponent" style="width: 60px; height: 60px;">
-                  <span>Opponent RFC</span>
-                </div>
-              </div>
-              <div class="countdown" data-countdown="2026-02-15T15:00:00"></div>
-              <div class="match-card-date mt-4">
-                Saturday, 15th February 2026 - Kick-off 3:00 PM
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      <!-- Main Info Section -->
+      <!-- Venue & Info Section (dynamic) -->
       <section class="section">
         <div class="container">
           <div class="two-col">
             <div>
-              <!-- Getting Here -->
+              <!-- Venue Info (dynamic) -->
               <div class="card mb-6">
-                <div class="card-body">
-                  <h2 class="mb-4">Getting Here</h2>
-
-                  <h4 class="mb-2">Address</h4>
-                  <p class="mb-4">
-                    Broadstreet RFC<br>
-                    Ivor Preece Field<br>
-                    Binley Woods<br>
-                    Coventry, CV3 2AY
-                  </p>
-
-                  <h4 class="mb-2">By Car</h4>
-                  <p class="mb-4">
-                    From the M6, take junction 2 and follow the A46 towards Coventry. Take the A428 exit and follow signs to Binley Woods. The ground is located on Rugby Road.
-                  </p>
-
-                  <h4 class="mb-2">Parking</h4>
-                  <p class="mb-4">
-                    Free parking is available on site. On busy matchdays, please follow steward directions. Additional overflow parking is available in the adjacent field.
-                  </p>
-
-                  <h4 class="mb-2">By Public Transport</h4>
-                  <p>
-                    The nearest bus stop is on Rugby Road, served by routes X1 and 86 from Coventry city centre. The journey takes approximately 20 minutes.
-                  </p>
+                <div class="card-body" id="matchdayVenue">
+                  <p class="text-muted">Loading venue information...</p>
                 </div>
               </div>
 
-              <!-- Matchday Schedule -->
-              <div class="card mb-6">
+              <!-- Matchday Schedule (home matches only) -->
+              <div id="matchdaySchedule" class="card mb-6">
                 <div class="card-body">
                   <h2 class="mb-4">Matchday Schedule</h2>
                   <table class="w-full">
@@ -205,46 +180,10 @@
             </div>
 
             <div>
-              <!-- Facilities -->
-              <div class="card mb-6">
-                <div class="card-body">
-                  <h2 class="mb-4">Facilities</h2>
-
-                  <div class="mb-4">
-                    <h4 class="mb-2">The Clubhouse</h4>
-                    <p>Our clubhouse offers a warm welcome with a fully licensed bar, hot and cold drinks, and a selection of snacks and meals.</p>
-                  </div>
-
-                  <div class="mb-4">
-                    <h4 class="mb-2">Food & Drink</h4>
-                    <ul>
-                      <li>Main bar serving local ales and lagers</li>
-                      <li>Hot food available (burgers, pies, chips)</li>
-                      <li>Tea, coffee, and soft drinks</li>
-                      <li>Snacks and confectionery</li>
-                    </ul>
-                  </div>
-
-                  <div class="mb-4">
-                    <h4 class="mb-2">Accessibility</h4>
-                    <p>We welcome all supporters. Accessible parking and viewing areas are available. Please contact us in advance if you have specific requirements.</p>
-                  </div>
-
-                  <div>
-                    <h4 class="mb-2">Toilets</h4>
-                    <p>Toilet facilities are located in the main clubhouse and adjacent to the pitch.</p>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Important Info -->
-              <div class="card bg-gray-100">
+              <!-- Home match info (dynamic - shown for home) -->
+              <div id="matchdayHomeInfo" class="card mb-6 bg-gray-100">
                 <div class="card-body">
                   <h2 class="mb-4">Important Information</h2>
-
-                  <div class="alert alert-info mb-4">
-                    <strong>Entry:</strong> Entry is free for all home league matches. Donations to support the club are welcome.
-                  </div>
 
                   <h4 class="mb-2">What to Bring</h4>
                   <ul class="mb-4">
@@ -267,23 +206,18 @@
                   </p>
                 </div>
               </div>
+
+              <!-- Away match info (dynamic - shown for away) -->
+              <div id="matchdayAwayInfo" style="display: none;"></div>
             </div>
           </div>
         </div>
       </section>
 
-      <!-- Map Section -->
+      <!-- Map Section (dynamic) -->
       <section class="section bg-gray-100">
-        <div class="container">
-          <h2 class="text-center mb-8">Find Us</h2>
-          <div class="card">
-            <div style="background: var(--color-gray-300); height: 400px; display: flex; align-items: center; justify-content: center;">
-              <p class="text-muted">Map placeholder - integrate Google Maps or similar</p>
-            </div>
-          </div>
-          <div class="text-center mt-6">
-            <a href="https://maps.google.com" target="_blank" rel="noopener" class="btn btn-primary">Get Directions</a>
-          </div>
+        <div class="container" id="matchdayMap">
+          <p class="text-muted text-center">Loading map...</p>
         </div>
       </section>
     </main>
@@ -420,9 +354,11 @@
   </div>
 
   <script src="../js/site-config.js"></script>
+  <script src="../js/sheets-api.js"></script>
   <script src="../js/navigation.js"></script>
   <script src="../js/components.js"></script>
   <script src="../js/utils.js"></script>
   <script src="../js/main.js"></script>
+  <script src="../js/matchday-feed.js"></script>
 </body>
 </html>
