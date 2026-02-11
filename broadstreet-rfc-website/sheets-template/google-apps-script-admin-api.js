@@ -1359,12 +1359,17 @@ function writeRowsToSheet(sheet, headers, rows) {
     var line = [];
     for (var c = 0; c < headers.length; c++) {
       var key = String(headers[c]);
-      line.push(rowObj[key] !== undefined ? rowObj[key] : "");
+      var val = rowObj[key] !== undefined ? rowObj[key] : "";
+      // Force all values to strings to prevent Google Sheets auto-type-detection
+      // (which converts date strings to Date objects and time strings to epoch dates)
+      line.push(String(val));
     }
     out.push(line);
   }
 
-  sheet.getRange(2, 1, out.length, headers.length).setValues(out);
+  var range = sheet.getRange(2, 1, out.length, headers.length);
+  range.setNumberFormat("@"); // Plain text format — prevents auto-conversion
+  range.setValues(out);
 }
 
 function newEmptyRowObject(headers) {

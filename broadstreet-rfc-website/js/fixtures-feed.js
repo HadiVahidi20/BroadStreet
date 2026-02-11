@@ -117,10 +117,27 @@
   }
 
   function getDateParts(dateStr) {
+    var dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+    var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+    // DD/MM/YYYY — Google Sheets auto-converted dates
+    var slashMatch = String(dateStr || "").match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+    if (slashMatch) {
+      var sd = parseInt(slashMatch[1], 10);
+      var sm = parseInt(slashMatch[2], 10);
+      var sy = parseInt(slashMatch[3], 10);
+      if (sy > 1900 && sm >= 1 && sm <= 12) {
+        var sDate = new Date(sy, sm - 1, sd);
+        return {
+          weekday: dayNames[sDate.getDay()],
+          day: String(sd),
+          month: monthNames[sm - 1]
+        };
+      }
+    }
+
     var d = new Date(dateStr);
     if (!isNaN(d.getTime())) {
-      var dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-      var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
       return {
         weekday: dayNames[d.getDay()],
         day: String(d.getDate()),
@@ -190,7 +207,11 @@
     var text = String(timeValue).trim();
     if (!text) return "";
 
+    // Detect Google Sheets epoch date (30/12/1899, 31/12/1899, etc.) — corrupted time value
     var m;
+    m = text.match(/^(\d{1,2})\/(\d{1,2})\/(18\d{2}|1900)$/);
+    if (m) return "";
+
     m = text.match(/^(?:1899-12-(?:30|31)|1900-01-0[01])T(\d{2}):(\d{2})(?::\d{2}(?:\.\d+)?)?Z?$/i);
     if (m) return m[1] + ":" + m[2];
 
@@ -232,6 +253,17 @@
     var m = text.match(/^(\d{4})-(\d{2})-(\d{2})$/);
     if (m) {
       return new Date(parseInt(m[1], 10), parseInt(m[2], 10) - 1, parseInt(m[3], 10), 0, 0, 0, 0);
+    }
+
+    // DD/MM/YYYY — Google Sheets auto-converted dates
+    m = text.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+    if (m) {
+      var dd = parseInt(m[1], 10);
+      var mm = parseInt(m[2], 10);
+      var yyyy = parseInt(m[3], 10);
+      if (yyyy > 1900 && mm >= 1 && mm <= 12) {
+        return new Date(yyyy, mm - 1, dd, 0, 0, 0, 0);
+      }
     }
 
     m = text.match(/^(?:[A-Za-z]+,?\s+)?(\d{1,2})\s+([A-Za-z]{3,})\.?,?\s+(\d{4})$/);
