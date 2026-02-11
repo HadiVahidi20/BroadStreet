@@ -5,9 +5,11 @@
 
 (function () {
   var allItems = [];
-  var gridItems = [];
+  var gridItems = [];      // all non-featured items (unfiltered)
+  var filteredItems = [];   // after category filter
   var currentPage = 1;
   var perPage = 6;
+  var activeFilter = '';    // '' = all
 
   function byId(id) {
     return document.getElementById(id);
@@ -79,6 +81,72 @@
     });
   }
 
+  /* ── Category Filters ── */
+
+  function renderFilters() {
+    var filtersEl = byId('newsFilters');
+    if (!filtersEl) return;
+
+    // Collect unique categories from all items (including featured)
+    var seen = {};
+    var categories = [];
+    for (var i = 0; i < allItems.length; i++) {
+      var cat = allItems[i].category || '';
+      if (cat && !seen[cat]) {
+        seen[cat] = true;
+        categories.push(cat);
+      }
+    }
+
+    // Build buttons: "All News" + each category
+    var html = '<button class="btn btn-primary btn-sm" data-filter="">All News</button>';
+    for (var j = 0; j < categories.length; j++) {
+      html += '<button class="btn btn-outline btn-sm" data-filter="' +
+        SheetsAPI.esc(categories[j]) + '">' + SheetsAPI.esc(categories[j]) + '</button>';
+    }
+    filtersEl.innerHTML = html;
+
+    // Bind click handlers
+    var buttons = filtersEl.querySelectorAll('button[data-filter]');
+    for (var k = 0; k < buttons.length; k++) {
+      (function (btn) {
+        btn.addEventListener('click', function () {
+          applyFilter(btn.getAttribute('data-filter'));
+        });
+      })(buttons[k]);
+    }
+  }
+
+  function applyFilter(category) {
+    activeFilter = category;
+
+    // Update button styles
+    var filtersEl = byId('newsFilters');
+    if (filtersEl) {
+      var buttons = filtersEl.querySelectorAll('button[data-filter]');
+      for (var i = 0; i < buttons.length; i++) {
+        var btnFilter = buttons[i].getAttribute('data-filter');
+        if (btnFilter === activeFilter) {
+          buttons[i].className = 'btn btn-primary btn-sm';
+        } else {
+          buttons[i].className = 'btn btn-outline btn-sm';
+        }
+      }
+    }
+
+    // Filter grid items
+    if (!activeFilter) {
+      filteredItems = gridItems.slice();
+    } else {
+      filteredItems = gridItems.filter(function (item) {
+        return item.category === activeFilter;
+      });
+    }
+
+    // Reset to page 1 and render
+    renderPage(1, false);
+  }
+
   /* ── Render Featured ── */
 
   function renderFeatured(item) {
@@ -115,7 +183,7 @@
     if (!gridEl) return;
 
     if (!items || items.length === 0) {
-      gridEl.innerHTML = '<p class="text-muted">No news items yet.</p>';
+      gridEl.innerHTML = '<p class="text-muted">No news items in this category.</p>';
       return;
     }
 
@@ -156,23 +224,25 @@
 
   /* ── Pagination ── */
 
-  function renderPage(page) {
+  function renderPage(page, scroll) {
     currentPage = page;
     var start = (page - 1) * perPage;
-    var pageItems = gridItems.slice(start, start + perPage);
+    var pageItems = filteredItems.slice(start, start + perPage);
     renderGrid(pageItems);
     renderPagination();
 
-    // Scroll to grid section
-    var gridEl = byId('newsGrid');
-    if (gridEl) gridEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    // Scroll to grid section (skip on initial load)
+    if (scroll !== false) {
+      var gridEl = byId('newsGrid');
+      if (gridEl) gridEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
   }
 
   function renderPagination() {
     var paginationEl = byId('newsPagination');
     if (!paginationEl) return;
 
-    var totalPages = Math.ceil(gridItems.length / perPage);
+    var totalPages = Math.ceil(filteredItems.length / perPage);
 
     // Hide pagination if only 1 page or no items
     if (totalPages <= 1) {
@@ -205,7 +275,7 @@
       (function (btn) {
         btn.addEventListener('click', function () {
           var val = btn.getAttribute('data-page');
-          var totalP = Math.ceil(gridItems.length / perPage);
+          var totalP = Math.ceil(filteredItems.length / perPage);
           if (val === 'prev' && currentPage > 1) {
             renderPage(currentPage - 1);
           } else if (val === 'next' && currentPage < totalP) {
@@ -240,9 +310,11 @@
 
       var featuredItem = allItems.find(function (i) { return i.featured; }) || allItems[0];
       gridItems = allItems.filter(function (i) { return i !== featuredItem; });
+      filteredItems = gridItems.slice();
 
       renderFeatured(featuredItem);
-      renderPage(1);
+      renderFilters();
+      renderPage(1, false);
       bindModalEvents();
     } catch (e) {
       // Keep placeholders; do not hard-fail the page.
