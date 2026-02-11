@@ -10,18 +10,18 @@
   var BROADSTREET_KEY = "broadstreet";
 
   var TEAM_LOGOS = [
-    { team: "Market Harborough", logo: "https://images.englandrugby.com/club_images/13377.png" },
-    { team: "Northampton Old Scouts", logo: "https://images.englandrugby.com/club_images/14907.png" },
-    { team: "Broadstreet", logo: "https://images.englandrugby.com/club_images/3366.png" },
-    { team: "Bedford Athletic", logo: "https://images.englandrugby.com/club_images/1822.png" },
-    { team: "Peterborough", logo: "https://images.englandrugby.com/club_images/16819.png" },
-    { team: "Stamford", logo: "https://images.englandrugby.com/club_images/20850.png" },
-    { team: "Kettering", logo: "https://images.englandrugby.com/club_images/11346.png" },
-    { team: "Oadby Wyggestonians", logo: "https://images.englandrugby.com/club_images/15254.png" },
-    { team: "Olney", logo: "https://images.englandrugby.com/club_images/16184.png" },
-    { team: "Daventry", logo: "https://images.englandrugby.com/club_images/6224.png" },
-    { team: "Old Coventrians", logo: "https://images.englandrugby.com/club_images/15578.png" },
-    { team: "Wellingborough", logo: "https://images.englandrugby.com/club_images/24604.png" }
+    { team: "Market Harborough", logo: "https://storage.googleapis.com/msgsndr/su6QlYYHk7V0zo5SCC0s/media/698ced5fc21b03cdc172f6fa.png" },
+    { team: "Northampton Old Scouts", logo: "https://storage.googleapis.com/msgsndr/su6QlYYHk7V0zo5SCC0s/media/698ced5f52c95207f5140a12.png" },
+    { team: "Broadstreet", logo: "https://storage.googleapis.com/msgsndr/su6QlYYHk7V0zo5SCC0s/media/698ced5f7f6dcf0f8725baf6.png" },
+    { team: "Bedford Athletic", logo: "https://storage.googleapis.com/msgsndr/su6QlYYHk7V0zo5SCC0s/media/698ced5f7f6dcfaf7e25baf7.png" },
+    { team: "Peterborough", logo: "https://storage.googleapis.com/msgsndr/su6QlYYHk7V0zo5SCC0s/media/698ced5f715cdadf52ab3fa6.png" },
+    { team: "Stamford", logo: "https://storage.googleapis.com/msgsndr/su6QlYYHk7V0zo5SCC0s/media/698ced5fc21b03341f72f6fb.png" },
+    { team: "Kettering", logo: "https://storage.googleapis.com/msgsndr/su6QlYYHk7V0zo5SCC0s/media/698ced5f72139751ea9b9e59.png" },
+    { team: "Oadby Wyggestonians", logo: "https://storage.googleapis.com/msgsndr/su6QlYYHk7V0zo5SCC0s/media/698ced5f715cda40d2ab3fa5.png" },
+    { team: "Olney", logo: "https://storage.googleapis.com/msgsndr/su6QlYYHk7V0zo5SCC0s/media/698ced5f721397ca9e9b9e55.png" },
+    { team: "Daventry", logo: "https://storage.googleapis.com/msgsndr/su6QlYYHk7V0zo5SCC0s/media/698ced5f7f6dcf6d4225baf5.png" },
+    { team: "Old Coventrians", logo: "https://storage.googleapis.com/msgsndr/su6QlYYHk7V0zo5SCC0s/media/698ced5f9d6101bb76c44111.png" },
+    { team: "Wellingborough", logo: "https://storage.googleapis.com/msgsndr/su6QlYYHk7V0zo5SCC0s/media/698ced5f3fdd0e6a89c12310.png" }
   ];
 
   var TEAM_LOGO_MAP = buildTeamLogoMap_(TEAM_LOGOS);
