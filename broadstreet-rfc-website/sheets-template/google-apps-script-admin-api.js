@@ -65,6 +65,11 @@ var ADMIN_CONFIG = {
   SYNC_TIME_ZONE: "Europe/London",
   AUTO_SYNC_WEEKDAY: "MONDAY",
   AUTO_SYNC_HOUR: 6,
+  // RFU Game Management System (GMS) - used for fetching match results with scores
+  RFU_GMS_TEAM_ID: 8763,    // Broadstreet 1st XV
+  RFU_GMS_CLUB_ID: 589,     // Broadstreet RFC
+  RFU_GMS_BASE_URL: "https://gms.rfu.com/fsiservices2/Competitions.svc/json",
+
   TEAM_ALIASES: {
     "Broadstreet RFC": "Broadstreet",
     "Market Harborough RFC": "Market Harborough",
@@ -174,6 +179,8 @@ function handleRequest(e) {
         return handleBatch(tab, data);
       case "syncRfuFixtures":
         return handleSyncRfuFixtures(tab, data);
+      case "syncRfuResults":
+        return handleSyncRfuResults(tab);
       default:
         return jsonResponse({ success: false, error: "Invalid action: " + action }, 400);
     }
@@ -530,6 +537,27 @@ function handleSyncRfuFixtures(tabName, data) {
 }
 
 /**
+ * Sync only match results/scores from the RFU GMS API.
+ */
+function handleSyncRfuResults(tabName) {
+  if (tabName !== "fixtures") {
+    return jsonResponse({ success: false, error: "syncRfuResults only supports the fixtures tab" }, 400);
+  }
+
+  try {
+    var summary = performRfuResultsSync_();
+    return jsonResponse({
+      success: true,
+      message: "RFU results synced successfully",
+      summary: summary
+    });
+  } catch (err) {
+    Logger.log("RFU results sync failed: " + err.toString());
+    return jsonResponse({ success: false, error: "RFU results sync failed: " + err.toString() }, 500);
+  }
+}
+
+/**
  * Shared sync routine used by manual API action and scheduled trigger.
  */
 function performRfuFixturesSync_(icsUrl) {
@@ -576,6 +604,19 @@ function performRfuFixturesSync_(icsUrl) {
   }
 
   recalculateStandingsIfFixturesChanged("fixtures");
+
+  // Also fetch results from RFU GMS API
+  try {
+    var resultsSummary = performRfuResultsSync_();
+    summary.results_fetched = resultsSummary.fetched;
+    summary.results_matched = resultsSummary.matched;
+    summary.results_updated = resultsSummary.updated;
+    summary.results_skipped = resultsSummary.skipped;
+  } catch (resultsErr) {
+    summary.results_error = resultsErr.toString();
+    Logger.log("RFU results sync failed (non-fatal): " + resultsErr.toString());
+  }
+
   return summary;
 }
 
@@ -589,6 +630,135 @@ function syncRfuFixturesScheduled() {
   } catch (err) {
     Logger.log("Scheduled RFU sync failed: " + err.toString());
   }
+}
+
+/**
+ * Fetch match results from the RFU Game Management System (GMS) API
+ * and update scores for matching fixtures in the sheet.
+ */
+function performRfuResultsSync_() {
+  var teamId = ADMIN_CONFIG.RFU_GMS_TEAM_ID;
+  var clubId = ADMIN_CONFIG.RFU_GMS_CLUB_ID;
+  var baseUrl = ADMIN_CONFIG.RFU_GMS_BASE_URL;
+
+  if (!teamId || !clubId || !baseUrl) {
+    throw new Error("RFU GMS config missing (RFU_GMS_TEAM_ID, RFU_GMS_CLUB_ID, RFU_GMS_BASE_URL)");
+  }
+
+  var url = baseUrl + "/GetResultsSimplified?teamId=" + teamId + "&clubId=" + clubId;
+  var response = UrlFetchApp.fetch(url, {
+    muteHttpExceptions: true,
+    headers: { Accept: "application/json" }
+  });
+
+  var code = response.getResponseCode();
+  if (code < 200 || code >= 300) {
+    throw new Error("RFU GMS API returned HTTP " + code);
+  }
+
+  var results;
+  try {
+    results = JSON.parse(response.getContentText());
+  } catch (e) {
+    throw new Error("Failed to parse RFU GMS response: " + e.toString());
+  }
+
+  if (!results || !results.length) {
+    return { fetched: 0, matched: 0, updated: 0, skipped: 0 };
+  }
+
+  var sheet = getSheet("fixtures");
+  if (!sheet) {
+    throw new Error("Tab not found: fixtures");
+  }
+
+  var headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
+  var fields = getFixtureFieldKeys(headers);
+  var rows = readSheetRowsAsObjects(sheet, headers);
+  var teamMap = buildNormalizedTeamMap(rows, fields);
+
+  var existingByKey = {};
+  for (var i = 0; i < rows.length; i++) {
+    var key = buildFixtureKey(rows[i][fields.date], rows[i][fields.home_team], rows[i][fields.away_team]);
+    if (key && !existingByKey[key]) {
+      existingByKey[key] = rows[i];
+    }
+  }
+
+  var tz = ADMIN_CONFIG.SYNC_TIME_ZONE || Session.getScriptTimeZone();
+  var matched = 0;
+  var updated = 0;
+  var skipped = 0;
+
+  for (var j = 0; j < results.length; j++) {
+    var result = results[j];
+    if (!result) continue;
+
+    var resultType = String(result.Type || "").toUpperCase();
+    if (resultType !== "RESULT" && resultType !== "HOMEWALKOVER" && resultType !== "AWAYWALKOVER") {
+      skipped++;
+      continue;
+    }
+
+    var dateObj = parseGmsDate_(result.Date);
+    if (!dateObj) { skipped++; continue; }
+
+    var homeTeam = canonicalizeTeamName(String(result.HomeTeamName || ""), teamMap);
+    var awayTeam = canonicalizeTeamName(String(result.AwayTeamName || ""), teamMap);
+    if (!homeTeam || !awayTeam) { skipped++; continue; }
+
+    var dateStr = formatFixtureDate(dateObj, tz);
+    var key = buildFixtureKey(dateStr, homeTeam, awayTeam);
+    var target = key ? existingByKey[key] : null;
+
+    if (!target) {
+      skipped++;
+      continue;
+    }
+
+    matched++;
+
+    var homeScore = parseInt(result.HomeFullTimeScore, 10);
+    var awayScore = parseInt(result.AwayFullTimeScore, 10);
+    if (isNaN(homeScore)) homeScore = 0;
+    if (isNaN(awayScore)) awayScore = 0;
+
+    var existingHome = String(target[fields.home_score] || "").trim();
+    var existingAway = String(target[fields.away_score] || "").trim();
+
+    if (existingHome !== "" && existingAway !== "" &&
+        existingHome === String(homeScore) && existingAway === String(awayScore)) {
+      continue;
+    }
+
+    target[fields.home_score] = homeScore;
+    target[fields.away_score] = awayScore;
+    target[fields.status] = "completed";
+    updated++;
+  }
+
+  if (updated > 0) {
+    writeRowsToSheet(sheet, headers, rows);
+    recalculateStandingsIfFixturesChanged("fixtures");
+  }
+
+  return {
+    fetched: results.length,
+    matched: matched,
+    updated: updated,
+    skipped: skipped
+  };
+}
+
+/**
+ * Parse .NET JSON date format: /Date(milliseconds+offset)/
+ */
+function parseGmsDate_(dateValue) {
+  if (!dateValue) return null;
+  var text = String(dateValue);
+  var m = text.match(/\/Date\((\d+)([+-]\d{4})?\)\//);
+  if (!m) return null;
+  return new Date(parseInt(m[1], 10));
 }
 
 function resolveRfuFeedSources_(icsUrl) {
