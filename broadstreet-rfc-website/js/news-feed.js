@@ -5,6 +5,9 @@
 
 (function () {
   var allItems = [];
+  var gridItems = [];
+  var currentPage = 1;
+  var perPage = 6;
 
   function byId(id) {
     return document.getElementById(id);
@@ -151,6 +154,71 @@
     }
   }
 
+  /* ── Pagination ── */
+
+  function renderPage(page) {
+    currentPage = page;
+    var start = (page - 1) * perPage;
+    var pageItems = gridItems.slice(start, start + perPage);
+    renderGrid(pageItems);
+    renderPagination();
+
+    // Scroll to grid section
+    var gridEl = byId('newsGrid');
+    if (gridEl) gridEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function renderPagination() {
+    var paginationEl = byId('newsPagination');
+    if (!paginationEl) return;
+
+    var totalPages = Math.ceil(gridItems.length / perPage);
+
+    // Hide pagination if only 1 page or no items
+    if (totalPages <= 1) {
+      paginationEl.style.display = 'none';
+      return;
+    }
+
+    paginationEl.style.display = 'flex';
+    var html = '';
+
+    // Previous button
+    html += '<button class="btn btn-outline btn-sm" data-page="prev"' +
+      (currentPage <= 1 ? ' disabled' : '') + '>&larr; Previous</button>';
+
+    // Page numbers
+    for (var i = 1; i <= totalPages; i++) {
+      var cls = i === currentPage ? 'btn btn-primary btn-sm' : 'btn btn-outline btn-sm';
+      html += '<button class="' + cls + '" data-page="' + i + '">' + i + '</button>';
+    }
+
+    // Next button
+    html += '<button class="btn btn-outline btn-sm" data-page="next"' +
+      (currentPage >= totalPages ? ' disabled' : '') + '>Next &rarr;</button>';
+
+    paginationEl.innerHTML = html;
+
+    // Bind click handlers
+    var buttons = paginationEl.querySelectorAll('button[data-page]');
+    for (var j = 0; j < buttons.length; j++) {
+      (function (btn) {
+        btn.addEventListener('click', function () {
+          var val = btn.getAttribute('data-page');
+          var totalP = Math.ceil(gridItems.length / perPage);
+          if (val === 'prev' && currentPage > 1) {
+            renderPage(currentPage - 1);
+          } else if (val === 'next' && currentPage < totalP) {
+            renderPage(currentPage + 1);
+          } else {
+            var num = parseInt(val, 10);
+            if (!isNaN(num)) renderPage(num);
+          }
+        });
+      })(buttons[j]);
+    }
+  }
+
   /* ── Load ── */
 
   async function load() {
@@ -171,10 +239,10 @@
       });
 
       var featuredItem = allItems.find(function (i) { return i.featured; }) || allItems[0];
-      var rest = allItems.filter(function (i) { return i !== featuredItem; });
+      gridItems = allItems.filter(function (i) { return i !== featuredItem; });
 
       renderFeatured(featuredItem);
-      renderGrid(rest);
+      renderPage(1);
       bindModalEvents();
     } catch (e) {
       // Keep placeholders; do not hard-fail the page.

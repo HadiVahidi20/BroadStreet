@@ -137,14 +137,8 @@
         <div class="container">
           <div id="newsGrid" class="grid grid-cols-1 md:grid-cols-3 gap-6"></div>
 
-          <!-- Pagination -->
-          <div class="flex justify-center gap-2 mt-12">
-            <button class="btn btn-outline btn-sm" disabled>&larr; Previous</button>
-            <button class="btn btn-primary btn-sm">1</button>
-            <button class="btn btn-outline btn-sm">2</button>
-            <button class="btn btn-outline btn-sm">3</button>
-            <button class="btn btn-outline btn-sm">Next &rarr;</button>
-          </div>
+          <!-- Pagination (dynamic) -->
+          <div id="newsPagination" class="flex justify-center gap-2 mt-12" style="display:none;"></div>
         </div>
       </section>
     </main>
