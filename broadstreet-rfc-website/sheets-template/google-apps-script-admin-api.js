@@ -611,6 +611,7 @@ function performRfuFixturesSync_(icsUrl) {
     summary.results_fetched = resultsSummary.fetched;
     summary.results_matched = resultsSummary.matched;
     summary.results_updated = resultsSummary.updated;
+    summary.results_created = resultsSummary.created;
     summary.results_skipped = resultsSummary.skipped;
   } catch (resultsErr) {
     summary.results_error = resultsErr.toString();
@@ -688,6 +689,7 @@ function performRfuResultsSync_() {
   var tz = ADMIN_CONFIG.SYNC_TIME_ZONE || Session.getScriptTimeZone();
   var matched = 0;
   var updated = 0;
+  var created = 0;
   var skipped = 0;
 
   for (var j = 0; j < results.length; j++) {
@@ -711,33 +713,49 @@ function performRfuResultsSync_() {
     var key = buildFixtureKey(dateStr, homeTeam, awayTeam);
     var target = key ? existingByKey[key] : null;
 
-    if (!target) {
-      skipped++;
-      continue;
-    }
-
-    matched++;
-
     var homeScore = parseInt(result.HomeFullTimeScore, 10);
     var awayScore = parseInt(result.AwayFullTimeScore, 10);
     if (isNaN(homeScore)) homeScore = 0;
     if (isNaN(awayScore)) awayScore = 0;
 
-    var existingHome = String(target[fields.home_score] || "").trim();
-    var existingAway = String(target[fields.away_score] || "").trim();
+    if (target) {
+      // Existing fixture found — update scores if changed
+      matched++;
 
-    if (existingHome !== "" && existingAway !== "" &&
-        existingHome === String(homeScore) && existingAway === String(awayScore)) {
-      continue;
+      var existingHome = String(target[fields.home_score] || "").trim();
+      var existingAway = String(target[fields.away_score] || "").trim();
+
+      if (existingHome !== "" && existingAway !== "" &&
+          existingHome === String(homeScore) && existingAway === String(awayScore)) {
+        continue;
+      }
+
+      target[fields.home_score] = homeScore;
+      target[fields.away_score] = awayScore;
+      target[fields.status] = "completed";
+      updated++;
+    } else {
+      // No matching fixture — create a new row from the GMS result
+      var newRow = newEmptyRowObject(headers);
+      newRow[fields.date] = dateStr;
+      newRow[fields.home_team] = homeTeam;
+      newRow[fields.away_team] = awayTeam;
+      newRow[fields.home_score] = homeScore;
+      newRow[fields.away_score] = awayScore;
+      newRow[fields.status] = "completed";
+
+      var competition = String(result.CompetitionName || result.Competition || "").trim();
+      if (competition && fields.competition) {
+        newRow[fields.competition] = competition;
+      }
+
+      rows.push(newRow);
+      existingByKey[key] = newRow;
+      created++;
     }
-
-    target[fields.home_score] = homeScore;
-    target[fields.away_score] = awayScore;
-    target[fields.status] = "completed";
-    updated++;
   }
 
-  if (updated > 0) {
+  if (updated > 0 || created > 0) {
     writeRowsToSheet(sheet, headers, rows);
     recalculateStandingsIfFixturesChanged("fixtures");
   }
@@ -746,6 +764,7 @@ function performRfuResultsSync_() {
     fetched: results.length,
     matched: matched,
     updated: updated,
+    created: created,
     skipped: skipped
   };
 }

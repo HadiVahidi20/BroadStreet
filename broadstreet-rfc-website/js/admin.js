@@ -747,6 +747,7 @@ const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw9ubtgljqkSSow
 
       const resultsUpdated = Number(summary.results_updated || 0);
       const resultsMatched = Number(summary.results_matched || 0);
+      const resultsCreated = Number(summary.results_created || 0);
       const resultsFetched = Number(summary.results_fetched || 0);
       const resultsError = summary.results_error || '';
 
@@ -764,9 +765,16 @@ const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw9ubtgljqkSSow
       showToast(parts.join(', ') + '.', failedFeeds > 0 ? 'info' : 'success');
 
       if (resultsFetched > 0) {
+        const resultParts = [`Results sync: ${resultsFetched} fetched`];
+        if (resultsMatched > 0) resultParts.push(`${resultsMatched} matched`);
+        if (resultsUpdated > 0) resultParts.push(`${resultsUpdated} scores updated`);
+        if (resultsCreated > 0) resultParts.push(`${resultsCreated} new results added`);
+        if (resultsMatched === 0 && resultsCreated === 0 && resultsUpdated === 0) {
+          resultParts.push('no changes needed');
+        }
         showToast(
-          `Results sync: ${resultsFetched} fetched, ${resultsMatched} matched, ${resultsUpdated} scores updated.`,
-          resultsUpdated > 0 ? 'success' : 'info'
+          resultParts.join(', ') + '.',
+          (resultsUpdated > 0 || resultsCreated > 0) ? 'success' : 'info'
         );
       } else if (resultsError) {
         showToast('Results sync failed: ' + resultsError, 'error');
