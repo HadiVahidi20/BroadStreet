@@ -1,10 +1,10 @@
-date,time,home_team,away_team,venue,competition,home_score,away_score,status,home_bp,away_bp
-Saturday 15 Feb 2026,3:00 PM,Broadstreet RFC,Kenilworth RFC,Broadstreet RFC Ground,Regional 2 Midlands East,,,upcoming,,
-Saturday 22 Feb 2026,3:00 PM,Old Laurentians RFC,Broadstreet RFC,Old Laurentians Ground,Regional 2 Midlands East,,,upcoming,,
-Saturday 1 Mar 2026,3:00 PM,Broadstreet RFC,Nuneaton Old Edwardians,Broadstreet RFC Ground,Regional 2 Midlands East,,,upcoming,,
-Saturday 8 Mar 2026,3:00 PM,Leamington RFC,Broadstreet RFC,Leamington RFC Ground,Regional 2 Midlands East,,,upcoming,,
-Saturday 8 Feb 2026,3:00 PM,Broadstreet RFC,Bedford Athletic,Broadstreet RFC Ground,Regional 2 Midlands East,28,24,completed,1,0
-Saturday 1 Feb 2026,3:00 PM,Rugby Lions,Broadstreet RFC,Webb Ellis Road,Regional 2 Midlands East,17,22,completed,0,1
-Saturday 25 Jan 2026,3:00 PM,Broadstreet RFC,Stratford Upon Avon,Broadstreet RFC Ground,Regional 2 Midlands East,35,14,completed,1,0
-Saturday 18 Jan 2026,3:00 PM,Towcestrians RFC,Broadstreet RFC,Towcestrians Ground,Regional 2 Midlands East,21,21,completed,0,0
-Saturday 11 Jan 2026,3:00 PM,Broadstreet RFC,Banbury RFC,Broadstreet RFC Ground,Regional 2 Midlands East,31,19,completed,1,0
+date,time,home_team,away_team,venue,competition,home_score,away_score,status,home_bp,away_bp,match_notes
+Saturday 15 Feb 2026,3:00 PM,Broadstreet RFC,Kenilworth RFC,Broadstreet RFC Ground,Regional 2 Midlands East,,,upcoming,,,
+Saturday 22 Feb 2026,3:00 PM,Old Laurentians RFC,Broadstreet RFC,Old Laurentians Ground,Regional 2 Midlands East,,,upcoming,,,
+Saturday 1 Mar 2026,3:00 PM,Broadstreet RFC,Nuneaton Old Edwardians,Broadstreet RFC Ground,Regional 2 Midlands East,,,upcoming,,,"Sponsors Day - all sponsors welcome for complimentary hospitality"
+Saturday 8 Mar 2026,3:00 PM,Leamington RFC,Broadstreet RFC,Leamington RFC Ground,Regional 2 Midlands East,,,upcoming,,,
+Saturday 8 Feb 2026,3:00 PM,Broadstreet RFC,Bedford Athletic,Broadstreet RFC Ground,Regional 2 Midlands East,28,24,completed,1,0,
+Saturday 1 Feb 2026,3:00 PM,Rugby Lions,Broadstreet RFC,Webb Ellis Road,Regional 2 Midlands East,17,22,completed,0,1,
+Saturday 25 Jan 2026,3:00 PM,Broadstreet RFC,Stratford Upon Avon,Broadstreet RFC Ground,Regional 2 Midlands East,35,14,completed,1,0,
+Saturday 18 Jan 2026,3:00 PM,Towcestrians RFC,Broadstreet RFC,Towcestrians Ground,Regional 2 Midlands East,21,21,completed,0,0,
+Saturday 11 Jan 2026,3:00 PM,Broadstreet RFC,Banbury RFC,Broadstreet RFC Ground,Regional 2 Midlands East,31,19,completed,1,0,

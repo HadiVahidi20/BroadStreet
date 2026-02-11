@@ -62,6 +62,7 @@ const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw9ubtgljqkSSow
       { name: 'status', label: 'Status', type: 'select', options: ['upcoming', 'completed', 'postponed'], required: true },
       { name: 'home_bp', label: 'Home Bonus Points', type: 'number', required: false },
       { name: 'away_bp', label: 'Away Bonus Points', type: 'number', required: false },
+      { name: 'match_notes', label: 'Match Notes', type: 'textarea', required: false, placeholder: 'Extra info shown in match details (e.g. charity match, special event)' },
     ],
     sponsors: [
       { name: 'name', label: 'Sponsor Name', type: 'text', required: true },

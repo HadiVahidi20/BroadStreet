@@ -299,9 +299,13 @@ const Components = {
         tab.addEventListener('click', () => {
           const target = tab.dataset.tab;
 
-          // Update tabs
-          tabs.forEach((t) => t.classList.remove('active'));
-          tab.classList.add('active');
+          // Update tabs — swap btn-primary / btn-outline visually
+          tabs.forEach((t) => {
+            t.classList.remove('active', 'btn-primary');
+            t.classList.add('btn-outline');
+          });
+          tab.classList.add('active', 'btn-primary');
+          tab.classList.remove('btn-outline');
 
           // Update panels
           panels.forEach((panel) => {

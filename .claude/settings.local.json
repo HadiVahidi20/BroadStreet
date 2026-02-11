@@ -45,7 +45,8 @@
       "WebFetch(domain:ics.ecal.com)",
       "WebFetch(domain:www.broadstreetrfc.co.uk)",
       "WebFetch(domain:broadstreetrfc.rfu.club)",
-      "WebFetch(domain:gms.rfu.com)"
+      "WebFetch(domain:gms.rfu.com)",
+      "Bash(del \"d:\\\\TheHerd\\\\BroadStreet\\\\broadstreet-rfc-website\\\\pages\\\\matchday.html\")"
     ]
   }
 }

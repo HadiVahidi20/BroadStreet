@@ -646,6 +646,92 @@
     title.textContent = competition ? competition + " Standings" : "League Standings";
   }
 
+  /* ── Fixture Details Accordion ── */
+
+  var chevronSvg = '<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6z"/></svg>';
+
+  function buildUpcomingDetails(f, isHome, kickOff) {
+    var html = '<div class="fixture-details">';
+    html += '<div class="fixture-details-grid">';
+
+    if (isHome) {
+      html += '<div class="fixture-details-item"><strong>Venue</strong><span>Ivor Preece Field, Binley Woods, Coventry, CV3 2AY</span></div>';
+      if (kickOff) html += '<div class="fixture-details-item"><strong>Kick-off</strong><span>' + esc(kickOff) + '</span></div>';
+      html += '<div class="fixture-details-item"><strong>Gates Open</strong><span>11:00 AM</span></div>';
+      html += '<div class="fixture-details-item"><strong>Entry</strong><span>Free for all home league matches</span></div>';
+      html += '<div class="fixture-details-item"><strong>Parking</strong><span>Free on-site parking available</span></div>';
+      html += '<div class="fixture-details-item"><strong>Facilities</strong><span>Clubhouse bar, hot food, tea & coffee</span></div>';
+    } else {
+      if (f.venue) html += '<div class="fixture-details-item"><strong>Venue</strong><span>' + esc(f.venue) + '</span></div>';
+      if (kickOff) html += '<div class="fixture-details-item"><strong>Kick-off</strong><span>' + esc(kickOff) + '</span></div>';
+      if (f.competition) html += '<div class="fixture-details-item"><strong>Competition</strong><span>' + esc(f.competition) + '</span></div>';
+    }
+
+    var notes = String(f.match_notes || "").trim();
+    if (notes) {
+      html += '<div class="fixture-details-item fixture-details-full"><strong>Notes</strong><span>' + esc(notes) + '</span></div>';
+    }
+
+    html += '</div></div>';
+    return html;
+  }
+
+  function buildResultDetails(f, isHome) {
+    var html = '<div class="fixture-details">';
+    html += '<div class="fixture-details-grid">';
+
+    if (f.venue) html += '<div class="fixture-details-item"><strong>Venue</strong><span>' + esc(f.venue) + '</span></div>';
+    if (f.competition) html += '<div class="fixture-details-item"><strong>Competition</strong><span>' + esc(f.competition) + '</span></div>';
+
+    var homeBP = String(f.home_bp || "").trim();
+    var awayBP = String(f.away_bp || "").trim();
+    if (homeBP || awayBP) {
+      html += '<div class="fixture-details-item"><strong>Bonus Points</strong><span>' +
+        esc(canonicalTeamName(f.home_team)) + ': ' + esc(homeBP || '0') + ' | ' +
+        esc(canonicalTeamName(f.away_team)) + ': ' + esc(awayBP || '0') + '</span></div>';
+    }
+
+    var notes = String(f.match_notes || "").trim();
+    if (notes) {
+      html += '<div class="fixture-details-item fixture-details-full"><strong>Notes</strong><span>' + esc(notes) + '</span></div>';
+    }
+
+    html += '</div></div>';
+    return html;
+  }
+
+  function bindFixtureAccordions(container) {
+    if (!container) return;
+    var toggles = container.querySelectorAll('.fixture-toggle');
+    for (var i = 0; i < toggles.length; i++) {
+      (function (btn) {
+        btn.addEventListener('click', function (e) {
+          e.preventDefault();
+          var card = btn.closest('.fixture-card');
+          if (!card) return;
+          var details = card.querySelector('.fixture-details');
+          if (!details) return;
+
+          var isOpen = card.classList.contains('fixture-open');
+
+          // Close all in this container
+          var allCards = container.querySelectorAll('.fixture-card.fixture-open');
+          for (var j = 0; j < allCards.length; j++) {
+            allCards[j].classList.remove('fixture-open');
+            var d = allCards[j].querySelector('.fixture-details');
+            if (d) { d.style.maxHeight = null; }
+          }
+
+          // Open clicked if was closed
+          if (!isOpen) {
+            card.classList.add('fixture-open');
+            details.style.maxHeight = details.scrollHeight + 'px';
+          }
+        });
+      })(toggles[i]);
+    }
+  }
+
   function renderFixturesPage(fixtures) {
     var upcoming = document.getElementById("fixturesList");
     var resultsList = document.getElementById("resultsList");
@@ -676,7 +762,7 @@
             var kickOff = normalizeTimeValue(f.time || "");
 
             return (
-              '<div class="card">' +
+              '<div class="card fixture-card">' +
               '<div class="card-body flex items-center justify-between flex-wrap gap-4">' +
               '<div class="flex items-center gap-6">' +
               '<div class="text-center">' +
@@ -708,12 +794,14 @@
               "</p>" +
               "</div>" +
               "</div>" +
-              '<a href="matchday.html" class="btn btn-outline btn-sm">Matchday Info</a>' +
+              '<button class="fixture-toggle" aria-label="Match details">' + chevronSvg + '</button>' +
               "</div>" +
+              buildUpcomingDetails(f, isHome, kickOff) +
               "</div>"
             );
           })
           .join("");
+        bindFixtureAccordions(upcoming);
       }
     }
 
@@ -744,10 +832,8 @@
               }
             }
 
-            var venueType = broadHome ? "Home" : "Away";
-
             return (
-              '<div class="card">' +
+              '<div class="card fixture-card">' +
               '<div class="card-body flex items-center justify-between flex-wrap gap-4">' +
               '<div class="flex items-center gap-6">' +
               '<div class="text-center">' +
@@ -780,15 +866,18 @@
               "</h3>" +
               '<p class="text-sm text-muted">' +
               esc(f.competition || "") +
-              (venueType ? " - " + venueType : "") +
+              " - " + (broadHome ? "Home" : "Away") +
               "</p>" +
               "</div>" +
               "</div>" +
+              '<button class="fixture-toggle" aria-label="Match details">' + chevronSvg + '</button>' +
               "</div>" +
+              buildResultDetails(f, broadHome) +
               "</div>"
             );
           })
           .join("");
+        bindFixtureAccordions(resultsList);
       }
     }
   }
