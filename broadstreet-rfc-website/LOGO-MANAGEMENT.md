@@ -7,8 +7,8 @@ This project uses a centralized logo management system to ensure consistency acr
 ## 🎯 Current Configuration
 
 All pages now use the unified logo system:
-- **Main Logo**: `assets/logos/logo-light.png`
-- **Favicon**: `assets/logos/logo-light.png`
+- **Main Logo**: `https://storage.googleapis.com/msgsndr/su6QlYYHk7V0zo5SCC0s/media/698cba8f33e4ec634d172d19.png`
+- **Favicon**: `https://storage.googleapis.com/msgsndr/su6QlYYHk7V0zo5SCC0s/media/698cba8f33e4ec634d172d19.png`
 
 ## 🔧 How It Works
 
@@ -18,8 +18,8 @@ The file `js/site-config.js` contains all logo paths and site-wide settings:
 ```javascript
 const SiteConfig = {
   logos: {
-    main: '../assets/logos/logo-light.png',
-    favicon: '../assets/logos/logo-light.png',
+    main: 'https://storage.googleapis.com/msgsndr/su6QlYYHk7V0zo5SCC0s/media/698cba8f33e4ec634d172d19.png',
+    favicon: 'https://storage.googleapis.com/msgsndr/su6QlYYHk7V0zo5SCC0s/media/698cba8f33e4ec634d172d19.png',
     alt: 'Broadstreet RFC',
   },
   // ... other settings
@@ -34,8 +34,8 @@ When any page loads, `site-config.js`:
 
 ### 3. Static Fallbacks
 All HTML files also have direct logo references as fallbacks:
-- Header logo: `<img src="../assets/logos/logo-light.png">`
-- Favicon: `<link rel="icon" href="../assets/logos/logo-light.png">`
+- Header logo: `<img src="https://storage.googleapis.com/msgsndr/su6QlYYHk7V0zo5SCC0s/media/698cba8f33e4ec634d172d19.png">`
+- Favicon: `<link rel="icon" href="https://storage.googleapis.com/msgsndr/su6QlYYHk7V0zo5SCC0s/media/698cba8f33e4ec634d172d19.png">`
 
 ## 🔄 Updating Logos Site-Wide
 
@@ -120,7 +120,7 @@ When creating a new page:
 ### Logos not updating?
 1. Check browser cache (Ctrl+Shift+R to hard refresh)
 2. Verify `site-config.js` is loaded in browser console
-3. Check logo file exists at `assets/logos/logo-light.png`
+3. Check logo file exists at `https://storage.googleapis.com/msgsndr/su6QlYYHk7V0zo5SCC0s/media/698cba8f33e4ec634d172d19.png`
 
 ### Want different logos per page?
 Modify `site-config.js` to include page-specific logic:

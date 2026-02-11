@@ -17,10 +17,10 @@ for file in "$PAGES_DIR"/*.html; do
     echo "Processing: $file"
 
     # Replace old SVG logos with new PNG logo
-    sed -i 's|../assets/logos/broadstreet-logo\.svg|../assets/logos/logo-light.png|g' "$file"
+    sed -i 's|../assets/logos/broadstreet-logo\.svg|https://storage.googleapis.com/msgsndr/su6QlYYHk7V0zo5SCC0s/media/698cba8f33e4ec634d172d19.png|g' "$file"
 
     # Replace old favicon
-    sed -i 's|<link rel="icon" type="image/svg+xml" href="../assets/logos/favicon\.svg">|<link rel="icon" type="image/png" href="../assets/logos/logo-light.png">|g' "$file"
+    sed -i 's|<link rel="icon" type="image/svg+xml" href="../assets/logos/favicon\.svg">|<link rel="icon" type="image/png" href="https://storage.googleapis.com/msgsndr/su6QlYYHk7V0zo5SCC0s/media/698cba8f33e4ec634d172d19.png">|g' "$file"
 
     # Add site-config.js if not already included (before closing body tag)
     if ! grep -q "site-config.js" "$file"; then

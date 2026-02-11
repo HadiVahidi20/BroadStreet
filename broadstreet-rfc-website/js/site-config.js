@@ -6,8 +6,8 @@
 const SiteConfig = {
   // Logo paths
   logos: {
-    main: '../assets/logos/logo-light.png',
-    favicon: '../assets/logos/logo-light.png',
+    main: 'https://storage.googleapis.com/msgsndr/su6QlYYHk7V0zo5SCC0s/media/698cba8f33e4ec634d172d19.png',
+    favicon: 'https://storage.googleapis.com/msgsndr/su6QlYYHk7V0zo5SCC0s/media/698cba8f33e4ec634d172d19.png',
     alt: 'Broadstreet RFC',
   },
 
