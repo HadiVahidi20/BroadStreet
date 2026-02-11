@@ -12,6 +12,10 @@ var CONFIG = {
   pointsForLoss: 0,
   losingBonusMargin: 7,
 
+  // Only fixtures with this competition (or empty) affect standings.
+  // Non-league matches (Friendly, Charity Match, etc.) are excluded.
+  leagueCompetition: "Regional 2 Midlands East",
+
   // Baseline is fixed at "today" when this strategy was introduced.
   // Fixtures before this date are ignored in calculations.
   baselineDate: "2026-02-10",
@@ -74,7 +78,8 @@ function calculateStandings() {
     away_score: header.indexOf("away_score"),
     status: header.indexOf("status"),
     home_bp: header.indexOf("home_bp"),
-    away_bp: header.indexOf("away_bp")
+    away_bp: header.indexOf("away_bp"),
+    competition: header.indexOf("competition")
   };
 
   if (col.date === -1 || col.home_team === -1 || col.away_team === -1 || col.home_score === -1 || col.away_score === -1) {
@@ -98,6 +103,12 @@ function calculateStandings() {
     var homeScore = parseInt(row[col.home_score], 10);
     var awayScore = parseInt(row[col.away_score], 10);
     if (isNaN(homeScore) || isNaN(awayScore)) continue;
+
+    // Skip non-league fixtures (Friendly, Charity Match, etc.)
+    if (col.competition !== -1 && CONFIG.leagueCompetition) {
+      var comp = String(row[col.competition] || "").trim();
+      if (comp !== "" && comp.toLowerCase() !== CONFIG.leagueCompetition.toLowerCase()) continue;
+    }
 
     var fixtureDate = parseFixtureDate_(row[col.date]);
     if (!fixtureDate) continue;

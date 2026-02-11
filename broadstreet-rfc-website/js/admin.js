@@ -28,7 +28,18 @@ const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw9ubtgljqkSSow
   let editingRowIndex = null;
   let googleClient = null;
 
-  // Field definitions for each section 
+  // League teams for fixture dropdowns
+  const LEAGUE_TEAMS = [
+    'Broadstreet', 'Bedford Athletic', 'Daventry', 'Kettering',
+    'Market Harborough', 'Northampton Old Scouts', 'Oadby Wyggestonians',
+    'Old Coventrians', 'Olney', 'Peterborough', 'Stamford', 'Wellingborough'
+  ];
+
+  const COMPETITION_OPTIONS = [
+    'Regional 2 Midlands East', 'Friendly', 'Charity Match', 'Cup', 'Pre-Season'
+  ];
+
+  // Field definitions for each section
   const fieldDefinitions = {
     news: [
       { name: 'title', label: 'Title', type: 'text', required: true },
@@ -40,12 +51,12 @@ const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw9ubtgljqkSSow
       { name: 'featured', label: 'Featured', type: 'select', options: ['false', 'true'], required: true },
     ],
     fixtures: [
-      { name: 'date', label: 'Date', type: 'text', required: true, placeholder: 'e.g., Saturday 15 Feb 2026' },
-      { name: 'time', label: 'Time', type: 'text', required: true, placeholder: 'e.g., 3:00 PM' },
-      { name: 'home_team', label: 'Home Team', type: 'text', required: true },
-      { name: 'away_team', label: 'Away Team', type: 'text', required: true },
+      { name: 'date', label: 'Date', type: 'date', required: true },
+      { name: 'time', label: 'Time', type: 'time', required: true },
+      { name: 'home_team', label: 'Home Team', type: 'select-other', options: LEAGUE_TEAMS, required: true },
+      { name: 'away_team', label: 'Away Team', type: 'select-other', options: LEAGUE_TEAMS, required: true },
       { name: 'venue', label: 'Venue', type: 'text', required: true },
-      { name: 'competition', label: 'Competition', type: 'text', required: true, placeholder: 'e.g., Regional 2 Midlands East' },
+      { name: 'competition', label: 'Competition', type: 'select-other', options: COMPETITION_OPTIONS, required: true },
       { name: 'home_score', label: 'Home Score', type: 'number', required: false },
       { name: 'away_score', label: 'Away Score', type: 'number', required: false },
       { name: 'status', label: 'Status', type: 'select', options: ['upcoming', 'completed', 'postponed'], required: true },
@@ -437,6 +448,58 @@ const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw9ubtgljqkSSow
     return text;
   }
 
+  // Convert stored date formats to YYYY-MM-DD for HTML5 date input
+  function normalizeDateForInput(value) {
+    if (!value) return '';
+    const text = String(value).trim();
+    if (!text) return '';
+
+    // Already YYYY-MM-DD
+    let m = text.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+    if (m) return text;
+
+    // DD/MM/YYYY (Google Sheets auto-converted)
+    m = text.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+    if (m) return `${m[3]}-${pad2(parseInt(m[2], 10))}-${pad2(parseInt(m[1], 10))}`;
+
+    // "Saturday 15 Feb 2026" or "15 Feb 2026"
+    const monthMap = { jan:1, feb:2, mar:3, apr:4, may:5, jun:6, jul:7, aug:8, sep:9, oct:10, nov:11, dec:12 };
+    m = text.match(/(?:[A-Za-z]+,?\s+)?(\d{1,2})\s+([A-Za-z]{3,})\.?,?\s+(\d{4})/);
+    if (m) {
+      const mi = monthMap[m[2].toLowerCase().substring(0, 3)];
+      if (mi) return `${m[3]}-${pad2(mi)}-${pad2(parseInt(m[1], 10))}`;
+    }
+
+    return '';
+  }
+
+  // Convert YYYY-MM-DD to "Saturday 15 Feb 2026" for storage
+  function formatDateForStorage(isoDate) {
+    if (!isoDate) return '';
+    const parts = isoDate.split('-');
+    if (parts.length !== 3) return isoDate;
+    const y = parseInt(parts[0], 10);
+    const m = parseInt(parts[1], 10);
+    const d = parseInt(parts[2], 10);
+    const dt = new Date(y, m - 1, d);
+    const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    return `${dayNames[dt.getDay()]} ${d} ${monthNames[m - 1]} ${y}`;
+  }
+
+  // Convert HH:MM to "3:00 PM" for storage
+  function formatTimeForStorage(time24) {
+    if (!time24) return '';
+    const m = time24.match(/^(\d{1,2}):(\d{2})$/);
+    if (!m) return time24;
+    let h = parseInt(m[1], 10);
+    const mi = m[2];
+    const ampm = h >= 12 ? 'PM' : 'AM';
+    if (h > 12) h -= 12;
+    if (h === 0) h = 12;
+    return `${h}:${mi} ${ampm}`;
+  }
+
   function isBroadstreetFixtureRow(row) {
     if (!row) return false;
     const home = normalizeTeamKey(row.home_team);
@@ -632,10 +695,17 @@ const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw9ubtgljqkSSow
     let html = '';
     fields.forEach((field) => {
       let value = data[field.name] || '';
-      if (currentSection === 'fixtures' && field.name === 'time') {
-        value = normalizeTimeDisplay(value);
-      }
       const fieldType = field.type || 'text';
+
+      // Normalize values for HTML5 inputs when editing fixtures
+      if (currentSection === 'fixtures') {
+        if (fieldType === 'time' || field.name === 'time') {
+          value = normalizeTimeDisplay(value);
+        } else if (fieldType === 'date' || field.name === 'date') {
+          value = normalizeDateForInput(value);
+        }
+      }
+
       html += `<div class="form-group">`;
       html += `<label for="field_${field.name}">${field.label}${field.required ? ' *' : ''}</label>`;
 
@@ -648,6 +718,21 @@ const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw9ubtgljqkSSow
           html += `<option value="${opt}" ${selected}>${opt}</option>`;
         });
         html += `</select>`;
+      } else if (fieldType === 'select-other') {
+        const opts = field.options || [];
+        const isInOptions = opts.indexOf(String(value)) !== -1;
+        const isOther = value !== '' && !isInOptions;
+        const selectId = `field_${field.name}`;
+        const otherId = `field_${field.name}_other`;
+
+        html += `<select id="${selectId}" name="${field.name}" ${field.required ? 'required' : ''} onchange="(function(sel){var oth=document.getElementById('${otherId}');if(sel.value==='__other__'){oth.style.display='block';oth.required=${field.required || false};sel.removeAttribute('name');}else{oth.style.display='none';oth.required=false;oth.value='';sel.name='${field.name}';}})(this)">`;
+        opts.forEach((opt) => {
+          const selected = String(value) === opt ? 'selected' : '';
+          html += `<option value="${escapeHtml(opt)}" ${selected}>${escapeHtml(opt)}</option>`;
+        });
+        html += `<option value="__other__" ${isOther ? 'selected' : ''}>Other...</option>`;
+        html += `</select>`;
+        html += `<input type="text" id="${otherId}" name="${isOther ? field.name : ''}" placeholder="Enter custom value" value="${isOther ? escapeHtml(String(value)) : ''}" style="display:${isOther ? 'block' : 'none'};margin-top:6px" ${isOther && field.required ? 'required' : ''}>`;
       } else {
         html += `<input type="${fieldType}" id="field_${field.name}" name="${field.name}" ${field.required ? 'required' : ''} placeholder="${field.placeholder || ''}" value="${escapeHtml(String(value))}">`;
       }
@@ -669,6 +754,16 @@ const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw9ubtgljqkSSow
     formData.forEach((value, key) => {
       data[key] = value;
     });
+
+    // Convert HTML5 date/time inputs to storage format for fixtures
+    if (currentSection === 'fixtures') {
+      if (data.date && data.date.match(/^\d{4}-\d{2}-\d{2}$/)) {
+        data.date = formatDateForStorage(data.date);
+      }
+      if (data.time && data.time.match(/^\d{2}:\d{2}$/)) {
+        data.time = formatTimeForStorage(data.time);
+      }
+    }
 
     // If editing, include row index
     if (isEditing && editingRowIndex !== null) {
