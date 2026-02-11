@@ -247,6 +247,19 @@
   .next-match-grid {
     grid-template-columns: 1fr 1fr;
   }
+
+  .next-match-grid .standings-card {
+    max-height: 600px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .next-match-grid .standings-card > .overflow-x-auto {
+    flex: 1;
+    min-height: 0;
+    overflow-x: auto;
+    overflow-y: auto;
+  }
 }
 
 /* Next Match Card */
