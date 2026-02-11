@@ -775,7 +775,7 @@ function parseIcsEventFixture(eventBlock) {
     away_team: teams.away_team,
     venue: venue || "",
     competition: competition || "",
-    status: "upcoming",
+    status: isFixtureDatePast_(start.date) ? "completed" : "upcoming",
     home_score: "",
     away_score: "",
     home_bp: "",
@@ -1026,7 +1026,7 @@ function syncFixturesToSheet(sheet, incomingFixtures) {
 
     var preserveResult = hasCompletedResult(target, fields);
     if (!preserveResult) {
-      target[fields.status] = "upcoming";
+      target[fields.status] = isFixtureDatePast_(target[fields.date]) ? "completed" : "upcoming";
       target[fields.home_score] = "";
       target[fields.away_score] = "";
       target[fields.home_bp] = "";
@@ -1335,6 +1335,37 @@ function normalizeTimeKey(value) {
   }
 
   return s;
+}
+
+function isFixtureDatePast_(dateValue) {
+  var tz = ADMIN_CONFIG.SYNC_TIME_ZONE || Session.getScriptTimeZone();
+  var today = Utilities.formatDate(new Date(), tz, "yyyy-MM-dd");
+
+  if (dateValue instanceof Date && !isNaN(dateValue.getTime())) {
+    return Utilities.formatDate(dateValue, tz, "yyyy-MM-dd") < today;
+  }
+
+  var text = String(dateValue || "").trim();
+  if (!text) return false;
+
+  var m = text.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (m) return text < today;
+
+  m = text.match(/^(?:[A-Za-z]+,?\s+)?(\d{1,2})\s+([A-Za-z]{3,})\.?,?\s+(\d{4})$/);
+  if (m) {
+    var months = { jan:0, feb:1, mar:2, apr:3, may:4, jun:5, jul:6, aug:7, sep:8, oct:9, nov:10, dec:11 };
+    var monthIdx = months[m[2].toLowerCase().substring(0, 3)];
+    if (monthIdx === undefined) return false;
+    var d = new Date(parseInt(m[3], 10), monthIdx, parseInt(m[1], 10));
+    return Utilities.formatDate(d, tz, "yyyy-MM-dd") < today;
+  }
+
+  var parsed = new Date(text);
+  if (!isNaN(parsed.getTime())) {
+    return Utilities.formatDate(parsed, tz, "yyyy-MM-dd") < today;
+  }
+
+  return false;
 }
 
 function isBlank(value) {

@@ -75,6 +75,28 @@
     return isBroadstreet(fixture.home_team) || isBroadstreet(fixture.away_team);
   }
 
+  function hasScores(fixture) {
+    var home = String(fixture.home_score || "").trim();
+    var away = String(fixture.away_score || "").trim();
+    return home !== "" && away !== "" && !isNaN(Number(home)) && !isNaN(Number(away));
+  }
+
+  function isFixturePast(fixture) {
+    var fixtureDate = parseFixtureDateValue(fixture.date);
+    if (!fixtureDate) return false;
+
+    var today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return fixtureDate.getTime() < today.getTime();
+  }
+
+  function getEffectiveStatus(fixture) {
+    if (String(fixture.status || "").toLowerCase().trim() === "completed") return "completed";
+    if (hasScores(fixture)) return "completed";
+    if (isFixturePast(fixture)) return "completed";
+    return "upcoming";
+  }
+
   function renderTeamWithLogo(teamName, className) {
     var displayName = getDisplayTeamName(teamName);
     var logo = getTeamLogo(teamName);
@@ -548,14 +570,14 @@
 
     var upcomingItems = sortFixturesByDate(
       fixtures.filter(function (f) {
-        return String(f.status || "").toLowerCase() === "upcoming";
+        return getEffectiveStatus(f) === "upcoming";
       }),
       "asc"
     );
 
     var completedItems = sortFixturesByDate(
       fixtures.filter(function (f) {
-        return String(f.status || "").toLowerCase() === "completed";
+        return getEffectiveStatus(f) === "completed";
       }),
       "desc"
     );
@@ -707,18 +729,10 @@
       if (isHomepage) {
         var upcoming = sortFixturesByDate(
           fixtures.filter(function (f) {
-            return String(f.status || "").toLowerCase() === "upcoming";
+            return getEffectiveStatus(f) === "upcoming";
           }),
           "asc"
         );
-        if (!upcoming.length) {
-          upcoming = sortFixturesByDate(
-            fixtures.filter(function (f) {
-              return String(f.status || "").toLowerCase() !== "completed";
-            }),
-            "asc"
-          );
-        }
         if (upcoming.length) {
           renderNextMatch(upcoming[0]);
         } else {
@@ -729,7 +743,7 @@
 
         var completed = sortFixturesByDate(
           fixtures.filter(function (f) {
-            return String(f.status || "").toLowerCase() === "completed";
+            return getEffectiveStatus(f) === "completed" && hasScores(f);
           }),
           "desc"
         );

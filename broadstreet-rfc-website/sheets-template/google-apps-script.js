@@ -95,9 +95,6 @@ function calculateStandings() {
     var row = data[i];
     if (!row) continue;
 
-    var status = col.status !== -1 ? String(row[col.status] || "").toLowerCase().trim() : "";
-    if (col.status !== -1 && status !== "completed") continue;
-
     var homeScore = parseInt(row[col.home_score], 10);
     var awayScore = parseInt(row[col.away_score], 10);
     if (isNaN(homeScore) || isNaN(awayScore)) continue;
