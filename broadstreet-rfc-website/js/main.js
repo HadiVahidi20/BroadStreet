@@ -20,6 +20,8 @@ const BroadstreetRFC = {
     this.initContactForm();
     this.initSmoothScroll();
     this.initLazyLoad();
+    this.initLayoutMetrics();
+    this.initTeamAccordion();
     this.initParallaxEffects();
     this.initScrollReveal();
     console.log('Broadstreet RFC Website Initialized');
@@ -177,6 +179,99 @@ const BroadstreetRFC = {
   },
 
   /**
+   * Sync layout-related CSS variables
+   */
+  initLayoutMetrics() {
+    const root = document.documentElement;
+    const header = document.querySelector('.main-header');
+
+    const syncStickyHeaderHeight = () => {
+      const height = header ? Math.round(header.getBoundingClientRect().height) : 0;
+      root.style.setProperty('--sticky-header-height', `${height}px`);
+    };
+
+    syncStickyHeaderHeight();
+    window.setTimeout(syncStickyHeaderHeight, 180);
+    window.addEventListener('resize', syncStickyHeaderHeight, { passive: true });
+    window.addEventListener('orientationchange', syncStickyHeaderHeight, { passive: true });
+
+    if ('ResizeObserver' in window && header) {
+      const resizeObserver = new ResizeObserver(() => syncStickyHeaderHeight());
+      resizeObserver.observe(header);
+    }
+  },
+
+  /**
+   * Homepage team pathway accordion
+   */
+  initTeamAccordion() {
+    const accordion = document.getElementById('teamAccordion');
+    if (!accordion) return;
+
+    const panels = Array.from(accordion.querySelectorAll('[data-team-panel]'));
+    if (!panels.length) return;
+
+    const setActivePanel = (activePanel) => {
+      panels.forEach((panel) => {
+        const isActive = panel === activePanel;
+        panel.classList.toggle('is-active', isActive);
+        panel.setAttribute('aria-expanded', isActive ? 'true' : 'false');
+      });
+    };
+
+    panels.forEach((panel, index) => {
+      panel.setAttribute('role', 'button');
+      panel.tabIndex = 0;
+
+      const panelContent = panel.querySelector('.team-accordion-inner');
+      if (panelContent) {
+        const contentId = panelContent.id || `teamPanelContent${index + 1}`;
+        panelContent.id = contentId;
+        panel.setAttribute('aria-controls', contentId);
+      }
+
+      panel.addEventListener('click', (event) => {
+        const isActive = panel.classList.contains('is-active');
+        const clickedLink = event.target.closest('a');
+
+        if (clickedLink && !isActive) {
+          event.preventDefault();
+        }
+
+        if (!isActive) {
+          setActivePanel(panel);
+        }
+      });
+
+      panel.addEventListener('keydown', (event) => {
+        const key = event.key;
+
+        if (key === 'Enter' || key === ' ') {
+          event.preventDefault();
+          setActivePanel(panel);
+          return;
+        }
+
+        if (!['ArrowRight', 'ArrowDown', 'ArrowLeft', 'ArrowUp'].includes(key)) {
+          return;
+        }
+
+        event.preventDefault();
+        const currentIndex = panels.indexOf(panel);
+        const direction = key === 'ArrowRight' || key === 'ArrowDown' ? 1 : -1;
+        const nextIndex = (currentIndex + direction + panels.length) % panels.length;
+        const nextPanel = panels[nextIndex];
+
+        setActivePanel(nextPanel);
+        nextPanel.focus({ preventScroll: true });
+      });
+    });
+
+    const initialActive = panels.find((panel) => panel.classList.contains('is-active')) || panels[0];
+    setActivePanel(initialActive);
+  },
+
+  /**
    * Lightweight parallax effects (no external deps)
    */
   initParallaxEffects() {
@@ -315,6 +410,7 @@ const BroadstreetRFC = {
 
     // Staggered cards / content blocks
     revealGroup('.team-pathway-card', { effect: 'up', startDelay: 50, step: 70 });
+    revealGroup('.team-accordion-item', { effect: 'up', startDelay: 50, step: 80 });
     revealGroup('.facility-stat', { effect: 'up', startDelay: 60, step: 70 });
     revealGroup('.standings-wrapper', { effect: 'up', startDelay: 80, step: 120 });
     revealGroup('.home-player-card', { effect: 'up', startDelay: 40, step: 35 });
