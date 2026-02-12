@@ -112,6 +112,16 @@ const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw9ubtgljqkSSow
       { name: 'image', label: 'Image URL', type: 'url', required: false },
       { name: 'team', label: 'Team', type: 'text', required: true, placeholder: 'e.g., 1st XV' },
     ],
+    gallery: [
+      { name: 'title', label: 'Title', type: 'text', required: true },
+      { name: 'category', label: 'Category', type: 'select', options: ['matches', 'events', 'youth', 'clubhouse'], required: true },
+      { name: 'image_url', label: 'Image URL', type: 'url', required: true, placeholder: 'Full size image URL' },
+      { name: 'thumbnail_url', label: 'Thumbnail URL', type: 'url', required: false, placeholder: 'Optional smaller version' },
+      { name: 'date', label: 'Date', type: 'date', required: true },
+      { name: 'featured', label: 'Featured', type: 'select', options: ['false', 'true'], required: true },
+      { name: 'photographer', label: 'Photographer', type: 'text', required: false },
+      { name: 'description', label: 'Description', type: 'textarea', required: false },
+    ],
   };
 
   // Read-only tabs (none for now; standings is manually editable)

@@ -803,6 +803,18 @@
       scroll-margin-top: 120px;
     }
 
+    .page-teams .teams-quick-nav-links .btn.is-active {
+      background-color: var(--color-primary);
+      border-color: var(--color-primary);
+      color: var(--color-white);
+    }
+
+    .page-teams .teams-quick-nav-links .btn.is-active:hover {
+      background-color: var(--color-primary-dark);
+      border-color: var(--color-primary-dark);
+      color: var(--color-white);
+    }
+
     /* Fixed left-side quick navigation on wide screens */
     @media (min-width: 1400px) {
       .page-teams .main-content > section:not(.hero) .container {
@@ -817,6 +829,18 @@
         padding: 0;
         background: transparent;
         z-index: 190;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(14px);
+        pointer-events: none;
+        transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s ease;
+      }
+
+      .page-teams .teams-quick-nav.is-visible {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+        pointer-events: auto;
       }
 
       .page-teams .teams-quick-nav .container {
@@ -2158,6 +2182,96 @@
       } else if (mobileMql.addListener) {
         mobileMql.addListener(syncCarouselMode);
       }
+    });
+  </script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const quickNav = document.querySelector('.teams-quick-nav');
+      const heroSection = document.querySelector('.main-content > .hero');
+      const quickNavLinks = Array.from(document.querySelectorAll('.teams-quick-nav-links a[href^="#"]'));
+
+      if (!quickNav || !heroSection || quickNavLinks.length === 0) return;
+
+      const stickyMql = window.matchMedia('(min-width: 1400px)');
+      const STICKY_TOP = 110;
+      const ACTIVE_OFFSET = 170;
+
+      const sectionTargets = quickNavLinks
+        .map((link) => {
+          const hash = link.getAttribute('href');
+          if (!hash) return null;
+          const section = document.querySelector(hash);
+          if (!section) return null;
+          return { id: hash.slice(1), section, link };
+        })
+        .filter(Boolean);
+
+      if (sectionTargets.length === 0) return;
+
+      function setActiveSection(activeId) {
+        sectionTargets.forEach(({ id, link }) => {
+          const isActive = id === activeId;
+          link.classList.toggle('is-active', isActive);
+          if (isActive) {
+            link.setAttribute('aria-current', 'true');
+          } else {
+            link.removeAttribute('aria-current');
+          }
+        });
+      }
+
+      function getActiveSectionId(scrollY) {
+        const probeY = scrollY + ACTIVE_OFFSET;
+        let activeId = sectionTargets[0].id;
+
+        for (const { id, section } of sectionTargets) {
+          if (probeY >= section.offsetTop) {
+            activeId = id;
+          } else {
+            break;
+          }
+        }
+
+        return activeId;
+      }
+
+      let rafId = 0;
+
+      function updateQuickNavState() {
+        rafId = 0;
+        const scrollY = window.scrollY || window.pageYOffset;
+        const heroBottom = heroSection.offsetTop + heroSection.offsetHeight;
+        const shouldShowSticky = stickyMql.matches && (scrollY + STICKY_TOP >= heroBottom);
+
+        quickNav.classList.toggle('is-visible', shouldShowSticky);
+        setActiveSection(getActiveSectionId(scrollY));
+      }
+
+      function queueUpdate() {
+        if (rafId) return;
+        rafId = window.requestAnimationFrame(updateQuickNavState);
+      }
+
+      quickNavLinks.forEach((link) => {
+        link.addEventListener('click', () => {
+          const targetHash = link.getAttribute('href');
+          if (!targetHash) return;
+          setActiveSection(targetHash.slice(1));
+          queueUpdate();
+        });
+      });
+
+      window.addEventListener('scroll', queueUpdate, { passive: true });
+      window.addEventListener('resize', queueUpdate);
+
+      if (stickyMql.addEventListener) {
+        stickyMql.addEventListener('change', queueUpdate);
+      } else if (stickyMql.addListener) {
+        stickyMql.addListener(queueUpdate);
+      }
+
+      updateQuickNavState();
     });
   </script>
 </body>
