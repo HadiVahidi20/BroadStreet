@@ -829,11 +829,18 @@
         padding: 0;
         background: transparent;
         z-index: 190;
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+        pointer-events: auto;
+        transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s ease;
+      }
+
+      .page-teams.nav-scroll-ready .teams-quick-nav:not(.is-visible) {
         opacity: 0;
         visibility: hidden;
         transform: translateY(14px);
         pointer-events: none;
-        transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s ease;
       }
 
       .page-teams .teams-quick-nav.is-visible {
@@ -2208,6 +2215,7 @@
         .filter(Boolean);
 
       if (sectionTargets.length === 0) return;
+      const firstContentSection = sectionTargets[0].section;
 
       function setActiveSection(activeId) {
         sectionTargets.forEach(({ id, link }) => {
@@ -2221,12 +2229,11 @@
         });
       }
 
-      function getActiveSectionId(scrollY) {
-        const probeY = scrollY + ACTIVE_OFFSET;
+      function getActiveSectionId() {
         let activeId = sectionTargets[0].id;
 
         for (const { id, section } of sectionTargets) {
-          if (probeY >= section.offsetTop) {
+          if (section.getBoundingClientRect().top <= ACTIVE_OFFSET) {
             activeId = id;
           } else {
             break;
@@ -2240,12 +2247,11 @@
 
       function updateQuickNavState() {
         rafId = 0;
-        const scrollY = window.scrollY || window.pageYOffset;
-        const heroBottom = heroSection.offsetTop + heroSection.offsetHeight;
-        const shouldShowSticky = stickyMql.matches && (scrollY + STICKY_TOP >= heroBottom);
+        const firstSectionTop = firstContentSection.getBoundingClientRect().top;
+        const shouldShowSticky = stickyMql.matches && firstSectionTop <= STICKY_TOP;
 
         quickNav.classList.toggle('is-visible', shouldShowSticky);
-        setActiveSection(getActiveSectionId(scrollY));
+        setActiveSection(getActiveSectionId());
       }
 
       function queueUpdate() {
@@ -2272,6 +2278,8 @@
       }
 
       updateQuickNavState();
+      document.body.classList.add('nav-scroll-ready');
+      queueUpdate();
     });
   </script>
 </body>
