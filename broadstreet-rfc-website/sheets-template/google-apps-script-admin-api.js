@@ -39,7 +39,7 @@ var ADMIN_CONFIG = {
   ],
   
   // Allowed sheet tabs
-  ALLOWED_TABS: ["news", "fixtures", "sponsors", "players", "hero", "standings", "coaching"],
+  ALLOWED_TABS: ["news", "fixtures", "sponsors", "players", "hero", "standings", "coaching", "venues", "gallery"],
   
   // Read-only tabs
   // Standings is intentionally editable from admin for manual corrections.
