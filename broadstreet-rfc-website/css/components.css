@@ -1438,6 +1438,11 @@
   z-index: 1;
 }
 
+/* Give plain sections a base background so sticky hero doesn't show through */
+:where(.hero:not(.home-hero) ~ section) {
+  background-color: var(--color-paper);
+}
+
 .hero-carousel {
   position: relative;
   width: 100%;
