@@ -1426,6 +1426,18 @@
   overflow: hidden;
 }
 
+/* Keep inner-page heroes fixed while following sections scroll over them */
+.hero:not(.home-hero) {
+  position: sticky;
+  top: 0;
+  z-index: 0;
+}
+
+.hero:not(.home-hero) ~ * {
+  position: relative;
+  z-index: 1;
+}
+
 .hero-carousel {
   position: relative;
   width: 100%;
