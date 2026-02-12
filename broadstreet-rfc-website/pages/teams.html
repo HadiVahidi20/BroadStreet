@@ -794,9 +794,63 @@
       margin-top: 2px;
     }
 
+    #coaching,
+    #senior,
+    #women,
+    #youth,
+    #minis,
+    #touch {
+      scroll-margin-top: 120px;
+    }
+
+    /* Fixed left-side quick navigation on wide screens */
+    @media (min-width: 1400px) {
+      .page-teams .main-content > section:not(.hero) .container {
+        max-width: calc(var(--container-xl) - 220px);
+      }
+
+      .page-teams .teams-quick-nav {
+        position: fixed;
+        top: 110px;
+        left: max(16px, calc((100vw - (var(--container-xl) - 220px)) / 2 - 200px));
+        width: 180px;
+        padding: 0;
+        background: transparent;
+        z-index: 190;
+      }
+
+      .page-teams .teams-quick-nav .container {
+        max-width: none;
+        margin: 0;
+        padding: 0;
+      }
+
+      .page-teams .teams-quick-nav-links {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        gap: var(--space-2);
+        max-height: calc(100vh - 140px);
+        overflow-y: auto;
+        padding: var(--space-3);
+        border: 1px solid var(--color-gray-200);
+        border-radius: var(--radius-lg);
+        background: rgba(255, 255, 255, 0.95);
+        box-shadow: var(--shadow-lg);
+        backdrop-filter: blur(6px);
+      }
+
+      .page-teams .teams-quick-nav-links .btn {
+        width: 100%;
+        justify-content: flex-start;
+        text-align: left;
+        white-space: normal;
+      }
+    }
+
   </style>
 </head>
-<body>
+<body class="page-teams">
   <div class="page-wrapper">
     <div class="top-bar">
       <div class="container">
@@ -883,9 +937,9 @@
       </section>
 
       <!-- Quick Navigation -->
-      <section class="section-sm bg-white">
+      <section class="section-sm bg-white teams-quick-nav" aria-label="Teams quick navigation">
         <div class="container">
-          <div class="flex flex-wrap gap-2 justify-center">
+          <div class="flex flex-wrap gap-2 justify-center teams-quick-nav-links">
             <a href="#coaching" class="btn btn-outline btn-sm">Coaching Staff</a>
             <a href="#senior" class="btn btn-outline btn-sm">Senior Men's</a>
             <a href="#women" class="btn btn-outline btn-sm">Women's Rugby</a>

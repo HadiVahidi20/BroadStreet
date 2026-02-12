@@ -358,7 +358,7 @@
   }
 
   function renderNextMatch(fixture) {
-    var el = document.getElementById("homeNextMatch");
+    var el = document.getElementById("homeNextMatch") || document.getElementById("fanZoneNextMatch");
     if (!el || !fixture) return;
 
     var homeName = el.querySelector(".next-match-team:first-child .next-match-team-name");
@@ -420,7 +420,7 @@
   }
 
   function renderNoUpcomingNextMatch() {
-    var el = document.getElementById("homeNextMatch");
+    var el = document.getElementById("homeNextMatch") || document.getElementById("fanZoneNextMatch");
     if (!el) return;
 
     var homeName = el.querySelector(".next-match-team:first-child .next-match-team-name");
@@ -885,10 +885,12 @@
   async function load() {
     try {
       var isHomepage = !!document.getElementById("homeNextMatch");
+      var isFanZone = !!document.getElementById("fanZoneNextMatch");
       var hasFixturesStandings = !!document.getElementById("fixturesStandings");
       var isFixturesPage =
         !!document.getElementById("fixturesList") || !!document.getElementById("resultsList") || hasFixturesStandings;
       var needsStandings = isHomepage || hasFixturesStandings;
+      var needsNextMatch = isHomepage || isFanZone;
 
       var promises = [SheetsAPI.fetchTab("fixtures")];
       if (needsStandings) promises.push(SheetsAPI.fetchTab("standings"));
@@ -898,7 +900,7 @@
       var fixtures = allFixtures.filter(isBroadstreetFixture);
       var standings = needsStandings ? results[1] || [] : [];
 
-      if (isHomepage) {
+      if (needsNextMatch) {
         var upcoming = sortFixturesByDate(
           fixtures.filter(function (f) {
             return getEffectiveStatus(f) === "upcoming";
@@ -910,7 +912,9 @@
         } else {
           renderNoUpcomingNextMatch();
         }
+      }
 
+      if (isHomepage) {
         if (standings.length) renderHomeStandings(standings);
 
         var completed = sortFixturesByDate(
@@ -930,7 +934,7 @@
         if (hasFixturesStandings) renderFixturesStandings(standings);
       }
     } catch (e) {
-      if (document.getElementById("homeNextMatch")) {
+      if (document.getElementById("homeNextMatch") || document.getElementById("fanZoneNextMatch")) {
         renderNoUpcomingNextMatch();
       }
       var resultsStrip = document.getElementById("homeResultsMini");
