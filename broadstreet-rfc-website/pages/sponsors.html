@@ -753,11 +753,37 @@
   </div>
 
   <script src="../js/site-config.js"></script>
-
+  <script src="../js/sheets-api.js"></script>
   <script src="../js/navigation.js"></script>
   <script src="../js/components.js"></script>
   <script src="../js/utils.js"></script>
   <script src="../js/main.js"></script>
-  
+  <script src="../js/sponsors-feed.js"></script>
+
+  <!-- Sponsorship Form Handler -->
+  <script>
+    (function() {
+      var form = document.getElementById('sponsorshipInquiryForm');
+      var successMsg = document.getElementById('sponsorshipFormSuccess');
+      if (!form) return;
+
+      form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        var subject = 'Sponsorship Inquiry from ' + form.querySelector('[name="company"]').value;
+        var body = 'Name: ' + form.querySelector('[name="name"]').value + '\n' +
+                   'Company: ' + form.querySelector('[name="company"]').value + '\n' +
+                   'Email: ' + form.querySelector('[name="email"]').value + '\n' +
+                   'Phone: ' + form.querySelector('[name="phone"]').value + '\n' +
+                   'Package Interest: ' + form.querySelector('[name="package"]').value + '\n\n' +
+                   'Message:\n' + form.querySelector('[name="message"]').value;
+
+        window.location.href = 'mailto:chairman@broadstreetrfc.co.uk?subject=' +
+                                encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+        form.style.display = 'none';
+        successMsg.style.display = 'block';
+        successMsg.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      });
+    })();
+  </script>
 </body>
 </html>

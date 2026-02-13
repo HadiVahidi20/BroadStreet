@@ -380,6 +380,41 @@
       margin-bottom: var(--space-4);
     }
 
+    /* Team section feature layout: wide media row, content row */
+    .team-feature-stack {
+      display: grid;
+      grid-template-columns: 1fr;
+      grid-template-areas:
+        "media"
+        "content";
+      gap: var(--space-5);
+      align-items: start;
+    }
+
+    .team-feature-stack .team-feature-media {
+      grid-area: media;
+      width: 100%;
+    }
+
+    .team-feature-stack .team-feature-content {
+      grid-area: content;
+      width: 100%;
+    }
+
+    .team-feature-stack .team-feature-media > img,
+    .team-feature-stack .team-feature-media > picture > img,
+    .team-feature-stack .team-feature-media .team-hero-wrapper {
+      width: 100%;
+      display: block;
+    }
+
+    .team-feature-stack .team-feature-image {
+      width: 100%;
+      aspect-ratio: 21 / 9 !important;
+      object-fit: cover !important;
+      object-position: center;
+    }
+
     /* Team Hero Section Styles */
     .team-hero-wrapper {
       position: relative;
@@ -1080,8 +1115,8 @@
           <!-- 1st XV -->
           <div class="mb-12">
             <div class="mb-6">
-              <div class="two-col-equal" style="align-items: start;">
-                <div>
+              <div class="two-col-equal team-feature-stack" style="align-items: start;">
+                <div class="team-feature-content">
                   <span class="badge badge-primary mb-2">First Team</span>
                   <h3>1st XV Squad</h3>
                   <p class="text-sm text-muted mb-2">Tradition. Resilience. Ambition.</p>
@@ -1163,7 +1198,7 @@
                     </a>
                   </div>
                 </div>
-                <div>
+                <div class="team-feature-media">
                   <!-- Interactive Team Hero -->
                   <div class="team-hero-wrapper">
                     <div class="team-hero-container">
@@ -1522,11 +1557,11 @@
           <!-- 2nd XV -->
           <div class="card">
             <div class="card-body">
-              <div class="two-col-equal" style="align-items: center;">
-                <div>
-                  <img src="https://images.unsplash.com/photo-1529900748604-07564a03e7a6?w=600&h=400&q=80&fit=crop" alt="2nd XV Squad" class="rounded-lg w-full" style="aspect-ratio: 3/2; object-fit: cover;">
+              <div class="two-col-equal team-feature-stack" style="align-items: center;">
+                <div class="team-feature-media">
+                  <img src="https://images.unsplash.com/photo-1529900748604-07564a03e7a6?w=600&h=400&q=80&fit=crop" alt="2nd XV Squad" class="rounded-lg w-full team-feature-image" style="aspect-ratio: 3/2; object-fit: cover;">
                 </div>
-                <div>
+                <div class="team-feature-content">
                   <span class="badge badge-secondary mb-2">Development Squad</span>
                   <h3>2nd XV</h3>
                   <p class="text-lg text-muted mb-4">Our development squad, providing competitive rugby for players progressing to senior level and returning from injury.</p>
@@ -1565,11 +1600,11 @@
 
           <div class="card">
             <div class="card-body">
-              <div class="two-col-equal">
-                <div>
-                  <img src="https://storage.googleapis.com/msgsndr/su6QlYYHk7V0zo5SCC0s/media/698b64131fe166223b5a7fb9.jpg" alt="Women's Team" class="rounded-lg w-full" style="aspect-ratio: 16/10; object-fit: cover;">
+              <div class="two-col-equal team-feature-stack">
+                <div class="team-feature-media">
+                  <img src="https://storage.googleapis.com/msgsndr/su6QlYYHk7V0zo5SCC0s/media/698b64131fe166223b5a7fb9.jpg" alt="Women's Team" class="rounded-lg w-full team-feature-image" style="aspect-ratio: 16/10; object-fit: cover;">
                 </div>
-                <div>
+                <div class="team-feature-content">
                   <span class="badge badge-success mb-2">All Welcome</span>
                   <h3>Women's Team</h3>
                   <p class="text-lg mb-4">Our growing women's section welcomes players of all abilities - from complete beginners to experienced players.</p>
@@ -1672,8 +1707,8 @@
 
           <div class="card mb-8">
             <div class="card-body">
-              <div class="two-col-equal">
-                <div>
+              <div class="two-col-equal team-feature-stack">
+                <div class="team-feature-content">
                   <h3>Sunday Morning Rugby</h3>
                   <p class="text-lg mb-4">Every Sunday during the season (September - April), rain or shine!</p>
 
@@ -1693,8 +1728,8 @@
 
                   <a href="contact.html?subject=minis" class="btn btn-primary">Register Your Child</a>
                 </div>
-                <div>
-                  <img src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=600&h=375&q=80&fit=crop" alt="Mini Rugby" class="rounded-lg w-full mb-4" style="aspect-ratio: 16/10; object-fit: cover;">
+                <div class="team-feature-media">
+                  <img src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=600&h=375&q=80&fit=crop" alt="Mini Rugby" class="rounded-lg w-full team-feature-image" style="aspect-ratio: 16/10; object-fit: cover;">
                 </div>
               </div>
             </div>
@@ -1766,8 +1801,8 @@
 
           <div class="card">
             <div class="card-body">
-              <div class="two-col-equal">
-                <div>
+              <div class="two-col-equal team-feature-stack">
+                <div class="team-feature-content">
                   <span class="badge badge-info mb-2">Non-Contact</span>
                   <h3>Social Touch Rugby</h3>
                   <p class="text-lg mb-4">A fun, fast-paced, non-contact version of rugby. Perfect for fitness, social interaction, and enjoying the game without tackles.</p>
@@ -1795,8 +1830,8 @@
 
                   <a href="contact.html?subject=touch" class="btn btn-primary">Find Out More</a>
                 </div>
-                <div>
-                  <img src="https://images.unsplash.com/photo-1517649763962-0c623066013b?w=600&h=375&q=80&fit=crop" alt="Touch Rugby" class="rounded-lg w-full" style="aspect-ratio: 16/10; object-fit: cover;">
+                <div class="team-feature-media">
+                  <img src="https://images.unsplash.com/photo-1517649763962-0c623066013b?w=600&h=375&q=80&fit=crop" alt="Touch Rugby" class="rounded-lg w-full team-feature-image" style="aspect-ratio: 16/10; object-fit: cover;">
                 </div>
               </div>
             </div>

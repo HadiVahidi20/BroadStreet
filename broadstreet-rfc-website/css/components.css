@@ -1426,19 +1426,19 @@
   overflow: hidden;
 }
 
-/* Keep inner-page heroes fixed while following sections scroll over them */
+/* Inner-page heroes should remain stable (no sticky cover effect) */
 .hero:not(.home-hero) {
-  position: sticky;
-  top: 0;
+  position: relative;
+  top: auto;
   z-index: 0;
 }
 
 .hero:not(.home-hero) ~ * {
   position: relative;
-  z-index: 1;
+  z-index: auto;
 }
 
-/* Give plain sections a base background so sticky hero doesn't show through */
+/* Keep plain section backgrounds solid after hero */
 :where(.hero:not(.home-hero) ~ section) {
   background-color: var(--color-paper);
 }

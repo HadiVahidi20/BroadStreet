@@ -68,7 +68,9 @@
 
 /* Gap variations */
 .gap-0 { gap: 0; }
+.gap-1 { gap: var(--space-1); }
 .gap-2 { gap: var(--space-2); }
+.gap-3 { gap: var(--space-3); }
 .gap-4 { gap: var(--space-4); }
 .gap-6 { gap: var(--space-6); }
 .gap-8 { gap: var(--space-8); }
@@ -177,6 +179,13 @@
    Two Column Layout
    ---------------- */
 .two-col {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-8);
+}
+
+.two-col-equal,
+.two-col-reverse {
   display: grid;
   grid-template-columns: 1fr;
   gap: var(--space-8);
