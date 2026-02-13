@@ -6,7 +6,7 @@
    Top Bar
    ---------------- */
 .top-bar {
-  background-color: var(--color-ink);
+  background-color: var(--color-primary);
   padding: var(--space-2) 0;
   font-size: var(--font-size-sm);
 }
@@ -23,7 +23,7 @@
 }
 
 .top-bar-links a {
-  color: var(--color-gray-300);
+  color: var(--color-white);
   text-decoration: none;
   transition: color var(--transition-fast);
 }
@@ -38,19 +38,20 @@
 }
 
 .top-bar-social a {
-  color: var(--color-gray-400);
+  color: var(--color-white);
   transition: color var(--transition-fast);
 }
 
 .top-bar-social a:hover {
-  color: var(--color-primary);
+  color: var(--color-white);
+  opacity: 0.85;
 }
 
 /* ----------------
    Main Header
    ---------------- */
 .main-header {
-  background-color: var(--color-white);
+  background-color: var(--color-black);
   box-shadow: var(--shadow-sm);
   position: sticky;
   top: 0;
@@ -88,13 +89,13 @@
 .logo-name {
   font-size: var(--font-size-xl);
   font-weight: var(--font-weight-bold);
-  color: var(--color-ink);
+  color: var(--color-white);
   line-height: 1.2;
 }
 
 .logo-tagline {
   font-size: var(--font-size-xs);
-  color: var(--color-gray-500);
+  color: var(--color-white);
   text-transform: uppercase;
   letter-spacing: var(--letter-spacing-wider);
 }
@@ -117,7 +118,7 @@
 .main-nav a {
   display: block;
   padding: var(--space-2) var(--space-4);
-  color: var(--color-ink);
+  color: var(--color-white);
   font-weight: var(--font-weight-semibold);
   font-size: var(--font-size-sm);
   text-decoration: none;
@@ -141,7 +142,7 @@
   top: 100%;
   left: 0;
   min-width: 200px;
-  background-color: var(--color-white);
+  background-color: var(--color-black);
   box-shadow: var(--shadow-lg);
   border-radius: var(--radius-md);
   padding: var(--space-2);
@@ -186,7 +187,7 @@
   display: block;
   width: 24px;
   height: 2px;
-  background-color: var(--color-ink);
+  background-color: var(--color-white);
   transition: all var(--transition-fast);
 }
 
@@ -212,7 +213,7 @@
   width: 100%;
   max-width: 320px;
   height: 100vh;
-  background-color: var(--color-white);
+  background-color: var(--color-black);
   box-shadow: var(--shadow-2xl);
   z-index: var(--z-modal);
   transition: right var(--transition-normal);
@@ -257,7 +258,7 @@
 .mobile-nav a {
   display: block;
   padding: var(--space-3) var(--space-4);
-  color: var(--color-ink);
+  color: var(--color-white);
   font-weight: var(--font-weight-semibold);
   text-decoration: none;
   border-radius: var(--radius-md);
