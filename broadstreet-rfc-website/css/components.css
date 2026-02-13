@@ -2953,6 +2953,10 @@
   filter: saturate(0.88);
 }
 
+.team-accordion-item:not(.is-active)::before {
+  background-image: var(--team-panel-bg-closed, var(--team-panel-bg));
+}
+
 .team-accordion-item:hover::before,
 .team-accordion-item.is-active::before {
   transform: scale(1.13);
