@@ -134,31 +134,8 @@
             <h2 class="mb-0">Photo Gallery</h2>
             <a href="gallery.html" class="btn btn-outline btn-sm">View All Photos</a>
           </div>
-          <div class="grid grid-cols-2 md:grid-cols-4 gap-4" data-gallery>
-            <a href="https://images.unsplash.com/photo-1552667466-07770ae110d0?w=800&q=80" class="card overflow-hidden" data-gallery-item>
-              <img src="https://images.unsplash.com/photo-1552667466-07770ae110d0?w=400&h=400&q=80&fit=crop" alt="Rugby action" style="aspect-ratio: 1; width: 100%; object-fit: cover;">
-            </a>
-            <a href="https://images.unsplash.com/photo-1531415074968-036ba1b575da?w=800&q=80" class="card overflow-hidden" data-gallery-item>
-              <img src="https://images.unsplash.com/photo-1531415074968-036ba1b575da?w=400&h=400&q=80&fit=crop" alt="Rugby players" style="aspect-ratio: 1; width: 100%; object-fit: cover;">
-            </a>
-            <a href="https://images.unsplash.com/photo-1544298621-35a989e2e6e0?w=800&q=80" class="card overflow-hidden" data-gallery-item>
-              <img src="https://images.unsplash.com/photo-1544298621-35a989e2e6e0?w=400&h=400&q=80&fit=crop" alt="Rugby ball" style="aspect-ratio: 1; width: 100%; object-fit: cover;">
-            </a>
-            <a href="https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=800&q=80" class="card overflow-hidden" data-gallery-item>
-              <img src="https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=400&h=400&q=80&fit=crop" alt="Stadium" style="aspect-ratio: 1; width: 100%; object-fit: cover;">
-            </a>
-            <a href="https://images.unsplash.com/photo-1529900748604-07564a03e7a6?w=800&q=80" class="card overflow-hidden" data-gallery-item>
-              <img src="https://images.unsplash.com/photo-1529900748604-07564a03e7a6?w=400&h=400&q=80&fit=crop" alt="Rugby training" style="aspect-ratio: 1; width: 100%; object-fit: cover;">
-            </a>
-            <a href="https://images.unsplash.com/photo-1551958219-acbc608c6377?w=800&q=80" class="card overflow-hidden" data-gallery-item>
-              <img src="https://images.unsplash.com/photo-1551958219-acbc608c6377?w=400&h=400&q=80&fit=crop" alt="Sports field" style="aspect-ratio: 1; width: 100%; object-fit: cover;">
-            </a>
-            <a href="https://images.unsplash.com/photo-1461896836934- voices?w=800&q=80" class="card overflow-hidden" data-gallery-item>
-              <img src="https://images.unsplash.com/photo-1517466787929-bc90951d0974?w=400&h=400&q=80&fit=crop" alt="Team celebration" style="aspect-ratio: 1; width: 100%; object-fit: cover;">
-            </a>
-            <a href="https://images.unsplash.com/photo-1508098682722-e99c43a406b2?w=800&q=80" class="card overflow-hidden" data-gallery-item>
-              <img src="https://images.unsplash.com/photo-1508098682722-e99c43a406b2?w=400&h=400&q=80&fit=crop" alt="Crowd at match" style="aspect-ratio: 1; width: 100%; object-fit: cover;">
-            </a>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="fanZoneGallery">
+            <p class="text-muted col-span-full text-center py-8">Loading gallery...</p>
           </div>
         </div>
       </section>
@@ -537,5 +514,68 @@
   <script src="../js/utils.js"></script>
   <script src="../js/main.js"></script>
   <script src="../js/fixtures-feed.js"></script>
+  <script>
+  (function () {
+    var container = document.getElementById('fanZoneGallery');
+    if (!container) return;
+    var esc = SheetsAPI.esc;
+    var MAX_PHOTOS = 8;
+
+    function sortDesc(photos) {
+      return photos.slice().sort(function (a, b) {
+        return new Date(b.date || '2000-01-01') - new Date(a.date || '2000-01-01');
+      });
+    }
+
+    function openLightbox(imageUrl, title) {
+      var lb = document.createElement('div');
+      lb.className = 'gallery-lightbox active';
+      lb.innerHTML =
+        '<div class="gallery-lightbox-overlay"></div>' +
+        '<div class="gallery-lightbox-content">' +
+        '<button class="gallery-lightbox-close">&times;</button>' +
+        '<img src="' + esc(imageUrl) + '" alt="' + esc(title) + '" class="gallery-lightbox-image">' +
+        '</div>';
+      document.body.appendChild(lb);
+      document.body.style.overflow = 'hidden';
+      function close() {
+        lb.classList.remove('active');
+        setTimeout(function () { document.body.removeChild(lb); document.body.style.overflow = ''; }, 300);
+      }
+      lb.querySelector('.gallery-lightbox-close').addEventListener('click', close);
+      lb.querySelector('.gallery-lightbox-overlay').addEventListener('click', close);
+      document.addEventListener('keydown', function handler(e) {
+        if (e.key === 'Escape') { close(); document.removeEventListener('keydown', handler); }
+      });
+    }
+
+    SheetsAPI.fetchTab('gallery').then(function (data) {
+      var photos = sortDesc(data || []).slice(0, MAX_PHOTOS);
+      if (!photos.length) {
+        container.innerHTML = '<p class="text-muted col-span-full text-center py-8">No photos available.</p>';
+        return;
+      }
+      var html = '';
+      for (var i = 0; i < photos.length; i++) {
+        var p = photos[i];
+        var thumb = p.thumbnail_url || p.image_url || '';
+        var full = p.image_url || thumb;
+        var title = p.title || 'Photo ' + (i + 1);
+        html += '<a href="' + esc(full) + '" class="card overflow-hidden" data-fz-gallery>';
+        html += '<img src="' + esc(thumb) + '" alt="' + esc(title) + '" style="aspect-ratio:1;width:100%;object-fit:cover;" loading="lazy">';
+        html += '</a>';
+      }
+      container.innerHTML = html;
+      container.querySelectorAll('[data-fz-gallery]').forEach(function (item) {
+        item.addEventListener('click', function (e) {
+          e.preventDefault();
+          openLightbox(item.href, item.querySelector('img').alt);
+        });
+      });
+    }).catch(function () {
+      container.innerHTML = '<p class="text-muted col-span-full text-center py-8">Unable to load gallery.</p>';
+    });
+  })();
+  </script>
 </body>
 </html>
