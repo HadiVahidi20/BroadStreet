@@ -1426,16 +1426,26 @@
   overflow: hidden;
 }
 
-/* Inner-page heroes should remain stable (no sticky cover effect) */
+/* Keep inner-page heroes sticky while content scrolls over them */
 .hero:not(.home-hero) {
+  position: sticky;
+  top: 0;
+  z-index: 0;
+}
+
+/* Ensure breadcrumb/title stay above the hero background layer */
+.hero:not(.home-hero) > .container {
   position: relative;
-  top: auto;
+  z-index: 2;
+}
+
+.hero:not(.home-hero) .hero-bg {
   z-index: 0;
 }
 
 .hero:not(.home-hero) ~ * {
   position: relative;
-  z-index: auto;
+  z-index: 1;
 }
 
 /* Keep plain section backgrounds solid after hero */
