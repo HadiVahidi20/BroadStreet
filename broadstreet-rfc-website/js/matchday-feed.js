@@ -353,23 +353,38 @@
     el.innerHTML = html;
   }
 
+  function extractMapsQuery(url) {
+    try {
+      var match = String(url || "").match(/[?&]q=([^&]+)/);
+      return match ? decodeURIComponent(match[1].replace(/\+/g, " ")) : "";
+    } catch (e) {
+      return "";
+    }
+  }
+
   function renderMapSection(venue) {
     var el = document.getElementById("matchdayMap");
     if (!el) return;
 
     if (venue && venue.google_maps_url) {
+      var query = extractMapsQuery(venue.google_maps_url);
+      if (!query && venue.venue_name) {
+        query = (venue.venue_name || "") + " " + (venue.address || "") + " " + (venue.postcode || "");
+      }
+      var embedSrc = "https://www.google.com/maps?q=" + encodeURIComponent(query) + "&output=embed";
+
       el.innerHTML =
         '<h2 class="text-center mb-8">Find the Ground</h2>' +
-        '<div class="card">' +
-        '<div class="matchday-map-placeholder">' +
-        '<div class="matchday-map-inner">' +
-        '<svg width="48" height="48" viewBox="0 0 24 24" fill="var(--color-primary)">' +
-        '<path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>' +
-        '</svg>' +
-        '<p class="mt-4"><strong>' + esc(venue.venue_name || "Venue") + '</strong></p>' +
-        '<p class="text-muted">' + esc(venue.address || "") + (venue.postcode ? ', ' + esc(venue.postcode) : '') + '</p>' +
-        '</div>' +
-        '</div>' +
+        '<div class="card" style="overflow:hidden; border-radius:var(--radius-lg);">' +
+        '<iframe' +
+        ' src="' + esc(embedSrc) + '"' +
+        ' width="100%" height="400"' +
+        ' style="border:0; display:block;"' +
+        ' allowfullscreen=""' +
+        ' loading="lazy"' +
+        ' referrerpolicy="no-referrer-when-downgrade"' +
+        ' title="' + esc(venue.venue_name || "Venue") + ' Location">' +
+        '</iframe>' +
         '</div>' +
         '<div class="text-center mt-6">' +
         '<a href="' + esc(venue.google_maps_url) + '" target="_blank" rel="noopener" class="btn btn-primary">Get Directions</a>' +
