@@ -185,20 +185,36 @@ const BroadstreetRFC = {
   initLayoutMetrics() {
     const root = document.documentElement;
     const header = document.querySelector('.main-header');
+    const topBar = document.querySelector('.top-bar');
 
     const syncStickyHeaderHeight = () => {
       const height = header ? Math.round(header.getBoundingClientRect().height) : 0;
       root.style.setProperty('--sticky-header-height', `${height}px`);
     };
 
-    syncStickyHeaderHeight();
-    window.setTimeout(syncStickyHeaderHeight, 180);
-    window.addEventListener('resize', syncStickyHeaderHeight, { passive: true });
-    window.addEventListener('orientationchange', syncStickyHeaderHeight, { passive: true });
+    const syncTopBarHeight = () => {
+      const height = topBar ? Math.round(topBar.getBoundingClientRect().height) : 0;
+      root.style.setProperty('--top-bar-height', `${height}px`);
+    };
+
+    const syncLayoutVars = () => {
+      syncStickyHeaderHeight();
+      syncTopBarHeight();
+    };
+
+    syncLayoutVars();
+    window.setTimeout(syncLayoutVars, 180);
+    window.addEventListener('resize', syncLayoutVars, { passive: true });
+    window.addEventListener('orientationchange', syncLayoutVars, { passive: true });
 
     if ('ResizeObserver' in window && header) {
-      const resizeObserver = new ResizeObserver(() => syncStickyHeaderHeight());
+      const resizeObserver = new ResizeObserver(() => syncLayoutVars());
       resizeObserver.observe(header);
+    }
+
+    if ('ResizeObserver' in window && topBar) {
+      const topBarResizeObserver = new ResizeObserver(() => syncLayoutVars());
+      topBarResizeObserver.observe(topBar);
     }
   },
 
@@ -381,11 +397,10 @@ const BroadstreetRFC = {
 
         const heroStart = hero.offsetTop;
         const progress = clamp((scrollY - heroStart) / (viewportHeight * 0.9), 0, 1);
-        const shift = Math.round(progress * 160);
-        const opacity = clamp(1 - progress * 1.2, 0, 1);
+        const shift = Math.round(progress * 140);
 
         content.style.setProperty('--inner-hero-copy-shift', `-${shift}px`);
-        content.style.setProperty('--inner-hero-copy-opacity', opacity.toFixed(3));
+        content.style.setProperty('--inner-hero-copy-opacity', '1');
       });
     };
 

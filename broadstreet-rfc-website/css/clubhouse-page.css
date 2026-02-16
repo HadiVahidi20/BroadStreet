@@ -13,9 +13,10 @@
    Hero
    ---------------- */
 .page-clubhouse .clubhouse-hero {
-  min-height: clamp(520px, 74vh, 680px);
-  height: auto;
-  padding: clamp(var(--space-12), 8vw, var(--space-20)) 0;
+  min-height: clamp(500px, 68vh, 640px);
+  height: calc(100vh - var(--sticky-header-height, 86px) - var(--top-bar-height, 0px));
+  height: calc(100svh - var(--sticky-header-height, 86px) - var(--top-bar-height, 0px));
+  padding: 0;
   overflow: hidden;
 }
 
@@ -36,10 +37,11 @@
 .page-clubhouse .clubhouse-hero .container {
   position: relative;
   z-index: 2;
-  min-height: clamp(420px, 66vh, 580px);
+  min-height: 100%;
   display: flex;
   align-items: flex-end;
   justify-content: flex-start;
+  padding-bottom: clamp(var(--space-10), 12vh, var(--space-16));
 }
 
 .page-clubhouse .clubhouse-hero-content {
@@ -403,13 +405,11 @@
 
 @media (max-width: 767px) {
   .page-clubhouse .clubhouse-hero {
-    min-height: 560px;
-    padding-top: var(--space-12);
-    padding-bottom: var(--space-12);
+    min-height: 460px;
   }
 
   .page-clubhouse .clubhouse-hero .container {
-    min-height: 460px;
+    padding-bottom: clamp(var(--space-7), 10vh, var(--space-12));
   }
 
   .page-clubhouse .clubhouse-section-lead {

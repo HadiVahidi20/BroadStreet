@@ -1437,6 +1437,9 @@
   position: sticky;
   top: 0;
   z-index: 0;
+  height: calc(100vh - var(--sticky-header-height, 86px) - var(--top-bar-height, 0px));
+  height: calc(100svh - var(--sticky-header-height, 86px) - var(--top-bar-height, 0px));
+  min-height: 500px;
 }
 
 /* Normalize legacy inline hero padding used across inner pages */
@@ -1452,7 +1455,7 @@
   min-height: 100%;
   display: flex;
   align-items: flex-end;
-  padding-bottom: clamp(var(--space-8), 11vh, var(--space-16));
+  padding-bottom: clamp(var(--space-10), 13vh, var(--space-18));
 }
 
 .hero:not(.home-hero) .hero-bg {
@@ -1982,6 +1985,14 @@
 
   .hero:not(.home-hero) .breadcrumb {
     justify-content: flex-start;
+  }
+
+  .hero:not(.home-hero) {
+    min-height: 460px;
+  }
+
+  .hero:not(.home-hero) > .container {
+    padding-bottom: clamp(var(--space-7), 10vh, var(--space-12));
   }
 
   .hero-nav {
