@@ -39,15 +39,17 @@
   min-height: clamp(420px, 66vh, 580px);
   display: flex;
   align-items: flex-end;
-  justify-content: center;
+  justify-content: flex-start;
 }
 
 .page-clubhouse .clubhouse-hero-content {
   width: min(100%, 840px);
+  text-align: left;
 }
 
 .page-clubhouse .clubhouse-hero .breadcrumb {
   color: rgba(255, 255, 255, 0.82);
+  justify-content: flex-start;
 }
 
 .page-clubhouse .clubhouse-hero .breadcrumb a {
@@ -64,22 +66,22 @@
 
 .page-clubhouse .clubhouse-hero .hero-subtitle {
   max-width: 640px;
-  margin-left: auto;
-  margin-right: auto;
+  margin-left: 0;
+  margin-right: 0;
 }
 
 .page-clubhouse .clubhouse-hero-highlights {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: var(--space-3);
-  margin: var(--space-6) auto 0;
+  margin: var(--space-6) 0 0;
   width: min(100%, 740px);
 }
 
 .page-clubhouse .clubhouse-hero-highlight {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   min-height: 48px;
   padding: var(--space-2) var(--space-4);
   border-radius: var(--radius-full);
@@ -90,6 +92,7 @@
   font-weight: var(--font-weight-semibold);
   letter-spacing: var(--letter-spacing-wide);
   backdrop-filter: blur(6px);
+  text-align: left;
 }
 
 /* ----------------

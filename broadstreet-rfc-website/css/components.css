@@ -1439,14 +1439,53 @@
   z-index: 0;
 }
 
-/* Ensure breadcrumb/title stay above the hero background layer */
+/* Normalize legacy inline hero padding used across inner pages */
+.hero:not(.home-hero)[style*="padding"] {
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+/* Pin inner-page hero copy to bottom-left like the homepage hero */
 .hero:not(.home-hero) > .container {
   position: relative;
   z-index: 2;
+  min-height: 100%;
+  display: flex;
+  align-items: flex-end;
+  padding-bottom: clamp(var(--space-8), 11vh, var(--space-16));
 }
 
 .hero:not(.home-hero) .hero-bg {
   z-index: 0;
+}
+
+.hero:not(.home-hero) .hero-content {
+  max-width: min(760px, 100%);
+  text-align: left;
+  transform: translate3d(0, var(--inner-hero-copy-shift, 0px), 0);
+  opacity: var(--inner-hero-copy-opacity, 1);
+  will-change: transform, opacity;
+}
+
+.hero:not(.home-hero) .breadcrumb {
+  padding-top: 0;
+  color: rgba(255, 255, 255, 0.82);
+}
+
+.hero:not(.home-hero) .breadcrumb a {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.hero:not(.home-hero) .breadcrumb a:hover {
+  color: var(--color-white);
+}
+
+.hero:not(.home-hero) .breadcrumb-separator {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.hero:not(.home-hero) .breadcrumb-current {
+  color: var(--color-white);
 }
 
 .hero:not(.home-hero) ~ * {
@@ -1934,6 +1973,15 @@
     text-align: center;
     max-width: 100%;
     margin: 0 auto;
+  }
+
+  .hero:not(.home-hero) .hero-content {
+    text-align: left;
+    margin: 0;
+  }
+
+  .hero:not(.home-hero) .breadcrumb {
+    justify-content: flex-start;
   }
 
   .hero-nav {

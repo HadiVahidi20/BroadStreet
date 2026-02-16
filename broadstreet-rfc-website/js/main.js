@@ -23,6 +23,7 @@ const BroadstreetRFC = {
     this.initLayoutMetrics();
     this.initTeamAccordion();
     this.initParallaxEffects();
+    this.initInnerHeroCopyMotion();
     this.initScrollReveal();
     console.log('Broadstreet RFC Website Initialized');
   },
@@ -342,6 +343,65 @@ const BroadstreetRFC = {
     }
 
     // Prevent orphan RAF callback during tab switches.
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden) {
+        queueUpdate();
+      } else if (rafId) {
+        window.cancelAnimationFrame(rafId);
+        rafId = 0;
+        ticking = false;
+      }
+    });
+  },
+
+  /**
+   * Move inner-page hero copy upward on scroll while the hero image stays sticky
+   */
+  initInnerHeroCopyMotion() {
+    const heroes = Array.from(document.querySelectorAll('.hero:not(.home-hero)'));
+    if (!heroes.length) return;
+
+    const prefersReducedMotion =
+      window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReducedMotion) return;
+
+    const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
+
+    let rafId = 0;
+    let ticking = false;
+
+    const update = () => {
+      ticking = false;
+      const viewportHeight = Math.max(window.innerHeight || 0, 1);
+      const scrollY = window.scrollY || window.pageYOffset || 0;
+
+      heroes.forEach((hero) => {
+        const content = hero.querySelector('.hero-content');
+        if (!content) return;
+
+        const heroStart = hero.offsetTop;
+        const progress = clamp((scrollY - heroStart) / (viewportHeight * 0.9), 0, 1);
+        const shift = Math.round(progress * 160);
+        const opacity = clamp(1 - progress * 1.2, 0, 1);
+
+        content.style.setProperty('--inner-hero-copy-shift', `-${shift}px`);
+        content.style.setProperty('--inner-hero-copy-opacity', opacity.toFixed(3));
+      });
+    };
+
+    const queueUpdate = () => {
+      if (ticking) return;
+      ticking = true;
+      rafId = window.requestAnimationFrame(update);
+    };
+
+    window.addEventListener('scroll', queueUpdate, { passive: true });
+    window.addEventListener('resize', queueUpdate);
+    window.addEventListener('orientationchange', queueUpdate, { passive: true });
+
+    queueUpdate();
+    window.setTimeout(queueUpdate, 140);
+
     document.addEventListener('visibilitychange', () => {
       if (!document.hidden) {
         queueUpdate();
