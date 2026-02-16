@@ -47,6 +47,15 @@
   opacity: 0.85;
 }
 
+.top-bar-admin-link {
+  margin-left: var(--space-2);
+  padding-left: var(--space-3);
+  border-left: 1px solid rgba(255, 255, 255, 0.35);
+  text-decoration: none;
+  font-weight: var(--font-weight-semibold);
+  white-space: nowrap;
+}
+
 /* ----------------
    Main Header
    ---------------- */
