@@ -23,7 +23,6 @@ const BroadstreetRFC = {
     this.initLayoutMetrics();
     this.initTeamAccordion();
     this.initParallaxEffects();
-    this.initInnerHeroCopyMotion();
     this.initScrollReveal();
     console.log('Broadstreet RFC Website Initialized');
   },

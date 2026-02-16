@@ -1432,14 +1432,12 @@
   overflow: hidden;
 }
 
-/* Keep inner-page heroes sticky while content scrolls over them */
+/* Inner pages: only hero background is sticky, content scrolls normally */
 .hero:not(.home-hero) {
-  position: sticky;
-  top: 0;
+  position: relative;
   z-index: 0;
-  height: calc(100vh - var(--sticky-header-height, 86px) - var(--top-bar-height, 0px));
-  height: calc(100svh - var(--sticky-header-height, 86px) - var(--top-bar-height, 0px));
-  min-height: 500px;
+  min-height: calc(100vh - var(--sticky-header-height, 86px) - var(--top-bar-height, 0px) + 170px);
+  min-height: calc(100svh - var(--sticky-header-height, 86px) - var(--top-bar-height, 0px) + 170px);
 }
 
 /* Normalize legacy inline hero padding used across inner pages */
@@ -1452,22 +1450,30 @@
 .hero:not(.home-hero) > .container {
   position: relative;
   z-index: 2;
-  min-height: 100%;
+  min-height: calc(100vh - var(--sticky-header-height, 86px) - var(--top-bar-height, 0px));
+  min-height: calc(100svh - var(--sticky-header-height, 86px) - var(--top-bar-height, 0px));
   display: flex;
   align-items: flex-end;
   padding-bottom: clamp(var(--space-10), 13vh, var(--space-18));
 }
 
-.hero:not(.home-hero) .hero-bg {
+.hero:not(.home-hero) > .hero-bg {
+  position: sticky;
+  inset: auto;
+  top: calc(var(--sticky-header-height, 86px) + var(--top-bar-height, 0px));
+  left: 0;
+  right: 0;
+  height: calc(100vh - var(--sticky-header-height, 86px) - var(--top-bar-height, 0px));
+  height: calc(100svh - var(--sticky-header-height, 86px) - var(--top-bar-height, 0px));
   z-index: 0;
 }
 
 .hero:not(.home-hero) .hero-content {
   max-width: min(760px, 100%);
   text-align: left;
-  transform: translate3d(0, var(--inner-hero-copy-shift, 0px), 0);
-  opacity: var(--inner-hero-copy-opacity, 1);
-  will-change: transform, opacity;
+  transform: none;
+  opacity: 1;
+  will-change: auto;
 }
 
 .hero:not(.home-hero) .breadcrumb {
@@ -1988,10 +1994,11 @@
   }
 
   .hero:not(.home-hero) {
-    min-height: 460px;
+    min-height: calc(100svh - var(--sticky-header-height, 86px) - var(--top-bar-height, 0px) + 120px);
   }
 
   .hero:not(.home-hero) > .container {
+    min-height: calc(100svh - var(--sticky-header-height, 86px) - var(--top-bar-height, 0px));
     padding-bottom: clamp(var(--space-7), 10vh, var(--space-12));
   }
 
