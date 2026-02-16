@@ -225,6 +225,12 @@ function calculateStandings() {
     ]);
   }
 
+  // Add last_updated timestamp as a metadata row at the end
+  var tz = "Europe/London";
+  try { tz = Session.getScriptTimeZone() || tz; } catch (e) { /* use default */ }
+  var now = Utilities.formatDate(new Date(), tz, "dd MMM yyyy, HH:mm");
+  output.push(["_meta", "last_updated", now, "", "", "", "", "", "", "", "", "", "", ""]);
+
   writeToSheet(CONFIG.standingsTab, output);
   Logger.log(
     "Standings updated. Baseline date: " +

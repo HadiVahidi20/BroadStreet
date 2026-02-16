@@ -576,6 +576,14 @@
       .join("");
   }
 
+  function renderStandingsLastUpdated(timestamp) {
+    if (!timestamp) return;
+    var targets = document.querySelectorAll(".standings-last-updated");
+    for (var i = 0; i < targets.length; i++) {
+      targets[i].textContent = "Last updated: " + timestamp;
+    }
+  }
+
   function renderFixturesStandings(rows) {
     var tbody = document.getElementById("fixturesStandings");
     if (!tbody) return;
@@ -898,7 +906,20 @@
       var results = await Promise.all(promises);
       var allFixtures = results[0] || [];
       var fixtures = allFixtures.filter(isBroadstreetFixture);
-      var standings = needsStandings ? results[1] || [] : [];
+      var rawStandings = needsStandings ? results[1] || [] : [];
+
+      // Extract _meta row (last_updated timestamp) and filter it out
+      var standingsLastUpdated = "";
+      var standings = [];
+      for (var si = 0; si < rawStandings.length; si++) {
+        if (String(rawStandings[si].position || "").trim() === "_meta") {
+          if (String(rawStandings[si].team || "").trim() === "last_updated") {
+            standingsLastUpdated = String(rawStandings[si].played || "").trim();
+          }
+        } else {
+          standings.push(rawStandings[si]);
+        }
+      }
 
       if (needsNextMatch) {
         var upcoming = sortFixturesByDate(
@@ -916,6 +937,7 @@
 
       if (isHomepage) {
         if (standings.length) renderHomeStandings(standings);
+        renderStandingsLastUpdated(standingsLastUpdated);
 
         var completed = sortFixturesByDate(
           fixtures.filter(function (f) {
@@ -932,6 +954,7 @@
         renderFixturesPage(fixtures);
         updateFixturesStandingsTitle(fixtures);
         if (hasFixturesStandings) renderFixturesStandings(standings);
+        renderStandingsLastUpdated(standingsLastUpdated);
       }
     } catch (e) {
       if (document.getElementById("homeNextMatch") || document.getElementById("fanZoneNextMatch")) {

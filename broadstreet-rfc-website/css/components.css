@@ -477,6 +477,12 @@
   box-shadow: var(--shadow-lg);
 }
 
+.standings-last-updated {
+  font-style: italic;
+  opacity: 0.7;
+  text-align: right;
+}
+
 /* Mobile Responsive */
 @media (max-width: 768px) {
   .next-match-card {
