@@ -16,22 +16,22 @@ var CONFIG = {
   // Non-league matches (Friendly, Charity Match, etc.) are excluded.
   leagueCompetition: "Regional 2 Midlands East",
 
-  // Baseline is fixed at "today" when this strategy was introduced.
-  // Fixtures before this date are ignored in calculations.
-  baselineDate: "2026-02-10",
+  // Baseline is fixed at a known-good date. Fixtures from this date onward
+  // are recalculated from sheet data. Update baseline when standings are verified.
+  baselineDate: "2026-02-16",
 
-  // Baseline standings provided by admin.
+  // Baseline standings provided by admin — updated 2026-02-16.
   baselineStandings: [
     { team: "Market Harborough", played: 16, won: 14, drawn: 1, lost: 1, pf: 751, pa: 195, tb: 14, lb: 1, points: 73 },
     { team: "Northampton Old Scouts", played: 16, won: 13, drawn: 0, lost: 3, pf: 628, pa: 341, tb: 12, lb: 1, points: 66 },
-    { team: "Broadstreet", played: 16, won: 12, drawn: 0, lost: 4, pf: 591, pa: 336, tb: 11, lb: 2, points: 61 },
+    { team: "Broadstreet", played: 17, won: 13, drawn: 0, lost: 4, pf: 632, pa: 336, tb: 12, lb: 1, points: 65 },
     { team: "Bedford Athletic", played: 16, won: 12, drawn: 0, lost: 4, pf: 505, pa: 424, tb: 11, lb: 0, points: 59 },
     { team: "Peterborough", played: 16, won: 9, drawn: 1, lost: 6, pf: 588, pa: 370, tb: 11, lb: 2, points: 51 },
     { team: "Stamford", played: 16, won: 7, drawn: 2, lost: 7, pf: 424, pa: 447, tb: 10, lb: 2, points: 44 },
     { team: "Kettering", played: 16, won: 8, drawn: 0, lost: 8, pf: 448, pa: 358, tb: 9, lb: 1, points: 42 },
     { team: "Oadby Wyggestonians", played: 16, won: 5, drawn: 1, lost: 10, pf: 374, pa: 540, tb: 6, lb: 2, points: 30 },
     { team: "Olney", played: 16, won: 4, drawn: 0, lost: 12, pf: 396, pa: 556, tb: 8, lb: 4, points: 28 },
-    { team: "Daventry", played: 16, won: 4, drawn: 1, lost: 11, pf: 320, pa: 584, tb: 5, lb: 2, points: 25 },
+    { team: "Daventry", played: 17, won: 4, drawn: 1, lost: 12, pf: 320, pa: 625, tb: 5, lb: 2, points: 25 },
     { team: "Old Coventrians", played: 16, won: 4, drawn: 0, lost: 12, pf: 338, pa: 644, tb: 6, lb: 3, points: 20 },
     { team: "Wellingborough", played: 16, won: 1, drawn: 0, lost: 15, pf: 214, pa: 782, tb: 2, lb: 1, points: 7 }
   ],

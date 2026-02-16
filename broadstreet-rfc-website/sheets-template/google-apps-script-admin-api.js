@@ -63,12 +63,36 @@ var ADMIN_CONFIG = {
   ],
   DEFAULT_FIXTURE_TIME: "3:00 PM",
   SYNC_TIME_ZONE: "Europe/London",
+  // Two syncs per week to catch all results:
+  // 1) Monday evening — most clubs have submitted by then
+  // 2) Wednesday morning — catches late submissions and corrections
+  AUTO_SYNC_SCHEDULE: [
+    { weekday: "MONDAY", hour: 20 },
+    { weekday: "WEDNESDAY", hour: 6 }
+  ],
+  // Legacy single-trigger fields (kept for backward compat)
   AUTO_SYNC_WEEKDAY: "MONDAY",
-  AUTO_SYNC_HOUR: 6,
+  AUTO_SYNC_HOUR: 20,
   // RFU Game Management System (GMS) - used for fetching match results with scores
-  RFU_GMS_TEAM_ID: 8763,    // Broadstreet 1st XV
-  RFU_GMS_CLUB_ID: 589,     // Broadstreet RFC
+  RFU_GMS_TEAM_ID: 8763,    // Broadstreet 1st XV (kept for backward compat)
+  RFU_GMS_CLUB_ID: 589,     // Broadstreet RFC (kept for backward compat)
   RFU_GMS_BASE_URL: "https://gms.rfu.com/fsiservices2/Competitions.svc/json",
+
+  // All league team GMS IDs — used to fetch results for the entire league
+  RFU_GMS_LEAGUE_TEAMS: [
+    { team: "Market Harborough", teamId: 8822 },
+    { team: "Northampton Old Scouts", teamId: 8864 },
+    { team: "Broadstreet", teamId: 8763 },
+    { team: "Bedford Athletic", teamId: 8736 },
+    { team: "Peterborough", teamId: 8893 },
+    { team: "Stamford", teamId: 8918 },
+    { team: "Kettering", teamId: 8820 },
+    { team: "Oadby Wyggestonians", teamId: 8869 },
+    { team: "Olney", teamId: 8632 },
+    { team: "Daventry", teamId: 8788 },
+    { team: "Old Coventrians", teamId: 8873 },
+    { team: "Wellingborough", teamId: 8951 }
+  ],
 
   TEAM_ALIASES: {
     "Broadstreet RFC": "Broadstreet",
@@ -635,37 +659,59 @@ function syncRfuFixturesScheduled() {
 
 /**
  * Fetch match results from the RFU Game Management System (GMS) API
- * and update scores for matching fixtures in the sheet.
+ * for ALL league teams and update scores for matching fixtures in the sheet.
+ * This ensures standings are accurate for every team, not just Broadstreet.
  */
 function performRfuResultsSync_() {
-  var teamId = ADMIN_CONFIG.RFU_GMS_TEAM_ID;
-  var clubId = ADMIN_CONFIG.RFU_GMS_CLUB_ID;
   var baseUrl = ADMIN_CONFIG.RFU_GMS_BASE_URL;
-
-  if (!teamId || !clubId || !baseUrl) {
-    throw new Error("RFU GMS config missing (RFU_GMS_TEAM_ID, RFU_GMS_CLUB_ID, RFU_GMS_BASE_URL)");
+  if (!baseUrl) {
+    throw new Error("RFU GMS config missing (RFU_GMS_BASE_URL)");
   }
 
-  var url = baseUrl + "/GetResultsSimplified?teamId=" + teamId + "&clubId=" + clubId;
-  var response = UrlFetchApp.fetch(url, {
-    muteHttpExceptions: true,
-    headers: { Accept: "application/json" }
-  });
-
-  var code = response.getResponseCode();
-  if (code < 200 || code >= 300) {
-    throw new Error("RFU GMS API returned HTTP " + code);
+  var leagueTeams = ADMIN_CONFIG.RFU_GMS_LEAGUE_TEAMS;
+  if (!leagueTeams || !leagueTeams.length) {
+    // Fallback to single-team fetch for backward compatibility
+    leagueTeams = [{ team: "Broadstreet", teamId: ADMIN_CONFIG.RFU_GMS_TEAM_ID }];
   }
 
-  var results;
-  try {
-    results = JSON.parse(response.getContentText());
-  } catch (e) {
-    throw new Error("Failed to parse RFU GMS response: " + e.toString());
+  // Fetch results for every team in the league
+  var allResults = [];
+  var fetchedTeams = 0;
+  var failedTeams = [];
+
+  for (var t = 0; t < leagueTeams.length; t++) {
+    var entry = leagueTeams[t];
+    if (!entry || !entry.teamId) continue;
+
+    try {
+      var url = baseUrl + "/GetResultsSimplified?teamId=" + entry.teamId;
+      var response = UrlFetchApp.fetch(url, {
+        muteHttpExceptions: true,
+        headers: { Accept: "application/json" }
+      });
+
+      var code = response.getResponseCode();
+      if (code < 200 || code >= 300) {
+        failedTeams.push({ team: entry.team, error: "HTTP " + code });
+        continue;
+      }
+
+      var teamResults = JSON.parse(response.getContentText());
+      if (teamResults && teamResults.length) {
+        allResults = allResults.concat(teamResults);
+      }
+      fetchedTeams++;
+    } catch (err) {
+      failedTeams.push({ team: entry.team, error: err.toString() });
+      Logger.log("GMS fetch failed for " + entry.team + ": " + err.toString());
+    }
   }
 
-  if (!results || !results.length) {
-    return { fetched: 0, matched: 0, updated: 0, skipped: 0 };
+  // Deduplicate results — the same match appears in both teams' feeds
+  var deduped = dedupeGmsResults_(allResults);
+
+  if (!deduped.length) {
+    return { fetched_teams: fetchedTeams, fetched_raw: allResults.length, fetched: 0, matched: 0, updated: 0, created: 0, skipped: 0 };
   }
 
   var sheet = getSheet("fixtures");
@@ -692,8 +738,8 @@ function performRfuResultsSync_() {
   var created = 0;
   var skipped = 0;
 
-  for (var j = 0; j < results.length; j++) {
-    var result = results[j];
+  for (var j = 0; j < deduped.length; j++) {
+    var result = deduped[j];
     if (!result) continue;
 
     var resultType = String(result.Type || "").toUpperCase();
@@ -761,13 +807,41 @@ function performRfuResultsSync_() {
     recalculateStandingsIfFixturesChanged("fixtures");
   }
 
-  return {
-    fetched: results.length,
+  var summary = {
+    fetched_teams: fetchedTeams,
+    fetched_raw: allResults.length,
+    fetched: deduped.length,
     matched: matched,
     updated: updated,
     created: created,
     skipped: skipped
   };
+  if (failedTeams.length) {
+    summary.failed_teams = failedTeams;
+  }
+  return summary;
+}
+
+/**
+ * Deduplicate GMS results — the same match appears in both teams' result feeds.
+ * Uses match Id as the primary dedup key.
+ */
+function dedupeGmsResults_(results) {
+  var seen = {};
+  var out = [];
+
+  for (var i = 0; i < results.length; i++) {
+    var r = results[i];
+    if (!r) continue;
+
+    var id = r.Id;
+    if (id && seen[id]) continue;
+
+    if (id) seen[id] = true;
+    out.push(r);
+  }
+
+  return out;
 }
 
 /**
@@ -837,22 +911,42 @@ function dedupeFixturesByKey_(fixtures) {
 }
 
 /**
- * Run once from Apps Script editor to create a single weekly trigger.
- * Uses ADMIN_CONFIG.AUTO_SYNC_WEEKDAY and ADMIN_CONFIG.AUTO_SYNC_HOUR.
+ * Run once from Apps Script editor to create weekly sync triggers.
+ * Uses ADMIN_CONFIG.AUTO_SYNC_SCHEDULE for multiple syncs per week,
+ * or falls back to single AUTO_SYNC_WEEKDAY/AUTO_SYNC_HOUR.
  */
 function setupWeeklyRfuSyncTrigger() {
   deleteTriggersByHandler_("syncRfuFixturesScheduled");
 
-  var hour = normalizeTriggerHour_(ADMIN_CONFIG.AUTO_SYNC_HOUR);
-  var weekday = getWeekDayEnum_(ADMIN_CONFIG.AUTO_SYNC_WEEKDAY);
+  var schedule = ADMIN_CONFIG.AUTO_SYNC_SCHEDULE;
+  if (schedule && schedule.length) {
+    for (var i = 0; i < schedule.length; i++) {
+      var entry = schedule[i];
+      var hour = normalizeTriggerHour_(entry.hour);
+      var weekday = getWeekDayEnum_(entry.weekday);
 
-  ScriptApp.newTrigger("syncRfuFixturesScheduled")
-    .timeBased()
-    .onWeekDay(weekday)
-    .atHour(hour)
-    .create();
+      ScriptApp.newTrigger("syncRfuFixturesScheduled")
+        .timeBased()
+        .onWeekDay(weekday)
+        .atHour(hour)
+        .create();
 
-  Logger.log("Weekly RFU sync trigger created: " + String(ADMIN_CONFIG.AUTO_SYNC_WEEKDAY) + " at " + hour + ":00");
+      Logger.log("RFU sync trigger created: " + String(entry.weekday) + " at " + hour + ":00");
+    }
+    Logger.log("Total triggers created: " + schedule.length);
+  } else {
+    // Fallback to legacy single trigger
+    var hour = normalizeTriggerHour_(ADMIN_CONFIG.AUTO_SYNC_HOUR);
+    var weekday = getWeekDayEnum_(ADMIN_CONFIG.AUTO_SYNC_WEEKDAY);
+
+    ScriptApp.newTrigger("syncRfuFixturesScheduled")
+      .timeBased()
+      .onWeekDay(weekday)
+      .atHour(hour)
+      .create();
+
+    Logger.log("Weekly RFU sync trigger created: " + String(ADMIN_CONFIG.AUTO_SYNC_WEEKDAY) + " at " + hour + ":00");
+  }
 }
 
 /**
