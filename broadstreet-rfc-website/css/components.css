@@ -1448,14 +1448,14 @@
   padding-bottom: 0 !important;
 }
 
-/* Pin inner-page hero copy to bottom-left like the homepage hero */
+/* Pin inner-page hero copy to left-center */
 .hero:not(.home-hero) > .container {
   position: relative;
   z-index: 2;
   min-height: 100%;
   display: flex;
-  align-items: flex-end;
-  padding-bottom: clamp(var(--space-10), 13vh, var(--space-18));
+  align-items: center;
+  padding-bottom: 0;
 }
 
 .hero:not(.home-hero) .hero-bg {
@@ -1468,6 +1468,7 @@
   transform: translate3d(0, var(--inner-hero-copy-shift, 0px), 0);
   opacity: var(--inner-hero-copy-opacity, 1);
   will-change: transform, opacity;
+  margin: 0;
 }
 
 .hero:not(.home-hero) .breadcrumb {
@@ -1992,7 +1993,7 @@
   }
 
   .hero:not(.home-hero) > .container {
-    padding-bottom: clamp(var(--space-7), 10vh, var(--space-12));
+    padding-bottom: 0;
   }
 
   .hero-nav {
