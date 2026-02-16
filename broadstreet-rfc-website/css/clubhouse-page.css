@@ -13,9 +13,9 @@
    Hero
    ---------------- */
 .page-clubhouse .clubhouse-hero {
-  min-height: calc(100vh - var(--sticky-header-height, 86px) - var(--top-bar-height, 0px) + 170px);
-  min-height: calc(100svh - var(--sticky-header-height, 86px) - var(--top-bar-height, 0px) + 170px);
-  height: auto;
+  min-height: clamp(500px, 68vh, 640px);
+  height: calc(100vh - var(--sticky-header-height, 86px) - var(--top-bar-height, 0px));
+  height: calc(100svh - var(--sticky-header-height, 86px) - var(--top-bar-height, 0px));
   padding: 0;
   overflow: hidden;
 }
@@ -37,8 +37,7 @@
 .page-clubhouse .clubhouse-hero .container {
   position: relative;
   z-index: 2;
-  min-height: calc(100vh - var(--sticky-header-height, 86px) - var(--top-bar-height, 0px));
-  min-height: calc(100svh - var(--sticky-header-height, 86px) - var(--top-bar-height, 0px));
+  min-height: 100%;
   display: flex;
   align-items: flex-end;
   justify-content: flex-start;
@@ -406,11 +405,10 @@
 
 @media (max-width: 767px) {
   .page-clubhouse .clubhouse-hero {
-    min-height: calc(100svh - var(--sticky-header-height, 86px) - var(--top-bar-height, 0px) + 120px);
+    min-height: 460px;
   }
 
   .page-clubhouse .clubhouse-hero .container {
-    min-height: calc(100svh - var(--sticky-header-height, 86px) - var(--top-bar-height, 0px));
     padding-bottom: clamp(var(--space-7), 10vh, var(--space-12));
   }
 
